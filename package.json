@@ -1,0 +1,23 @@
+{
+  "name": "calendarfactory",
+  "version": "1.0.0",
+  "description": "Minimalist single-page calendar event generator with direct URL properties, 100% client-side for Cloudflare",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "pages:deploy": "wrangler pages deploy public"
+  },
+  "keywords": [
+    "calendar",
+    "google-calendar",
+    "apple-calendar",
+    "ical",
+    "cloudflare-pages"
+  ],
+  "author": "Dima",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^4.151.0"
+  }
+}
