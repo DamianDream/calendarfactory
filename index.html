@@ -291,6 +291,12 @@
       color: var(--text);
     }
 
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
     .form-input, .form-textarea, .form-select {
       width: 100%;
       padding: 10px 14px;
@@ -450,14 +456,14 @@
             <input type="date" id="inputDate" class="form-input" required>
           </div>
           <div class="form-group">
-            <label class="form-label" for="inputTime">Start Time</label>
-            <input type="time" id="inputTime" class="form-input" value="10:00">
+            <label class="form-label" for="inputTime">Start Time *</label>
+            <input type="time" id="inputTime" class="form-input" value="15:00" required>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="inputDuration">Duration (min)</label>
+            <label class="form-label" for="inputDuration">Duration / End</label>
             <select id="inputDuration" class="form-select">
               <option value="15">15 minutes</option>
               <option value="30">30 minutes</option>
@@ -469,7 +475,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="inputTimezone">Timezone</label>
+            <label class="form-label" for="inputTimezone">Timezone (optional)</label>
             <input type="text" id="inputTimezone" class="form-input" placeholder="e.g. Europe/Kyiv">
           </div>
         </div>
@@ -481,11 +487,12 @@
 
         <div class="form-group">
           <label class="form-label" for="inputDescription">Description</label>
-          <textarea id="inputDescription" class="form-textarea" rows="3" placeholder="Add an agenda, meeting notes or instructions..."></textarea>
+          <textarea id="inputDescription" class="form-textarea" rows="3" placeholder="Add an agenda, notes, or placeholders like {var} or {name}..."></textarea>
+          <div class="form-hint">💡 Dynamic placeholders: {var}, {{var}}, or %var% in description will be replaced by URL properties (e.g. &amp;var=value).</div>
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 24px;">
-          <button type="submit" class="btn btn-primary">Generate & Preview</button>
+          <button type="submit" class="btn btn-primary">Generate &amp; Preview</button>
         </div>
       </form>
     </div>
@@ -495,74 +502,127 @@
 
   <script>
     (function () {
-      // 1. Parameter extraction (supports query string & hash params)
-      function getParams() {
-        const queryParams = new URLSearchParams(window.location.search);
-        const hash = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : '';
-        const hashParams = new URLSearchParams(hash);
+      // Collect all query and hash parameters
+      const queryParams = new URLSearchParams(window.location.search);
+      const hash = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : '';
+      const hashParams = new URLSearchParams(hash);
 
-        function getVal(keys) {
-          for (const key of keys) {
-            if (queryParams.has(key) && queryParams.get(key).trim() !== '') {
-              return queryParams.get(key).trim();
-            }
-            if (hashParams.has(key) && hashParams.get(key).trim() !== '') {
-              return hashParams.get(key).trim();
-            }
+      const allParams = {};
+      for (const [k, v] of queryParams.entries()) {
+        allParams[k] = v;
+      }
+      for (const [k, v] of hashParams.entries()) {
+        allParams[k] = v;
+      }
+
+      function getVal(keys) {
+        for (const key of keys) {
+          if (allParams[key] !== undefined && allParams[key].trim() !== '') {
+            return allParams[key].trim();
           }
-          return null;
         }
+        return null;
+      }
 
-        const title = getVal(['title', 't', 'summary', 'name']);
+      // Dynamic placeholder replacement for desc, title, loc
+      // Supports {var}, {{var}}, %var%, [var], ${var}
+      function replacePlaceholders(text, paramMap) {
+        if (!text) return '';
+        let result = text;
+        for (const [rawKey, val] of Object.entries(paramMap)) {
+          if (val === undefined || val === null) continue;
+          const escapedKey = rawKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          const pattern = new RegExp(`\\{\\{${escapedKey}\\}\\}|\\{${escapedKey}\\}|%${escapedKey}%|\\[${escapedKey}\\]|\\$\\{${escapedKey}\\}`, 'gi');
+          result = result.replace(pattern, val);
+        }
+        return result;
+      }
+
+      function getParams() {
+        const rawTitle = getVal(['title', 't', 'summary', 'name']);
         const start = getVal(['start', 's', 'dtstart', 'begin', 'from']);
         const end = getVal(['end', 'e', 'dtend', 'to']);
         const duration = getVal(['duration', 'dur', 'd']);
-        const desc = getVal(['desc', 'description', 'details', 'body']);
-        const loc = getVal(['loc', 'location', 'venue', 'where']);
-        const tz = getVal(['tz', 'timezone']) || Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const rawDesc = getVal(['desc', 'description', 'details', 'body']);
+        const rawLoc = getVal(['loc', 'location', 'venue', 'where']);
+        const tz = getVal(['tz', 'timezone']);
         const allDayRaw = getVal(['allDay', 'allday']);
         const allDay = allDayRaw === '1' || allDayRaw === 'true' || allDayRaw === 'yes';
 
-        if (!title && !start) {
+        if (!rawTitle && !start) {
           return null;
         }
 
+        // Apply template variable substitution
+        const title = replacePlaceholders(rawTitle || 'Untitled Event', allParams);
+        const desc = replacePlaceholders(rawDesc || '', allParams);
+        const loc = replacePlaceholders(rawLoc || '', allParams);
+
         return {
-          title: title || 'Untitled Event',
+          title,
           start,
           end,
           duration: duration ? parseInt(duration, 10) : 60,
-          desc: desc || '',
-          loc: loc || '',
-          tz,
+          desc,
+          loc,
+          tz: tz || '',
           allDay
         };
       }
 
-      // Date parsing utilities
+      // Simplified Date Parsing:
+      // Accepts "2026-10-25T15:00", "2026-10-25 15:00", "2026-10-25", compact or ISO
       function parseDateTime(str, isAllDay) {
         if (!str) return new Date();
-        
-        // Handle compact format YYYYMMDDTHHmmssZ or YYYYMMDD
-        if (/^\d{8}(T\d{4,6}Z?)?$/.test(str)) {
-          const y = parseInt(str.substr(0, 4), 10);
-          const m = parseInt(str.substr(4, 2), 10) - 1;
-          const d = parseInt(str.substr(6, 2), 10);
-          if (str.length === 8 || isAllDay) {
+
+        // 1. Matches "YYYY-MM-DDTHH:mm" (e.g. "2026-10-25T15:00") or with optional seconds/Z
+        const match = str.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?(Z)?$/i);
+        if (match) {
+          const y = parseInt(match[1], 10);
+          const m = parseInt(match[2], 10) - 1;
+          const d = parseInt(match[3], 10);
+          if (!match[4] || isAllDay) {
             return new Date(y, m, d);
           }
-          const h = parseInt(str.substr(9, 2), 10);
-          const min = parseInt(str.substr(11, 2), 10);
-          const s = str.length >= 15 ? parseInt(str.substr(13, 2), 10) : 0;
-          return str.endsWith('Z') ? new Date(Date.UTC(y, m, d, h, min, s)) : new Date(y, m, d, h, min, s);
+          const h = parseInt(match[4], 10);
+          const min = parseInt(match[5], 10);
+          const s = match[6] ? parseInt(match[6], 10) : 0;
+          if (match[7] === 'Z' || match[7] === 'z') {
+            return new Date(Date.UTC(y, m, d, h, min, s));
+          }
+          return new Date(y, m, d, h, min, s);
+        }
+
+        // 2. Compact format: YYYYMMDD or YYYYMMDDTHHmm
+        const compactMatch = str.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?)?(Z)?$/i);
+        if (compactMatch) {
+          const y = parseInt(compactMatch[1], 10);
+          const m = parseInt(compactMatch[2], 10) - 1;
+          const d = parseInt(compactMatch[3], 10);
+          if (!compactMatch[4] || isAllDay) {
+            return new Date(y, m, d);
+          }
+          const h = parseInt(compactMatch[4], 10);
+          const min = parseInt(compactMatch[5], 10);
+          const s = compactMatch[6] ? parseInt(compactMatch[6], 10) : 0;
+          if (compactMatch[7] === 'Z' || compactMatch[7] === 'z') {
+            return new Date(Date.UTC(y, m, d, h, min, s));
+          }
+          return new Date(y, m, d, h, min, s);
         }
 
         const parsed = new Date(str);
         return isNaN(parsed.getTime()) ? new Date() : parsed;
       }
 
-      function formatCompactUTC(d) {
-        return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
+      function formatCompact(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const h = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const s = String(d.getSeconds()).padStart(2, '0');
+        return `${y}${m}${day}T${h}${min}${s}`;
       }
 
       function formatCompactDate(d) {
@@ -570,6 +630,16 @@
         const m = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
         return `${y}${m}${day}`;
+      }
+
+      function formatIsoNoZ(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const h = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const s = String(d.getSeconds()).padStart(2, '0');
+        return `${y}-${m}-${day}T${h}:${min}:${s}`;
       }
 
       function escapeIcs(str) {
@@ -616,7 +686,7 @@
           dtString += ` – ${endTimeStr}`;
         }
         document.getElementById('eventDateTime').textContent = dtString;
-        document.getElementById('eventTimezone').textContent = params.allDay ? 'All-day event' : `${params.tz || 'Local time'}`;
+        document.getElementById('eventTimezone').textContent = params.allDay ? 'All-day event' : (params.tz || Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local time');
 
         // Location
         if (params.loc) {
@@ -638,7 +708,7 @@
         // 1. Google Calendar URL
         const googleDates = params.allDay
           ? `${formatCompactDate(startDate)}/${formatCompactDate(new Date(endDate.getTime() + 86400000))}`
-          : `${formatCompactUTC(startDate)}/${formatCompactUTC(endDate)}`;
+          : `${formatCompact(startDate)}/${formatCompact(endDate)}`;
         
         const googleUrl = new URL('https://calendar.google.com/calendar/render');
         googleUrl.searchParams.set('action', 'TEMPLATE');
@@ -654,8 +724,8 @@
         outlookUrl.searchParams.set('path', '/calendar/action/compose');
         outlookUrl.searchParams.set('rru', 'addevent');
         outlookUrl.searchParams.set('subject', params.title);
-        outlookUrl.searchParams.set('startdt', startDate.toISOString());
-        outlookUrl.searchParams.set('enddt', endDate.toISOString());
+        outlookUrl.searchParams.set('startdt', formatIsoNoZ(startDate));
+        outlookUrl.searchParams.set('enddt', formatIsoNoZ(endDate));
         outlookUrl.searchParams.set('allday', params.allDay ? 'true' : 'false');
         if (params.desc) outlookUrl.searchParams.set('body', params.desc);
         if (params.loc) outlookUrl.searchParams.set('location', params.loc);
@@ -663,13 +733,13 @@
 
         // 3. Apple Calendar & ICS generation
         function generateIcs() {
-          const nowStr = formatCompactUTC(new Date());
+          const nowStr = formatCompact(new Date()) + 'Z';
           const dtStart = params.allDay
             ? `DTSTART;VALUE=DATE:${formatCompactDate(startDate)}`
-            : `DTSTART:${formatCompactUTC(startDate)}`;
+            : (params.tz ? `DTSTART;TZID=${params.tz}:${formatCompact(startDate)}` : `DTSTART:${formatCompact(startDate)}`);
           const dtEnd = params.allDay
             ? `DTEND;VALUE=DATE:${formatCompactDate(new Date(endDate.getTime() + 86400000))}`
-            : `DTEND:${formatCompactUTC(endDate)}`;
+            : (params.tz ? `DTEND;TZID=${params.tz}:${formatCompact(endDate)}` : `DTEND:${formatCompact(endDate)}`);
 
           const ics = [
             'BEGIN:VCALENDAR',
@@ -728,31 +798,29 @@
         const mm = String(today.getMonth() + 1).padStart(2, '0');
         const dd = String(today.getDate()).padStart(2, '0');
         document.getElementById('inputDate').value = `${yyyy}-${mm}-${dd}`;
-        document.getElementById('inputTimezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+        document.getElementById('inputTimezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
 
         document.getElementById('generatorForm').addEventListener('submit', (e) => {
           e.preventDefault();
           const title = document.getElementById('inputTitle').value.trim();
           const date = document.getElementById('inputDate').value;
-          const time = document.getElementById('inputTime').value;
+          const time = document.getElementById('inputTime').value || '15:00';
           const duration = document.getElementById('inputDuration').value;
           const loc = document.getElementById('inputLocation').value.trim();
           const desc = document.getElementById('inputDescription').value.trim();
           const tz = document.getElementById('inputTimezone').value.trim();
 
           const isAllDay = duration === 'allDay';
-          let startIso;
-          if (isAllDay) {
-            startIso = date;
-          } else {
-            startIso = new Date(`${date}T${time || '10:00'}:00`).toISOString();
-          }
+          
+          // Clean minimal date format: "2026-10-25T15:00" without seconds or Z
+          const startVal = isAllDay ? date : `${date}T${time}`;
 
           const targetUrl = new URL(window.location.href);
           targetUrl.search = '';
           targetUrl.hash = '';
           targetUrl.searchParams.set('title', title);
-          targetUrl.searchParams.set('start', startIso);
+          targetUrl.searchParams.set('start', startVal);
+
           if (isAllDay) {
             targetUrl.searchParams.set('allDay', '1');
           } else {
