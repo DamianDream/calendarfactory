@@ -64,6 +64,7 @@
       padding: 24px 16px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
+      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     .container {
@@ -111,6 +112,8 @@
       border-radius: var(--radius-lg);
       padding: 32px 28px;
       box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       transition: all 0.2s ease;
     }
 
@@ -165,7 +168,7 @@
     .event-desc {
       font-size: 14px;
       color: var(--text);
-      background: var(--bg);
+      background: rgba(0, 0, 0, 0.03);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
       padding: 14px 16px;
@@ -211,7 +214,6 @@
 
     .btn:hover {
       border-color: var(--text-muted);
-      background: var(--bg);
       transform: translateY(-1px);
     }
 
@@ -275,7 +277,7 @@
 
     .footer-action:hover {
       color: var(--text);
-      background: var(--bg);
+      background: rgba(0, 0, 0, 0.05);
     }
 
     /* Form Mode (Generator) */
@@ -301,7 +303,7 @@
       width: 100%;
       padding: 10px 14px;
       font-size: 14px;
-      background: var(--bg);
+      background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       color: var(--text);
@@ -481,6 +483,15 @@
         </div>
 
         <div class="form-group">
+          <label class="form-label" for="inputColor">Background Color (optional)</label>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="color" id="inputColorPicker" value="#f8fafc" style="width: 44px; height: 38px; padding: 2px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; background: var(--card-bg);">
+            <input type="text" id="inputColor" class="form-input" placeholder="e.g. 0f172a, e2e8f0, or navy">
+          </div>
+          <div class="form-hint">Set site background color via &amp;color= or &amp;c= (hex code or color name).</div>
+        </div>
+
+        <div class="form-group">
           <label class="form-label" for="inputLocation">Location / URL</label>
           <input type="text" id="inputLocation" class="form-input" placeholder="e.g. Zoom link or Office address">
         </div>
@@ -522,6 +533,54 @@
           }
         }
         return null;
+      }
+
+      // Handle custom site background color (color= or c= or bg=)
+      const rawColor = getVal(['color', 'c', 'bg']);
+      if (rawColor) {
+        let parsedColor = rawColor.trim();
+        if (/^[0-9a-fA-F]{3,8}$/.test(parsedColor)) {
+          parsedColor = '#' + parsedColor;
+        }
+
+        document.documentElement.style.setProperty('--bg', parsedColor);
+        document.body.style.backgroundColor = parsedColor;
+
+        // Auto-adapt contrast based on background luminance
+        try {
+          const temp = document.createElement('div');
+          temp.style.color = parsedColor;
+          document.body.appendChild(temp);
+          const cs = window.getComputedStyle(temp).color;
+          document.body.removeChild(temp);
+          const match = cs.match(/\(([^)]+)\)/);
+          if (match) {
+            const parts = match[1].split(',').map(x => parseFloat(x));
+            if (parts.length >= 3) {
+              const [r, g, b] = parts.slice(0, 3).map(c => {
+                c /= 255;
+                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+              });
+              const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+              if (lum < 0.4) {
+                // Dark background
+                document.documentElement.style.setProperty('--text', '#f8fafc');
+                document.documentElement.style.setProperty('--text-muted', '#94a3b8');
+                document.documentElement.style.setProperty('--card-bg', 'rgba(19, 27, 46, 0.88)');
+                document.documentElement.style.setProperty('--border', 'rgba(255, 255, 255, 0.12)');
+              } else {
+                // Light background
+                document.documentElement.style.setProperty('--text', '#0f172a');
+                document.documentElement.style.setProperty('--text-muted', '#64748b');
+                document.documentElement.style.setProperty('--card-bg', 'rgba(255, 255, 255, 0.92)');
+                document.documentElement.style.setProperty('--border', 'rgba(0, 0, 0, 0.1)');
+              }
+            }
+          }
+        } catch (e) {}
+
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', parsedColor);
       }
 
       // Dynamic placeholder replacement for desc, title, loc
@@ -566,7 +625,8 @@
           desc,
           loc,
           tz: tz || '',
-          allDay
+          allDay,
+          color: rawColor
         };
       }
 
@@ -800,6 +860,17 @@
         document.getElementById('inputDate').value = `${yyyy}-${mm}-${dd}`;
         document.getElementById('inputTimezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
 
+        const colorPicker = document.getElementById('inputColorPicker');
+        const colorInput = document.getElementById('inputColor');
+        colorPicker.addEventListener('input', () => {
+          colorInput.value = colorPicker.value.replace('#', '');
+        });
+        colorInput.addEventListener('input', () => {
+          if (/^[0-9a-fA-F]{6}$/.test(colorInput.value.trim())) {
+            colorPicker.value = '#' + colorInput.value.trim();
+          }
+        });
+
         document.getElementById('generatorForm').addEventListener('submit', (e) => {
           e.preventDefault();
           const title = document.getElementById('inputTitle').value.trim();
@@ -809,6 +880,7 @@
           const loc = document.getElementById('inputLocation').value.trim();
           const desc = document.getElementById('inputDescription').value.trim();
           const tz = document.getElementById('inputTimezone').value.trim();
+          const color = colorInput.value.trim();
 
           const isAllDay = duration === 'allDay';
           
@@ -829,6 +901,7 @@
           if (loc) targetUrl.searchParams.set('loc', loc);
           if (desc) targetUrl.searchParams.set('desc', desc);
           if (tz) targetUrl.searchParams.set('tz', tz);
+          if (color) targetUrl.searchParams.set('c', color.replace('#', ''));
 
           window.location.href = targetUrl.toString();
         });
