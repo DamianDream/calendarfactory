@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CalendarFactory — Add to Calendar</title>
+  <title>CalendarFactory — Add to Calendar & Link Generator</title>
   <meta name="description" content="Add events directly to Google Calendar, Apple Calendar, Outlook and more via simple URL parameters. 100% client-side, zero backend.">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#0f172a" media="(prefers-color-scheme: dark)">
@@ -19,6 +19,7 @@
       --primary-hover: #1d4ed8;
       --primary-light: #eff6ff;
       --accent: #3b82f6;
+      --success: #10b981;
       --ring: rgba(37, 99, 235, 0.2);
       --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
       --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
@@ -60,8 +61,8 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 24px 16px;
+      justify-content: flex-start;
+      padding: 32px 16px;
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.2s ease, color 0.2s ease;
@@ -69,8 +70,13 @@
 
     .container {
       width: 100%;
-      max-width: 520px;
-      margin: auto;
+      max-width: 540px;
+      margin: 0 auto;
+      transition: max-width 0.2s ease;
+    }
+
+    .container.wide {
+      max-width: 640px;
     }
 
     .brand {
@@ -84,11 +90,11 @@
     }
 
     .brand-icon {
-      font-size: 24px;
+      font-size: 26px;
     }
 
     .brand-name {
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 700;
       letter-spacing: -0.02em;
     }
@@ -197,7 +203,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
+      gap: 10px;
       width: 100%;
       padding: 12px 18px;
       font-size: 14px;
@@ -227,17 +233,9 @@
       flex-shrink: 0;
     }
 
-    .btn-google:hover {
-      border-color: #4285F4;
-    }
-
-    .btn-apple:hover {
-      border-color: #999999;
-    }
-
-    .btn-outlook:hover {
-      border-color: #0078D4;
-    }
+    .btn-google:hover { border-color: #4285F4; }
+    .btn-apple:hover { border-color: #999999; }
+    .btn-outlook:hover { border-color: #0078D4; }
 
     .btn-primary {
       background: var(--primary);
@@ -280,7 +278,7 @@
       background: rgba(0, 0, 0, 0.05);
     }
 
-    /* Form Mode (Generator) */
+    /* Generator Mode Specifics */
     .form-group {
       margin-bottom: 16px;
     }
@@ -311,6 +309,11 @@
       transition: border-color 0.15s, box-shadow 0.15s;
     }
 
+    .code-font {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+    }
+
     .form-input:focus, .form-textarea:focus, .form-select:focus {
       border-color: var(--primary);
       box-shadow: 0 0 0 3px var(--ring);
@@ -320,6 +323,124 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
+    }
+
+    /* Generated Output Section */
+    .output-section {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .output-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .output-title {
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .main-link-box {
+      background: var(--primary-light);
+      border: 1px solid var(--accent);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .link-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .link-row .form-input {
+      flex: 1;
+      background: var(--card-bg);
+    }
+
+    .btn-copy {
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-copy:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+
+    .btn-copy.copied {
+      background: var(--success);
+      color: #ffffff;
+      border-color: var(--success);
+    }
+
+    .btn-open {
+      padding: 9px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-open:hover {
+      background: var(--bg);
+    }
+
+    /* Direct Calendar Links List */
+    .direct-links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .direct-link-card {
+      background: rgba(0, 0, 0, 0.02);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 12px;
+    }
+
+    .direct-link-title {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .direct-link-service {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .toast {
@@ -352,7 +473,7 @@
 </head>
 <body>
 
-  <div class="container">
+  <div id="appContainer" class="container">
     <a href="./" class="brand">
       <span class="brand-icon">🗓️</span>
       <span class="brand-name">CalendarFactory</span>
@@ -432,7 +553,7 @@
           Copy Event Link
         </button>
         <button id="btnEditLink" class="footer-action" type="button">
-          Create Another ↗
+          Open Generator ↗
         </button>
       </div>
     </div>
@@ -440,76 +561,189 @@
     <!-- FORM MODE: GENERATOR / BUILDER -->
     <div id="formMode" class="card hidden">
       <div class="event-header">
-        <h1 class="event-title">Event Link Generator</h1>
+        <h1 class="event-title">Конструктор ссылок на событие</h1>
         <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px;">
-          Create a shareable link that lets attendees add your event to any calendar with 1 click.
+          Заполните параметры события. Ссылки формируются автоматически на лету — вы можете скопировать как общую страницу CalendarFactory, так и прямые ссылки на каждый календарь.
         </p>
       </div>
 
       <form id="generatorForm">
         <div class="form-group">
-          <label class="form-label" for="inputTitle">Event Title *</label>
-          <input type="text" id="inputTitle" class="form-input" placeholder="e.g. Quarterly Team Sync" required>
+          <label class="form-label" for="inputTitle">Название события *</label>
+          <input type="text" id="inputTitle" class="form-input" placeholder="Например: Встреча команды или Вебинар" value="Встреча проекта" required>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="inputDate">Date *</label>
+            <label class="form-label" for="inputDate">Дата события *</label>
             <input type="date" id="inputDate" class="form-input" required>
           </div>
           <div class="form-group">
-            <label class="form-label" for="inputTime">Start Time *</label>
+            <label class="form-label" for="inputTime">Время начала *</label>
             <input type="time" id="inputTime" class="form-input" value="15:00" required>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
-            <label class="form-label" for="inputDuration">Duration / End</label>
+            <label class="form-label" for="inputDuration">Длительность / Окончание</label>
             <select id="inputDuration" class="form-select">
-              <option value="15">15 minutes</option>
-              <option value="30">30 minutes</option>
-              <option value="45">45 minutes</option>
-              <option value="60" selected>1 hour</option>
-              <option value="90">1.5 hours</option>
-              <option value="120">2 hours</option>
-              <option value="allDay">All day event</option>
+              <option value="15">15 минут</option>
+              <option value="30">30 минут</option>
+              <option value="45">45 минут</option>
+              <option value="60" selected>1 час</option>
+              <option value="90">1.5 часа</option>
+              <option value="120">2 часа</option>
+              <option value="allDay">Весь день</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label" for="inputTimezone">Timezone (optional)</label>
-            <input type="text" id="inputTimezone" class="form-input" placeholder="e.g. Europe/Kyiv">
+            <label class="form-label" for="inputTimezone">Часовой пояс (опционально)</label>
+            <input type="text" id="inputTimezone" class="form-input" placeholder="например: Europe/Kyiv">
           </div>
         </div>
 
         <div class="form-group">
-          <label class="form-label" for="inputColor">Background Color (optional)</label>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="color" id="inputColorPicker" value="#f8fafc" style="width: 44px; height: 38px; padding: 2px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; background: var(--card-bg);">
-            <input type="text" id="inputColor" class="form-input" placeholder="e.g. 0f172a, e2e8f0, or navy">
+          <label class="form-label" for="inputLocation">Локация / Ссылка на встречу</label>
+          <input type="text" id="inputLocation" class="form-input" placeholder="https://meet.google.com/xyz или адрес офиса">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="inputDescription">Описание события</label>
+          <textarea id="inputDescription" class="form-textarea" rows="3" placeholder="План встречи, ссылки, или плейсхолдеры вроде: Привет {name}, твой код: {code}"></textarea>
+          <div class="form-hint">💡 Плейсхолдеры: {var}, {{var}} или %var% заменяются переменными из URL (&amp;var=значение).</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="inputExtraProps">Переменные (опционально)</label>
+            <input type="text" id="inputExtraProps" class="form-input" placeholder="name=Dima&amp;code=777">
+            <div class="form-hint">Дополнительные переменные через &amp;</div>
           </div>
-          <div class="form-hint">Set site background color via &amp;color= or &amp;c= (hex code or color name).</div>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="inputLocation">Location / URL</label>
-          <input type="text" id="inputLocation" class="form-input" placeholder="e.g. Zoom link or Office address">
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="inputDescription">Description</label>
-          <textarea id="inputDescription" class="form-textarea" rows="3" placeholder="Add an agenda, notes, or placeholders like {var} or {name}..."></textarea>
-          <div class="form-hint">💡 Dynamic placeholders: {var}, {{var}}, or %var% in description will be replaced by URL properties (e.g. &amp;var=value).</div>
-        </div>
-
-        <div style="display: flex; gap: 10px; margin-top: 24px;">
-          <button type="submit" class="btn btn-primary">Generate &amp; Preview</button>
+          <div class="form-group">
+            <label class="form-label" for="inputColor">Цвет фона сайта</label>
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <input type="color" id="inputColorPicker" value="#f8fafc" style="width: 44px; height: 38px; padding: 2px; border: 1px solid var(--border); border-radius: var(--radius-sm); cursor: pointer; background: var(--card-bg);">
+              <input type="text" id="inputColor" class="form-input" placeholder="0f172a или navy">
+            </div>
+            <div class="form-hint">HEX без # или имя цвета</div>
+          </div>
         </div>
       </form>
+
+      <!-- RESULTS SECTION -->
+      <div class="output-section">
+        <div class="output-header">
+          <div class="output-title">
+            <span>✨</span> Готовые ссылки для отправки
+          </div>
+        </div>
+
+        <!-- MAIN CALENDARFACTORY LINK -->
+        <div class="main-link-box">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+            <span style="font-size: 13px; font-weight: 700; color: var(--primary);">🌐 Страница CalendarFactory (со всеми кнопками)</span>
+            <span class="badge" style="font-size: 10px;">Рекомендуется</span>
+          </div>
+          <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+            Универсальная страница: открывается на любом устройстве и предлагает все календари сразу.
+          </p>
+          <div class="link-row">
+            <input type="text" id="outMainUrl" class="form-input code-font" readonly onclick="this.select()">
+            <button type="button" class="btn-copy" data-target="outMainUrl">
+              <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+              Копировать
+            </button>
+            <a id="btnPreviewMain" href="#" target="_blank" class="btn-open" title="Предпросмотр страницы">↗</a>
+          </div>
+        </div>
+
+        <!-- DIRECT SERVICE LINKS -->
+        <div class="section-label" style="margin-bottom: 8px;">Прямые ссылки на сервисы (без захода на наш сайт)</div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 14px;">
+          Используйте их, если хотите вставить чистую ссылку прямо в кнопку email-рассылки, бота или пост.
+        </p>
+
+        <div class="direct-links-list">
+          <!-- Google Calendar -->
+          <div class="direct-link-card">
+            <div class="direct-link-title">
+              <div class="direct-link-service">
+                <svg width="16" height="16" viewBox="0 0 24 24">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                </svg>
+                Google Calendar
+              </div>
+              <a id="linkOpenGoogle" href="#" target="_blank" class="footer-action" style="padding:0">Тест ↗</a>
+            </div>
+            <div class="link-row">
+              <input type="text" id="outGoogleUrl" class="form-input code-font" readonly onclick="this.select()">
+              <button type="button" class="btn-copy" data-target="outGoogleUrl">Копировать</button>
+            </div>
+          </div>
+
+          <!-- Microsoft Outlook Web -->
+          <div class="direct-link-card">
+            <div class="direct-link-title">
+              <div class="direct-link-service">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#0078D4">
+                  <path d="M1 5.5l10-2v17l-10-2v-13z"/>
+                  <path opacity="0.8" d="M11 3.5l12 2.5v12l-12 2.5v-17z"/>
+                </svg>
+                Microsoft Outlook (Live / Web)
+              </div>
+              <a id="linkOpenOutlook" href="#" target="_blank" class="footer-action" style="padding:0">Тест ↗</a>
+            </div>
+            <div class="link-row">
+              <input type="text" id="outOutlookUrl" class="form-input code-font" readonly onclick="this.select()">
+              <button type="button" class="btn-copy" data-target="outOutlookUrl">Копировать</button>
+            </div>
+          </div>
+
+          <!-- Office 365 -->
+          <div class="direct-link-card">
+            <div class="direct-link-title">
+              <div class="direct-link-service">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#D83B01">
+                  <path d="M1 5.5l10-2v17l-10-2v-13z"/>
+                  <path opacity="0.8" d="M11 3.5l12 2.5v12l-12 2.5v-17z"/>
+                </svg>
+                Office 365 (Корпоративный)
+              </div>
+              <a id="linkOpenOffice365" href="#" target="_blank" class="footer-action" style="padding:0">Тест ↗</a>
+            </div>
+            <div class="link-row">
+              <input type="text" id="outOffice365Url" class="form-input code-font" readonly onclick="this.select()">
+              <button type="button" class="btn-copy" data-target="outOffice365Url">Копировать</button>
+            </div>
+          </div>
+
+          <!-- Apple Calendar / Download ICS -->
+          <div class="direct-link-card">
+            <div class="direct-link-title">
+              <div class="direct-link-service">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.62-.75 1.04-1.8 0.92-2.84-.89.04-1.98.6-2.61 1.34-.56.64-1.05 1.7-0.92 2.71 1 .08 2-.46 2.61-1.21z"/>
+                </svg>
+                Apple Calendar / ICS файл
+              </div>
+            </div>
+            <div style="margin-top: 8px;">
+              <button type="button" id="btnDownloadIcsDirect" class="btn" style="padding: 9px 14px; font-size: 13px;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Скачать готовый .ICS файл события
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <div id="toast" class="toast">Link copied to clipboard!</div>
+  <div id="toast" class="toast">Скопировано в буфер обмена!</div>
 
   <script>
     (function () {
@@ -631,11 +865,10 @@
       }
 
       // Simplified Date Parsing:
-      // Accepts "2026-10-25T15:00", "2026-10-25 15:00", "2026-10-25", compact or ISO
+      // Accepts "YYYY-MM-DDTHH:mm", "YYYY-MM-DD HH:mm", "YYYY-MM-DD", compact or ISO
       function parseDateTime(str, isAllDay) {
         if (!str) return new Date();
 
-        // 1. Matches "YYYY-MM-DDTHH:mm" (e.g. "2026-10-25T15:00") or with optional seconds/Z
         const match = str.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?(Z)?$/i);
         if (match) {
           const y = parseInt(match[1], 10);
@@ -653,7 +886,6 @@
           return new Date(y, m, d, h, min, s);
         }
 
-        // 2. Compact format: YYYYMMDD or YYYYMMDDTHHmm
         const compactMatch = str.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?)?(Z)?$/i);
         if (compactMatch) {
           const y = parseInt(compactMatch[1], 10);
@@ -717,38 +949,123 @@
         setTimeout(() => toast.classList.remove('show'), 2500);
       }
 
+      function buildCalendarUrls(data) {
+        const startDate = parseDateTime(data.start, data.allDay);
+        let endDate;
+        if (data.end) {
+          endDate = parseDateTime(data.end, data.allDay);
+        } else {
+          endDate = new Date(startDate.getTime() + (data.duration * 60 * 1000));
+        }
+
+        // 1. Google Calendar
+        const googleDates = data.allDay
+          ? `${formatCompactDate(startDate)}/${formatCompactDate(new Date(endDate.getTime() + 86400000))}`
+          : `${formatCompact(startDate)}/${formatCompact(endDate)}`;
+        
+        const gUrl = new URL('https://calendar.google.com/calendar/render');
+        gUrl.searchParams.set('action', 'TEMPLATE');
+        gUrl.searchParams.set('text', data.title);
+        gUrl.searchParams.set('dates', googleDates);
+        if (data.desc) gUrl.searchParams.set('details', data.desc);
+        if (data.loc) gUrl.searchParams.set('location', data.loc);
+        if (data.tz && !data.allDay) gUrl.searchParams.set('ctz', data.tz);
+
+        // 2. Outlook Live Web
+        const outUrl = new URL('https://outlook.live.com/calendar/0/deeplink/compose');
+        outUrl.searchParams.set('path', '/calendar/action/compose');
+        outUrl.searchParams.set('rru', 'addevent');
+        outUrl.searchParams.set('subject', data.title);
+        outUrl.searchParams.set('startdt', formatIsoNoZ(startDate));
+        outUrl.searchParams.set('enddt', formatIsoNoZ(endDate));
+        outUrl.searchParams.set('allday', data.allDay ? 'true' : 'false');
+        if (data.desc) outUrl.searchParams.set('body', data.desc);
+        if (data.loc) outUrl.searchParams.set('location', data.loc);
+
+        // 3. Office 365
+        const o365Url = new URL('https://outlook.office.com/calendar/0/deeplink/compose');
+        o365Url.searchParams.set('path', '/calendar/action/compose');
+        o365Url.searchParams.set('rru', 'addevent');
+        o365Url.searchParams.set('subject', data.title);
+        o365Url.searchParams.set('startdt', formatIsoNoZ(startDate));
+        o365Url.searchParams.set('enddt', formatIsoNoZ(endDate));
+        o365Url.searchParams.set('allday', data.allDay ? 'true' : 'false');
+        if (data.desc) o365Url.searchParams.set('body', data.desc);
+        if (data.loc) o365Url.searchParams.set('location', data.loc);
+
+        // 4. ICS File String
+        const nowStr = formatCompact(new Date()) + 'Z';
+        const dtStart = data.allDay
+          ? `DTSTART;VALUE=DATE:${formatCompactDate(startDate)}`
+          : (data.tz ? `DTSTART;TZID=${data.tz}:${formatCompact(startDate)}` : `DTSTART:${formatCompact(startDate)}`);
+        const dtEnd = data.allDay
+          ? `DTEND;VALUE=DATE:${formatCompactDate(new Date(endDate.getTime() + 86400000))}`
+          : (data.tz ? `DTEND;TZID=${data.tz}:${formatCompact(endDate)}` : `DTEND:${formatCompact(endDate)}`);
+
+        const icsContent = [
+          'BEGIN:VCALENDAR',
+          'VERSION:2.0',
+          'PRODID:-//CalendarFactory//EN',
+          'CALSCALE:GREGORIAN',
+          'METHOD:PUBLISH',
+          'BEGIN:VEVENT',
+          `UID:${Date.now()}-${Math.random().toString(36).substr(2, 9)}@calendarfactory`,
+          `DTSTAMP:${nowStr}`,
+          dtStart,
+          dtEnd,
+          `SUMMARY:${escapeIcs(data.title)}`,
+          data.desc ? `DESCRIPTION:${escapeIcs(data.desc)}` : '',
+          data.loc ? `LOCATION:${escapeIcs(data.loc)}` : '',
+          'STATUS:CONFIRMED',
+          'END:VEVENT',
+          'END:VCALENDAR'
+        ].filter(Boolean).join('\r\n');
+
+        return {
+          startDate,
+          endDate,
+          google: gUrl.toString(),
+          outlook: outUrl.toString(),
+          office365: o365Url.toString(),
+          icsContent
+        };
+      }
+
+      function downloadIcsBlob(title, icsString) {
+        const blob = new Blob([icsString], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${title.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'event'}.ics`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      }
+
       const params = getParams();
 
       if (params) {
-        // VIEW MODE
+        // VIEW MODE: SINGLE EVENT CARD
         document.getElementById('viewMode').classList.remove('hidden');
 
-        const startDate = parseDateTime(params.start, params.allDay);
-        let endDate;
-        if (params.end) {
-          endDate = parseDateTime(params.end, params.allDay);
-        } else {
-          endDate = new Date(startDate.getTime() + (params.duration * 60 * 1000));
-        }
+        const calData = buildCalendarUrls(params);
 
-        // Render card
         document.getElementById('eventTitle').textContent = params.title;
         document.title = `${params.title} — CalendarFactory`;
 
-        // Format Date / Time
         const dtOptions = params.allDay
           ? { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
           : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
         
-        let dtString = startDate.toLocaleDateString(undefined, dtOptions);
+        let dtString = calData.startDate.toLocaleDateString(undefined, dtOptions);
         if (!params.allDay) {
-          const endTimeStr = endDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
+          const endTimeStr = calData.endDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
           dtString += ` – ${endTimeStr}`;
         }
         document.getElementById('eventDateTime').textContent = dtString;
         document.getElementById('eventTimezone').textContent = params.allDay ? 'All-day event' : (params.tz || Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local time');
 
-        // Location
         if (params.loc) {
           const locEl = document.getElementById('eventLoc');
           if (params.loc.startsWith('http://') || params.loc.startsWith('https://')) {
@@ -759,104 +1076,39 @@
           document.getElementById('locRow').classList.remove('hidden');
         }
 
-        // Description
         if (params.desc) {
           document.getElementById('eventDesc').textContent = params.desc;
           document.getElementById('descRow').classList.remove('hidden');
         }
 
-        // 1. Google Calendar URL
-        const googleDates = params.allDay
-          ? `${formatCompactDate(startDate)}/${formatCompactDate(new Date(endDate.getTime() + 86400000))}`
-          : `${formatCompact(startDate)}/${formatCompact(endDate)}`;
-        
-        const googleUrl = new URL('https://calendar.google.com/calendar/render');
-        googleUrl.searchParams.set('action', 'TEMPLATE');
-        googleUrl.searchParams.set('text', params.title);
-        googleUrl.searchParams.set('dates', googleDates);
-        if (params.desc) googleUrl.searchParams.set('details', params.desc);
-        if (params.loc) googleUrl.searchParams.set('location', params.loc);
-        if (params.tz && !params.allDay) googleUrl.searchParams.set('ctz', params.tz);
-        document.getElementById('btnGoogle').href = googleUrl.toString();
+        document.getElementById('btnGoogle').href = calData.google;
+        document.getElementById('btnOutlook').href = calData.outlook;
+        document.getElementById('btnApple').addEventListener('click', () => downloadIcsBlob(params.title, calData.icsContent));
+        document.getElementById('btnIcs').addEventListener('click', () => downloadIcsBlob(params.title, calData.icsContent));
 
-        // 2. Outlook / Office 365 URL
-        const outlookUrl = new URL('https://outlook.live.com/calendar/0/deeplink/compose');
-        outlookUrl.searchParams.set('path', '/calendar/action/compose');
-        outlookUrl.searchParams.set('rru', 'addevent');
-        outlookUrl.searchParams.set('subject', params.title);
-        outlookUrl.searchParams.set('startdt', formatIsoNoZ(startDate));
-        outlookUrl.searchParams.set('enddt', formatIsoNoZ(endDate));
-        outlookUrl.searchParams.set('allday', params.allDay ? 'true' : 'false');
-        if (params.desc) outlookUrl.searchParams.set('body', params.desc);
-        if (params.loc) outlookUrl.searchParams.set('location', params.loc);
-        document.getElementById('btnOutlook').href = outlookUrl.toString();
-
-        // 3. Apple Calendar & ICS generation
-        function generateIcs() {
-          const nowStr = formatCompact(new Date()) + 'Z';
-          const dtStart = params.allDay
-            ? `DTSTART;VALUE=DATE:${formatCompactDate(startDate)}`
-            : (params.tz ? `DTSTART;TZID=${params.tz}:${formatCompact(startDate)}` : `DTSTART:${formatCompact(startDate)}`);
-          const dtEnd = params.allDay
-            ? `DTEND;VALUE=DATE:${formatCompactDate(new Date(endDate.getTime() + 86400000))}`
-            : (params.tz ? `DTEND;TZID=${params.tz}:${formatCompact(endDate)}` : `DTEND:${formatCompact(endDate)}`);
-
-          const ics = [
-            'BEGIN:VCALENDAR',
-            'VERSION:2.0',
-            'PRODID:-//CalendarFactory//EN',
-            'CALSCALE:GREGORIAN',
-            'METHOD:PUBLISH',
-            'BEGIN:VEVENT',
-            `UID:${Date.now()}-${Math.random().toString(36).substr(2, 9)}@calendarfactory`,
-            `DTSTAMP:${nowStr}`,
-            dtStart,
-            dtEnd,
-            `SUMMARY:${escapeIcs(params.title)}`,
-            params.desc ? `DESCRIPTION:${escapeIcs(params.desc)}` : '',
-            params.loc ? `LOCATION:${escapeIcs(params.loc)}` : '',
-            'STATUS:CONFIRMED',
-            'END:VEVENT',
-            'END:VCALENDAR'
-          ].filter(Boolean).join('\r\n');
-
-          const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `${params.title.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'event'}.ics`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          setTimeout(() => URL.revokeObjectURL(url), 2000);
-        }
-
-        document.getElementById('btnApple').addEventListener('click', generateIcs);
-        document.getElementById('btnIcs').addEventListener('click', generateIcs);
-
-        // Share / Copy button
         document.getElementById('btnCopyLink').addEventListener('click', () => {
           if (navigator.clipboard) {
             navigator.clipboard.writeText(window.location.href).then(() => {
-              showToast('Link copied to clipboard!');
+              showToast('Ссылка на событие скопирована!');
             });
           }
         });
 
-        // Edit / Create another
         document.getElementById('btnEditLink').addEventListener('click', () => {
           window.location.href = window.location.pathname;
         });
 
       } else {
-        // GENERATOR MODE
+        // CONSTRUCTOR / GENERATOR MODE
         document.getElementById('formMode').classList.remove('hidden');
+        document.getElementById('appContainer').classList.add('wide');
 
-        // Set defaults
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
+        // Set default date to tomorrow
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const yyyy = tomorrow.getFullYear();
+        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
+        const dd = String(tomorrow.getDate()).padStart(2, '0');
         document.getElementById('inputDate').value = `${yyyy}-${mm}-${dd}`;
         document.getElementById('inputTimezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
 
@@ -864,47 +1116,139 @@
         const colorInput = document.getElementById('inputColor');
         colorPicker.addEventListener('input', () => {
           colorInput.value = colorPicker.value.replace('#', '');
+          updateOutputs();
         });
         colorInput.addEventListener('input', () => {
           if (/^[0-9a-fA-F]{6}$/.test(colorInput.value.trim())) {
             colorPicker.value = '#' + colorInput.value.trim();
           }
+          updateOutputs();
         });
 
-        document.getElementById('generatorForm').addEventListener('submit', (e) => {
-          e.preventDefault();
-          const title = document.getElementById('inputTitle').value.trim();
+        let currentIcsString = '';
+        let currentTitle = 'event';
+
+        function updateOutputs() {
+          const title = document.getElementById('inputTitle').value.trim() || 'Встреча';
           const date = document.getElementById('inputDate').value;
           const time = document.getElementById('inputTime').value || '15:00';
           const duration = document.getElementById('inputDuration').value;
           const loc = document.getElementById('inputLocation').value.trim();
-          const desc = document.getElementById('inputDescription').value.trim();
+          let desc = document.getElementById('inputDescription').value.trim();
+          const extraPropsStr = document.getElementById('inputExtraProps').value.trim();
           const tz = document.getElementById('inputTimezone').value.trim();
           const color = colorInput.value.trim();
 
           const isAllDay = duration === 'allDay';
-          
-          // Clean minimal date format: "2026-10-25T15:00" without seconds or Z
           const startVal = isAllDay ? date : `${date}T${time}`;
 
-          const targetUrl = new URL(window.location.href);
-          targetUrl.search = '';
-          targetUrl.hash = '';
-          targetUrl.searchParams.set('title', title);
-          targetUrl.searchParams.set('start', startVal);
+          // Parse extra props
+          const extraMap = {};
+          if (extraPropsStr) {
+            const pairs = extraPropsStr.split('&');
+            for (const p of pairs) {
+              const [k, v] = p.split('=');
+              if (k && v !== undefined) {
+                extraMap[k.trim()] = decodeURIComponent(v.trim());
+              }
+            }
+          }
+
+          // Build CalendarFactory Main Link
+          const mainUrl = new URL(window.location.origin + window.location.pathname);
+          mainUrl.search = '';
+          mainUrl.hash = '';
+          mainUrl.searchParams.set('title', title);
+          mainUrl.searchParams.set('start', startVal);
 
           if (isAllDay) {
-            targetUrl.searchParams.set('allDay', '1');
+            mainUrl.searchParams.set('allDay', '1');
           } else {
-            targetUrl.searchParams.set('duration', duration);
+            mainUrl.searchParams.set('duration', duration);
           }
-          if (loc) targetUrl.searchParams.set('loc', loc);
-          if (desc) targetUrl.searchParams.set('desc', desc);
-          if (tz) targetUrl.searchParams.set('tz', tz);
-          if (color) targetUrl.searchParams.set('c', color.replace('#', ''));
+          if (loc) mainUrl.searchParams.set('loc', loc);
+          if (desc) mainUrl.searchParams.set('desc', desc);
+          if (tz) mainUrl.searchParams.set('tz', tz);
+          if (color) mainUrl.searchParams.set('c', color.replace('#', ''));
 
-          window.location.href = targetUrl.toString();
+          for (const [k, v] of Object.entries(extraMap)) {
+            mainUrl.searchParams.set(k, v);
+          }
+
+          // Generate direct calendar links (with placeholder replacements applied)
+          const computedDesc = replacePlaceholders(desc, extraMap);
+          const computedTitle = replacePlaceholders(title, extraMap);
+          const computedLoc = replacePlaceholders(loc, extraMap);
+
+          const calData = buildCalendarUrls({
+            title: computedTitle,
+            start: startVal,
+            duration: isAllDay ? 60 : parseInt(duration, 10),
+            desc: computedDesc,
+            loc: computedLoc,
+            tz,
+            allDay: isAllDay
+          });
+
+          currentIcsString = calData.icsContent;
+          currentTitle = computedTitle;
+
+          // Populate inputs
+          document.getElementById('outMainUrl').value = mainUrl.toString();
+          document.getElementById('btnPreviewMain').href = mainUrl.toString();
+
+          document.getElementById('outGoogleUrl').value = calData.google;
+          document.getElementById('linkOpenGoogle').href = calData.google;
+
+          document.getElementById('outOutlookUrl').value = calData.outlook;
+          document.getElementById('linkOpenOutlook').href = calData.outlook;
+
+          document.getElementById('outOffice365Url').value = calData.office365;
+          document.getElementById('linkOpenOffice365').href = calData.office365;
+        }
+
+        // Live real-time update on any change
+        const formInputs = document.querySelectorAll('#generatorForm input, #generatorForm select, #generatorForm textarea');
+        formInputs.forEach(el => {
+          el.addEventListener('input', updateOutputs);
+          el.addEventListener('change', updateOutputs);
         });
+
+        // Copy button handler for all target inputs
+        document.querySelectorAll('.btn-copy').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const targetId = btn.getAttribute('data-target');
+            const targetInput = document.getElementById(targetId);
+            if (targetInput && targetInput.value) {
+              if (navigator.clipboard) {
+                navigator.clipboard.writeText(targetInput.value).then(() => {
+                  const originalHtml = btn.innerHTML;
+                  btn.classList.add('copied');
+                  btn.textContent = '✓ Скопировано';
+                  showToast('Ссылка скопирована!');
+                  setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.innerHTML = originalHtml;
+                  }, 2000);
+                });
+              } else {
+                targetInput.select();
+                document.execCommand('copy');
+                showToast('Ссылка скопирована!');
+              }
+            }
+          });
+        });
+
+        // Download direct ICS button
+        document.getElementById('btnDownloadIcsDirect').addEventListener('click', () => {
+          if (currentIcsString) {
+            downloadIcsBlob(currentTitle, currentIcsString);
+          }
+        });
+
+        // Initial compute
+        updateOutputs();
       }
 
       function escapeHtml(str) {
