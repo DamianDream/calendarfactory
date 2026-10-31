@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "Minimalist single-page calendar event generator with direct URL properties, 100% client-side for Cloudflare",
   "private": true,
+  "type": "module",
   "scripts": {
+    "build": "echo 'Static assets ready'",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "pages:deploy": "wrangler pages deploy public"
