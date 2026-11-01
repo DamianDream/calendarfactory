@@ -4,78 +4,185 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CalendarFactory: Add to Calendar and Link Generator</title>
-  <meta name="description" content="Add events directly to Google Calendar, Apple Calendar, Outlook and iCal via URL parameters. Client-side edge utility.">
-  <meta name="theme-color" content="#f9fafd">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <meta name="description" content="Minimalist calendar event link generator and viewer with floating labels. 100% client-side edge utility.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
   <style>
-/* Hallmark · shape: Workbench · genre: modern-minimal · theme: Cobalt (deal 1/3, seed minimalist-calendar-event-link-d792·d8ce7115·2026-10-31·r0) · job: try · draw: 7f3a2c
- * hero: Stage · nav: edge-aligned · footer: minimal · imagery: none · signature: real-time calendar link workbench
- * axes: light/grotesk-sans/cool · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · weakest: S, elevated keycap tactile states */
+/* Hallmark · shape: Workbench · genre: modern-minimal · theme: Interior Light (deal 1/3, seed minimalist-calendar-event-link-d792·d8ce7115·2026-10-31·r0) · job: try · draw: 7f3a2c
+ * hero: Stage · nav: edge-aligned · footer: minimal · imagery: none · signature: borderless floating label calendar workbench
+ * axes: light/grotesk-sans/warm · posture: restrained · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · weakest: S, borderless floating label precision */
 
 :root {
   color-scheme: light;
-  --font-display: "Familjen Grotesk", system-ui, -apple-system, sans-serif;
-  --font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-display: "General Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "General Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 
   --space-2xs: 4px;
   --space-xs: 8px;
   --space-sm: 12px;
   --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
+  --space-lg: 20px;
+  --space-xl: 24px;
+  --space-2xl: 36px;
 
   --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
-  --text-md: 1rem;
+  --text-sm: 0.8125rem;
+  --text-md: 0.9375rem;
   --text-lg: 1.125rem;
   --text-xl: 1.375rem;
-  --text-2xl: 1.75rem;
+  --text-2xl: 1.625rem;
 
-  --tracking-display: -0.024em;
+  --tracking-display: -0.015em;
   --display-weight: 600;
 
-  --color-paper: oklch(98.6% 0.005 250);
-  --color-paper-2: oklch(96.2% 0.008 252);
-  --color-paper-3: oklch(93% 0.011 252);
-  --color-ink: oklch(21% 0.028 262);
-  --color-ink-2: oklch(36% 0.022 260);
-  --color-muted: oklch(48% 0.02 258);
-  --color-rule: oklch(89% 0.01 252);
-  --color-rule-2: oklch(82% 0.014 252);
+  /* Color definitions */
+  --color-paper-light: #ffffff;
+  --color-paper-dark: #1f1f21;
+  --color-paper-subtle-light: #f8f8f6;
+  --color-paper-subtle-dark: #27272a;
+  --color-selection-bg-light: #1f1f21;
+  --color-selection-bg-dark: #ffffff;
+  --color-selection-text-light: #ffffff;
+  --color-selection-text-dark: #1f1f21;
+  --color-tooltip-bg-light: #1f1f21;
+  --color-tooltip-bg-dark: #ffffff;
+  --color-tooltip-text-light: #ffffff;
+  --color-tooltip-text-dark: #1f1f21;
+  --color-tooltip-border-light: #2a2a2d;
+  --color-tooltip-border-dark: #e5e3dc;
 
-  --color-accent: oklch(50% 0.2 258);
-  --color-accent-hover: oklch(44% 0.21 258);
-  --color-accent-ink: oklch(99% 0.003 250);
-  --color-accent-wash: oklch(96% 0.025 256);
-  --color-focus: oklch(50% 0.2 258);
+  /* Button colors */
+  --color-btn-dark-bg: #1f1f21;
+  --color-btn-dark-text: #ffffff;
+  --color-btn-dark-hover: #2c2c2f;
+  --color-btn-dark-divider: #38383c;
+  --color-btn-dark-border: #2a2a2d;
 
-  --color-key-face: oklch(99.6% 0.002 250);
-  --color-key-edge: oklch(79% 0.016 254);
-  --color-key-accent-edge: oklch(36% 0.18 260);
+  --color-btn-light-bg: #ffffff;
+  --color-btn-light-text: #1f1f21;
+  --color-btn-light-hover: #f1f0ec;
+  --color-btn-light-divider: #dddcd7;
+  --color-btn-light-border: #e5e3dc;
 
-  --color-success: oklch(48% 0.16 150);
-  --color-success-ink: oklch(99% 0.002 150);
+  /* Text colors */
+  --color-text-dark: #1f1f21;
+  --color-text-dark-dim: #3a3a3e;
+  --color-text-dark-muted: rgba(31, 31, 33, 0.5);
+  --color-text-dark-rule: #e5e5ea;
 
-  --color-graphite: oklch(19% 0.024 262);
-  --color-graphite-ink: oklch(94% 0.01 250);
+  --color-text-light: #ffffff;
+  --color-text-light-dim: #d1d0cb;
+  --color-text-light-muted: rgba(255, 255, 255, 0.5);
+  --color-text-light-rule: #38383c;
 
-  --radius-card: 12px;
-  --radius-input: 6px;
-  --radius-pill: 999px;
-  --cut: 8px;
+  /* Abstract background stripes */
+  --color-stripe-light: rgba(31, 31, 33, 0.05);
+  --color-stripe-dark: rgba(255, 255, 255, 0.05);
+  --color-stripe: var(--color-stripe-light);
 
-  --dur-micro: 120ms;
+  /* Light mode (default) tokens */
+  --color-paper: var(--color-paper-light);
+  --color-paper-subtle: var(--color-paper-subtle-light);
+  --color-selection-bg: var(--color-selection-bg-light);
+  --color-selection-text: var(--color-selection-text-light);
+  --color-tooltip-bg: var(--color-tooltip-bg-light);
+  --color-tooltip-text: var(--color-tooltip-text-light);
+  --color-tooltip-border: var(--color-tooltip-border-light);
+  --color-text: var(--color-text-dark);
+  --color-text-dim: var(--color-text-dark-dim);
+  --color-muted: var(--color-text-dark-muted);
+  --color-rule: var(--color-text-dark-rule);
+  --color-rule-active: var(--color-text-dark);
+
+  /* Light mode buttons: dark background (#1F1F21) with light text (#FFF) */
+  --color-pill: var(--color-btn-dark-bg);
+  --color-pill-label: var(--color-btn-dark-text);
+  --color-pill-hover: var(--color-btn-dark-hover);
+  --color-pill-divider: var(--color-btn-dark-divider);
+  --color-pill-border: var(--color-btn-dark-border);
+
+  --color-chip: var(--color-btn-dark-bg);
+  --color-chip-label: var(--color-btn-dark-text);
+  --color-chip-hover: var(--color-btn-dark-hover);
+  --color-chip-border: var(--color-btn-dark-border);
+
+  /* Liquid Switch Tokens */
+  --switch-track-light: rgba(31, 31, 33, 0.16);
+  --switch-track-hover-light: rgba(31, 31, 33, 0.26);
+  --switch-knob-light: #1f1f21;
+
+  --switch-track-dark: rgba(255, 255, 255, 0.22);
+  --switch-track-hover-dark: rgba(255, 255, 255, 0.32);
+  --switch-knob-dark: #ffffff;
+
+  --switch-track: var(--switch-track-light);
+  --switch-track-hover: var(--switch-track-hover-light);
+  --switch-knob: var(--switch-knob-light);
+  --switch-shadow-inset: inset 0 1px 2px rgba(0, 0, 0, 0.15);
+
+  --color-accent: oklch(48% 0.22 254);
+  --color-accent-ink: oklch(99% 0.002 250);
+  --color-focus-dark: #1f1f21;
+  --color-focus-light: #ffffff;
+  --color-focus: var(--color-focus-dark);
+
+  --color-success: oklch(48% 0.16 145);
+  --color-success-ink: oklch(99% 0.002 145);
+  --color-error-text-light: #dc2626;
+  --color-error-rule-light: #ef4444;
+  --color-error-text-dark: #f87171;
+  --color-error-rule-dark: #f87171;
+  --color-error-text: var(--color-error-text-light);
+  --color-error-rule: var(--color-error-rule-light);
+
+  --radius-pill: 9999px;
+  --radius-sm: 6px;
+
+  --dur-micro: 140ms;
+  --dur-float: 200ms;
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
-  --shadow-card: 0 1px 3px oklch(21% 0.028 262 / 0.06), 0 8px 24px -6px oklch(21% 0.028 262 / 0.08);
-  --shadow-key: 0 3px 0 0 var(--color-key-edge), 0 4px 6px -2px oklch(21% 0.028 262 / 0.14);
-  --shadow-key-accent: 0 3px 0 0 var(--color-key-accent-edge), 0 4px 6px -2px oklch(30% 0.12 260 / 0.28);
-  --shadow-key-press: inset 0 1px 2px oklch(21% 0.028 262 / 0.16);
+  --shadow-pill: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-toast: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+/* Dark mode: light text (#FFF), light buttons (#FFF bg with #1F1F21 text), dark page (#1F1F21) */
+body[data-theme="dark"] {
+  color-scheme: dark;
+  --color-paper: var(--color-paper-dark);
+  --color-paper-subtle: var(--color-paper-subtle-dark);
+  --color-selection-bg: var(--color-selection-bg-dark);
+  --color-selection-text: var(--color-selection-text-dark);
+  --color-tooltip-bg: var(--color-tooltip-bg-dark);
+  --color-tooltip-text: var(--color-tooltip-text-dark);
+  --color-tooltip-border: var(--color-tooltip-border-dark);
+  --color-text: var(--color-text-light);
+  --color-text-dim: var(--color-text-light-dim);
+  --color-muted: var(--color-text-light-muted);
+  --color-rule: var(--color-text-light-rule);
+  --color-rule-active: var(--color-text-light);
+
+  --color-pill: var(--color-btn-light-bg);
+  --color-pill-label: var(--color-btn-light-text);
+  --color-pill-hover: var(--color-btn-light-hover);
+  --color-pill-divider: var(--color-btn-light-divider);
+  --color-pill-border: var(--color-btn-light-border);
+
+  --color-chip: var(--color-btn-light-bg);
+  --color-chip-label: var(--color-btn-light-text);
+  --color-chip-hover: var(--color-btn-light-hover);
+  --color-chip-border: var(--color-btn-light-border);
+
+  --switch-track: var(--switch-track-dark);
+  --switch-track-hover: var(--switch-track-hover-dark);
+  --switch-knob: var(--switch-knob-dark);
+  --color-focus: var(--color-focus-light);
+  --color-stripe: var(--color-stripe-dark);
+  --color-error-text: var(--color-error-text-dark);
+  --color-error-rule: var(--color-error-rule-dark);
 }
 
 *, *::before, *::after {
@@ -87,29 +194,30 @@ html, body {
 }
 
 html {
-  scrollbar-color: var(--color-rule-2) var(--color-paper);
+  scrollbar-color: var(--color-rule) var(--color-paper);
 }
 
 body {
   margin: 0;
   background-color: var(--color-paper);
-  color: var(--color-ink);
+  color: var(--color-text);
   font-family: var(--font-body);
   font-size: var(--text-md);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  caret-color: var(--color-accent);
+  caret-color: var(--color-rule-active);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   min-height: 100vh;
-  padding: var(--space-xl) var(--space-md);
+  padding: calc(var(--space-2xl) + var(--space-xs)) var(--space-md) var(--space-xl);
 }
 
-::selection {
-  background: var(--color-accent-wash);
-  color: var(--color-ink);
+::selection,
+input::selection,
+textarea::selection {
+  background: var(--color-selection-bg);
+  color: var(--color-selection-text);
 }
 
 :focus-visible {
@@ -117,277 +225,321 @@ body {
   outline-offset: 2px;
 }
 
+input:disabled, textarea:disabled, select:disabled, button:disabled {
+  opacity: 0.44;
+  cursor: not-allowed;
+}
+
 .container {
   width: 100%;
-  max-width: 560px;
+  max-width: 440px;
   margin-inline: auto;
-  transition: max-width var(--dur-micro) var(--ease-out);
 }
 
-.container.wide {
-  max-width: 640px;
+/* Decorative Background Stripes */
+.bg-stripes {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
 }
 
-.brand {
+.bg-stripes-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Header */
+.site-header {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  margin-bottom: var(--space-lg);
+  justify-content: space-between;
+  gap: var(--space-md);
+  width: 100%;
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.header-brand {
+  font-family: var(--font-display);
+  font-size: calc(var(--text-md) * 2);
+  line-height: 1.15;
+  font-weight: 600;
+  color: var(--color-text);
   text-decoration: none;
-  color: var(--color-ink);
-}
-
-.brand-icon {
-  width: 22px;
-  height: 22px;
-  color: var(--color-accent);
-}
-
-.brand-name {
-  font-family: var(--font-display);
-  font-size: var(--text-lg);
-  font-weight: var(--display-weight);
   letter-spacing: var(--tracking-display);
+  transition: opacity var(--dur-micro) var(--ease-out);
 }
 
-.badge {
-  display: inline-flex;
+.header-brand:hover {
+  opacity: 0.7;
+}
+
+.header-brand:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* Detached Top-Right Floating Controls (Language & Theme Switch) */
+.top-corner-controls {
+  position: fixed;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  display: flex;
   align-items: center;
-  padding: var(--space-2xs) var(--space-xs);
-  font-family: var(--font-display);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  border-radius: var(--radius-pill);
-  background: var(--color-accent-wash);
-  color: var(--color-accent);
+  gap: var(--space-xs);
+  z-index: 100;
 }
 
-.card {
-  background: var(--color-paper-2);
-  border: 1px solid var(--color-rule);
-  border-radius: var(--radius-card);
-  padding: var(--space-xl) var(--space-lg);
-  box-shadow: var(--shadow-card);
-  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
-}
-
-@supports (corner-shape: bevel) {
-  .card {
-    border-radius: var(--cut) 4px var(--cut) 4px;
-    corner-shape: bevel round bevel round;
+@media (min-width: 640px) {
+  .top-corner-controls {
+    top: var(--space-lg);
+    right: var(--space-lg);
   }
 }
 
-.event-header {
-  margin-bottom: var(--space-lg);
+/* Planet Language Dropdown */
+.lang-dropdown {
+  position: relative;
+  flex-shrink: 0;
 }
 
-.event-title {
-  margin: 0 0 var(--space-sm) 0;
+.lang-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  background: transparent;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2xs) var(--space-xs);
+  color: var(--color-text);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1.2;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+}
+
+.lang-trigger:hover {
+  background: var(--color-paper-subtle);
+  border-color: var(--color-rule-active);
+}
+
+.lang-trigger:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.planet-icon {
+  width: 14px;
+  height: 14px;
+  color: var(--color-muted);
+  flex-shrink: 0;
+  transition: color var(--dur-micro) var(--ease-out);
+}
+
+.lang-trigger:hover .planet-icon {
+  color: var(--color-text);
+}
+
+.lang-current {
+  font-weight: 600;
+}
+
+.dropdown-chevron {
+  width: 10px;
+  height: 10px;
+  color: var(--color-muted);
+  transition: transform var(--dur-micro) var(--ease-out);
+}
+
+.lang-dropdown.open .dropdown-chevron {
+  transform: rotate(180deg);
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + var(--space-2xs));
+  right: 0;
+  min-width: 140px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-toast);
+  padding: var(--space-2xs);
+  display: none;
+  flex-direction: column;
+  z-index: 50;
+}
+
+.lang-dropdown.open .lang-menu {
+  display: flex;
+}
+
+.lang-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: var(--space-xs);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  cursor: pointer;
+  text-align: left;
+  transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+}
+
+.lang-item:hover, .lang-item:focus-visible {
+  background: var(--color-paper-subtle);
+  color: var(--color-text);
+  outline: none;
+}
+
+.lang-item.active {
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Seamless borderless surface */
+.surface {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.page-title {
+  margin: 0 0 var(--space-2xs) 0;
   font-family: var(--font-display);
   font-size: var(--text-2xl);
   font-weight: var(--display-weight);
   letter-spacing: var(--tracking-display);
   line-height: 1.15;
-  color: var(--color-ink);
-  overflow-wrap: break-word;
+  color: var(--color-text);
+}
+
+.page-desc {
+  margin: 0 0 var(--space-xl) 0;
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  line-height: 1.45;
+}
+
+/* Floating Label Fields (Interior.dev pattern) */
+.floating-field {
+  position: relative;
   min-width: 0;
-  text-wrap: balance;
-}
-
-.lead {
-  margin: 0 0 var(--space-lg) 0;
-  font-size: var(--text-sm);
-  color: var(--color-muted);
-  line-height: 1.5;
-}
-
-.meta-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
-  font-size: var(--text-sm);
-  color: var(--color-muted);
   margin-bottom: var(--space-lg);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid var(--color-rule);
 }
 
-.meta-item {
+.floating-input, .floating-textarea, .floating-select {
+  width: 100%;
+  min-width: 0;
+  border: none;
+  border-bottom: 1px solid var(--color-rule);
+  background: transparent;
+  padding: var(--space-xl) 0 var(--space-xs) 0;
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  color: var(--color-text);
+  outline: none;
+  border-radius: 0;
+  transition: border-color var(--dur-micro) var(--ease-out);
+}
+
+.floating-textarea {
+  min-height: 60px;
+  resize: none;
+}
+
+.floating-select, .floating-input[list] {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%2371717a' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 2px center;
+  padding-right: var(--space-md);
+}
+
+/* Remove duplicate native dropdown arrow in Chrome/WebKit datalist inputs */
+.floating-input[list]::-webkit-calendar-picker-indicator,
+input[list]::-webkit-calendar-picker-indicator {
+  display: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+  -webkit-appearance: none !important;
+}
+
+.floating-input[list]:hover::-webkit-calendar-picker-indicator,
+input[list]:hover::-webkit-calendar-picker-indicator,
+.floating-input[list]:focus::-webkit-calendar-picker-indicator,
+input[list]:focus::-webkit-calendar-picker-indicator {
+  display: none !important;
+  opacity: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+  -webkit-appearance: none !important;
+}
+
+.field-meta-row {
   display: flex;
   align-items: flex-start;
-  gap: var(--space-xs);
-}
-
-.meta-item svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-  margin-top: 2px;
-  color: var(--color-accent);
-}
-
-.meta-item a {
-  color: var(--color-accent);
-  text-decoration: underline;
-  text-underline-offset: 0.16em;
-  word-break: break-all;
-}
-
-.meta-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  color: var(--color-ink);
-}
-
-.event-desc {
-  font-size: var(--text-sm);
-  color: var(--color-ink);
-  background: var(--color-paper);
-  border: 1px solid var(--color-rule);
-  border-radius: var(--radius-input);
-  padding: var(--space-md);
-  margin-bottom: var(--space-lg);
-  white-space: pre-wrap;
-  word-break: break-word;
-  line-height: 1.6;
-}
-
-.section-label {
-  font-family: var(--font-display);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--color-muted);
-  margin-bottom: var(--space-xs);
-}
-
-.calendar-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-xs);
-  width: 100%;
-  min-height: 44px;
-  padding: 0 var(--space-md);
-  font-family: var(--font-display);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: var(--tracking-display);
-  border-radius: var(--radius-input);
-  border: 1px solid var(--color-rule-2);
-  background: var(--color-key-face);
-  color: var(--color-ink);
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: var(--shadow-key);
-  transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-  border-color: var(--color-ink-2);
-}
-
-.btn:active {
-  transform: translateY(2px);
-  box-shadow: var(--shadow-key-press);
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-.btn svg {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-}
-
-.btn-primary {
-  background: var(--color-accent);
-  color: var(--color-accent-ink);
-  border-color: var(--color-key-accent-edge);
-  box-shadow: var(--shadow-key-accent);
-}
-
-.btn-primary:hover {
-  background: var(--color-accent-hover);
-  color: var(--color-accent-ink);
-  border-color: var(--color-key-accent-edge);
-}
-
-.card-footer {
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  margin-top: var(--space-lg);
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-rule);
-  font-size: var(--text-xs);
-}
-
-.footer-action {
-  background: none;
-  border: none;
-  color: var(--color-muted);
-  cursor: pointer;
-  font-family: var(--font-display);
-  font-size: var(--text-xs);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  padding: var(--space-2xs) var(--space-xs);
-  border-radius: var(--radius-input);
-  text-decoration: none;
-  transition: color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out);
-}
-
-.footer-action:hover {
-  color: var(--color-ink);
-  background: var(--color-paper-3);
-}
-
-/* Generator Form */
-.form-group {
-  margin-bottom: var(--space-md);
-}
-
-.form-label {
-  display: block;
-  font-family: var(--font-display);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  margin-bottom: var(--space-2xs);
-  color: var(--color-ink);
-}
-
-.form-hint {
-  font-size: var(--text-xs);
-  color: var(--color-muted);
+  gap: var(--space-xs);
   margin-top: var(--space-2xs);
+  min-height: 18px;
 }
 
-.form-input, .form-textarea, .form-select {
-  width: 100%;
-  padding: var(--space-xs) var(--space-sm);
+.field-counter {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  margin-left: auto;
+  white-space: nowrap;
+  transition: color var(--dur-micro) var(--ease-out);
+}
+
+.field-error-msg {
   font-family: var(--font-body);
-  font-size: var(--text-sm);
-  background: var(--color-paper);
-  border: 1px solid var(--color-rule-2);
-  border-radius: var(--radius-input);
-  color: var(--color-ink);
-  outline: none;
-  transition: border-color var(--dur-micro) var(--ease-out);
+  font-size: var(--text-xs);
+  color: var(--color-error-text);
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.floating-field.has-error .floating-textarea {
+  border-bottom-color: var(--color-error-rule);
+}
+
+.floating-field.has-error .floating-line {
+  background: var(--color-error-rule);
+  transform: scaleX(1);
+}
+
+.floating-field.has-error .field-counter {
+  color: var(--color-error-text);
+  font-weight: 600;
+}
+
+.floating-select {
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .code-font {
@@ -395,145 +547,574 @@ body {
   font-size: var(--text-xs);
 }
 
-.form-input:focus, .form-textarea:focus, .form-select:focus {
-  border-color: var(--color-focus);
+.floating-label {
+  position: absolute;
+  top: 24px;
+  left: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+  pointer-events: none;
+  transform-origin: left top;
+  transition: transform var(--dur-float) var(--ease-out), color var(--dur-float) var(--ease-out);
 }
 
-.form-input:disabled, .form-textarea:disabled, .form-select:disabled {
-  opacity: 0.6;
-  background: var(--color-paper-3);
-  cursor: not-allowed;
+/* Float up state */
+.floating-input:focus ~ .floating-label,
+.floating-input:not(:placeholder-shown) ~ .floating-label,
+.floating-textarea:focus ~ .floating-label,
+.floating-textarea:not(:placeholder-shown) ~ .floating-label,
+.floating-label.floated {
+  transform: translateY(-20px) scale(0.85);
+  color: var(--color-text);
+  font-weight: 500;
 }
 
-.form-row {
+/* Active underline bar */
+.floating-line {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-rule-active);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-float) var(--ease-out);
+}
+
+.floating-input:focus ~ .floating-line,
+.floating-textarea:focus ~ .floating-line,
+.floating-select:focus ~ .floating-line {
+  transform: scaleX(1);
+}
+
+/* Form multi-column layouts */
+.row-3 {
+  display: grid;
+  grid-template-columns: 1.2fr 0.9fr 0.9fr;
+  gap: var(--space-xs);
+}
+
+@media (max-width: 480px) {
+  .row-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .row-3 > .floating-field:first-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.row-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-sm);
+  gap: var(--space-xs);
 }
 
-/* Output Section */
-.output-section {
-  margin-top: var(--space-lg);
+/* Progressive Disclosure (Borderless Details) */
+.details-clean {
+  margin-top: var(--space-2xs);
+  margin-bottom: var(--space-lg);
+}
+
+.summary-clean {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-muted);
+  cursor: pointer;
+  user-select: none;
+  padding: var(--space-2xs) 0;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  transition: color var(--dur-micro) var(--ease-out);
+}
+
+.summary-clean:hover {
+  color: var(--color-text);
+}
+
+.summary-clean::-webkit-details-marker {
+  display: none;
+}
+
+.summary-clean svg {
+  width: 10px;
+  height: 10px;
+  transition: transform var(--dur-micro) var(--ease-out);
+}
+
+.details-clean[open] .summary-clean svg {
+  transform: rotate(90deg);
+}
+
+.details-body {
+  padding-top: var(--space-sm);
+}
+
+/* Color picker swatch & Text color toggle */
+.color-picker-input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.color-picker-swatch {
+  position: absolute;
+  right: 0;
+  bottom: 8px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.color-picker-swatch::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.color-picker-swatch::-webkit-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.color-picker-swatch::-moz-color-swatch {
+  border: none;
+  border-radius: 4px;
+}
+
+.with-color-swatch {
+  padding-right: 32px;
+}
+
+.toggle-control-single {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xs) 0;
+  margin-top: var(--space-xs);
+}
+
+.toggle-control-label {
+  font-family: var(--font-display);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+/* Liquid Gooey Switch */
+.ss-liquid-switch {
+  position: relative;
+  display: inline-block;
+  width: 38px;
+  height: 24px;
+  border-radius: 12px;
+  cursor: pointer;
+  flex-shrink: 0;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.ss-liquid-switch input {
+  appearance: none;
+  -webkit-appearance: none;
+  outline: none;
+  border: none;
+  background: var(--switch-track);
+  display: block;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  border-radius: 12px;
+  width: 38px;
+  height: 24px;
+  box-shadow: var(--switch-shadow-inset);
+  transition: background 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ss-liquid-switch:hover input:not(:checked) {
+  background: var(--switch-track-hover);
+}
+
+.ss-liquid-switch input:checked {
+  background: var(--switch-track);
+}
+
+.ss-liquid-switch:hover input:checked {
+  background: var(--switch-track-hover);
+}
+
+.ss-liquid-switch input:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.ss-liquid-switch svg.switch-svg {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 38px;
+  height: 24px;
+  pointer-events: none;
+  fill: var(--switch-knob);
+  transform: translateZ(0);
+  transition: fill 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ss-liquid-switch .default {
+  transform-origin: 12px 12px;
+  transform: translateX(0px) scale(1);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ss-liquid-switch .dot {
+  transform-origin: 26px 12px;
+  transform: translateX(-8px) scale(0);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ss-liquid-switch input:checked + svg.switch-svg .default {
+  transform: translateX(8px) scale(0);
+}
+
+.ss-liquid-switch input:checked + svg.switch-svg .dot {
+  transform: translateX(0px) scale(1);
+}
+
+/* Output Link Area */
+.output-area {
+  margin-top: var(--space-md);
+  padding-top: var(--space-md);
+}
+
+/* Full-width Split Button with minimal border-radius */
+.btn-split {
+  display: flex;
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-pill);
+  border: 1px solid var(--color-pill-border);
+  box-shadow: var(--shadow-pill);
+  margin-top: var(--space-md);
+}
+
+.btn-split-main {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  padding: 0 var(--space-lg);
+  border: none;
+  background: transparent;
+  color: var(--color-pill-label);
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease-out);
+}
+
+.btn-split-main:hover {
+  background: var(--color-pill-hover);
+}
+
+.split-divider {
+  width: 1px;
+  background: var(--color-pill-divider);
+}
+
+.btn-split-open {
+  flex: 0 0 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--color-pill-label);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--dur-micro) var(--ease-out);
+}
+
+.btn-split-open:hover {
+  background: var(--color-pill-hover);
+}
+
+/* Quick Direct Calendar Chips (No heavy boxes) */
+.chips-section {
+  margin-top: var(--space-xl);
   padding-top: var(--space-md);
   border-top: 1px solid var(--color-rule);
 }
 
-.output-header {
+.chips-label {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-muted);
   margin-bottom: var(--space-sm);
 }
 
-.output-title {
-  font-family: var(--font-display);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: var(--tracking-display);
-  color: var(--color-ink);
-}
-
-.main-link-box {
-  background: var(--color-paper);
-  border: 1px solid var(--color-rule);
-  border-radius: var(--radius-input);
-  padding: var(--space-md);
-  margin-bottom: var(--space-lg);
-}
-
-.link-row {
-  display: flex;
+.chips-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--space-xs);
-  margin-top: var(--space-xs);
+  width: 100%;
 }
 
-.link-row .form-input {
-  flex: 1;
+.chips-row .chip {
+  width: 100%;
+  padding: 0 var(--space-xs);
 }
 
-.btn-copy {
-  padding: 0 var(--space-sm);
-  min-height: 38px;
-  font-family: var(--font-display);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  white-space: nowrap;
-  border-radius: var(--radius-input);
-  border: 1px solid var(--color-rule-2);
-  background: transparent;
-  color: var(--color-ink);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2xs);
-  box-shadow: none;
-  transition: transform var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
-}
-
-.btn-copy:hover {
-  background: var(--color-paper-3);
-}
-
-.btn-copy:active {
-  transform: translateY(1px);
-}
-
-.btn-copy.copied {
-  background: var(--color-success);
-  color: var(--color-success-ink);
-  border-color: var(--color-success);
-}
-
-.btn-open {
-  padding: 0 var(--space-sm);
-  min-height: 38px;
-  font-family: var(--font-display);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  border-radius: var(--radius-input);
-  border: 1px solid var(--color-rule-2);
-  background: transparent;
-  color: var(--color-ink);
-  text-decoration: none;
+.chip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: none;
-  transition: background-color var(--dur-micro) var(--ease-out);
+  gap: var(--space-xs);
+  min-height: 36px;
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-chip);
+  border: 1px solid var(--color-chip-border);
+  color: var(--color-chip-label);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  position: relative;
+  transition: background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
 }
 
-.btn-open:hover {
-  background: var(--color-paper-3);
+.chip-tooltip {
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%) translateY(3px);
+  background: var(--color-tooltip-bg);
+  color: var(--color-tooltip-text);
+  border: 1px solid var(--color-tooltip-border);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+  box-shadow: var(--shadow-toast);
+  z-index: 25;
 }
 
-.direct-links-list {
+.chip-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 4px;
+  border-style: solid;
+  border-color: var(--color-tooltip-bg) transparent transparent transparent;
+}
+
+.chip-tooltip.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.chip:hover {
+  background: var(--color-chip-hover);
+  transform: translateY(-1px);
+}
+
+.chip:active {
+  transform: translateY(1px);
+}
+
+.chip svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* View Mode Details */
+.view-details-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+  padding-bottom: var(--space-md);
+  border-bottom: 1px solid var(--color-rule);
+}
+
+.view-item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.view-item svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-text);
+}
+
+.view-item a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+  word-break: break-all;
+}
+
+.view-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.view-desc {
+  font-size: var(--text-sm);
+  color: var(--color-text);
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin-bottom: var(--space-xl);
+}
+
+.view-actions {
   display: flex;
   flex-direction: column;
   gap: var(--space-xs);
 }
 
-.direct-link-row {
-  border-top: 1px solid var(--color-rule);
-  padding-top: var(--space-xs);
-  margin-top: var(--space-2xs);
+.view-actions .chip {
+  width: 100%;
+  min-height: 44px;
+  justify-content: center;
+  font-size: var(--text-sm);
+  font-weight: 600;
 }
 
-.direct-link-head {
+.chip-featured {
+  background: var(--color-pill);
+  border-color: var(--color-pill-border);
+  color: var(--color-pill-label);
+  box-shadow: var(--shadow-pill);
+}
+
+.chip-featured:hover {
+  background: var(--color-pill-hover);
+}
+
+.view-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-top: var(--space-xl);
   font-size: var(--text-xs);
-  font-family: var(--font-display);
-  font-weight: 600;
-  margin-bottom: var(--space-2xs);
 }
 
-.direct-link-service {
+#eventTimezone {
+  color: var(--color-muted);
+}
+
+.service-footer {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-rule);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  text-align: center;
+}
+
+.footer-copy {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-xs);
 }
 
-.direct-link-service svg {
-  width: 16px;
-  height: 16px;
+.footer-docs-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  color: var(--color-text);
+  font-weight: 500;
+  text-decoration: none;
+  padding: 6px var(--space-md);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-rule);
+  background: transparent;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
+}
+
+.footer-docs-link:hover {
+  background: var(--color-paper-subtle);
+  border-color: var(--color-rule-active);
+  color: var(--color-text);
+}
+
+.footer-docs-link:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.service-footer a {
+  color: var(--color-text);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+  transition: color var(--dur-micro) var(--ease-out);
+}
+
+.service-footer a:hover {
+  color: var(--color-text-dim);
+}
+
+.footer-sep {
+  color: var(--color-rule);
+}
+
+.footer-link {
+  background: none;
+  border: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  text-decoration: none;
+  padding: 0;
+  transition: color var(--dur-micro) var(--ease-out);
+}
+
+.footer-link:hover {
+  color: var(--color-text);
 }
 
 .toast {
@@ -541,14 +1122,14 @@ body {
   bottom: var(--space-lg);
   left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: var(--color-graphite);
-  color: var(--color-graphite-ink);
+  background: var(--color-pill);
+  color: var(--color-pill-label);
   padding: var(--space-xs) var(--space-md);
-  border-radius: var(--radius-pill);
-  font-family: var(--font-display);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
   font-size: var(--text-xs);
   font-weight: 500;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-toast);
   opacity: 0;
   transition: transform var(--dur-micro) var(--ease-out), opacity var(--dur-micro) var(--ease-out);
   z-index: 500;
@@ -564,6 +1145,128 @@ body {
   display: none !important;
 }
 
+/* Desktop Comfort & Generous Spacing */
+@media (min-width: 640px) {
+  body {
+    padding: var(--space-2xl) var(--space-xl);
+  }
+
+  .container {
+    max-width: 580px;
+  }
+
+  .page-title {
+    font-size: 2.125rem;
+    line-height: 1.12;
+  }
+
+  .page-desc {
+    font-size: var(--text-md);
+    margin-bottom: var(--space-2xl);
+  }
+
+  .floating-input, .floating-textarea, .floating-select {
+    padding: var(--space-xl) 0 var(--space-sm) 0;
+    font-size: 1.0625rem;
+  }
+
+  .floating-label {
+    top: var(--space-xl);
+    font-size: var(--text-md);
+  }
+
+  .floating-input:focus ~ .floating-label,
+  .floating-input:not(:placeholder-shown) ~ .floating-label,
+  .floating-textarea:focus ~ .floating-label,
+  .floating-textarea:not(:placeholder-shown) ~ .floating-label,
+  .floating-label.floated {
+    transform: translateY(-24px) scale(0.82);
+  }
+
+  .row-3 {
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: var(--space-lg);
+  }
+
+  .row-2 {
+    gap: var(--space-lg);
+  }
+
+  .color-picker-swatch {
+    width: 26px;
+    height: 26px;
+    bottom: 10px;
+  }
+
+  .with-color-swatch {
+    padding-right: var(--space-2xl);
+  }
+
+  .btn-split-main {
+    min-height: 52px;
+    font-size: var(--text-md);
+    padding: 0 var(--space-xl);
+  }
+
+  .btn-split-open {
+    flex: 0 0 54px;
+  }
+
+  .btn-split-open svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .chips-section {
+    margin-top: var(--space-2xl);
+  }
+
+  .chips-label {
+    font-size: var(--text-sm);
+  }
+
+  .chips-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .chips-row .chip {
+    padding: 0 var(--space-xs);
+  }
+
+  .chip {
+    min-height: 40px;
+    padding: 0 var(--space-lg);
+    font-size: var(--text-sm);
+  }
+
+  .chip svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .view-actions .chip {
+    min-height: 52px;
+    font-size: var(--text-md);
+  }
+
+  .view-title {
+    font-size: var(--text-lg);
+  }
+
+  .view-desc {
+    font-size: var(--text-md);
+  }
+
+  .view-item {
+    font-size: var(--text-md);
+  }
+
+  .service-footer {
+    margin-top: var(--space-2xl);
+    font-size: var(--text-sm);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -575,275 +1278,644 @@ body {
   </style>
 </head>
 <body>
+  <!-- Abstract wavy decorative background lines (dynamically generated per page load) -->
+  <div class="bg-stripes" aria-hidden="true">
+    <svg id="bgSvg" class="bg-stripes-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" fill="none">
+    </svg>
+  </div>
 
-  <div id="appContainer" class="container">
-    <a href="./" class="brand">
-      <svg class="brand-icon" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+  <!-- Hidden SVG filter for liquid gooey switch -->
+  <svg width="0" height="0" class="sr-only" style="position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;" aria-hidden="true">
+    <defs>
+      <filter id="ss-goo" x="-50%" width="200%" y="-50%" height="200%" color-interpolation-filters="sRGB">
+        <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"></feGaussianBlur>
+        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -7" result="cm"></feColorMatrix>
+      </filter>
+    </defs>
+  </svg>
+
+  <!-- Detached Top-Right Floating Controls (Language & Theme Switch) -->
+  <div class="top-corner-controls" aria-label="Settings">
+    <div class="lang-dropdown" id="langDropdown">
+      <button type="button" class="lang-trigger" id="langTrigger" aria-label="Language selection" aria-expanded="false" aria-haspopup="true">
+        <svg class="planet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3.6 9h16.8" />
+          <path d="M3.6 15h16.8" />
+          <path d="M12 3a14.5 14.5 0 0 0 0 18" />
+          <path d="M12 3a14.5 14.5 0 0 1 0 18" />
+        </svg>
+        <span class="lang-current" id="currentLangLabel">EN</span>
+        <svg class="dropdown-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      <div class="lang-menu" id="langMenu" role="menu" aria-hidden="true">
+        <button type="button" class="lang-item active" role="menuitem" data-lang="en">English (EN)</button>
+        <button type="button" class="lang-item" role="menuitem" data-lang="ru">Русский (RU)</button>
+        <button type="button" class="lang-item" role="menuitem" data-lang="ua">Українська (UA)</button>
+      </div>
+    </div>
+
+    <label class="ss-liquid-switch" title="Toggle dark mode" aria-label="Toggle dark mode">
+      <input type="checkbox" id="toggleTheme" aria-label="Toggle dark mode" />
+      <svg viewBox="0 0 38 24" class="switch-svg" filter="url(#ss-goo)">
+        <circle class="default" cx="12" cy="12" r="8"></circle>
+        <circle class="dot" cx="26" cy="12" r="8"></circle>
       </svg>
-      <span class="brand-name">CalendarFactory</span>
-      <span class="badge">edge</span>
-    </a>
+    </label>
+  </div>
 
-    <!-- VIEW MODE: EVENT CARD -->
-    <div id="viewMode" class="card hidden">
-      <div class="event-header">
-        <h1 id="eventTitle" class="event-title">Event Title</h1>
-        
-        <div class="meta-list">
-          <div class="meta-item">
-            <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            <div>
-              <div id="eventDateTime" class="meta-title">Date and Time</div>
-              <div id="eventTimezone">Timezone</div>
-            </div>
-          </div>
+  <div class="container">
+    <header class="site-header">
+      <a href="./" class="header-brand" id="brandLink"><span id="lblFormTitle">Event Link Generator</span></a>
+    </header>
 
-          <div id="locRow" class="meta-item hidden">
-            <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-            </svg>
-            <div id="eventLoc">Location</div>
+    <!-- VIEW MODE: MINIMAL EVENT -->
+    <div id="viewMode" class="surface hidden">
+      <h1 id="eventTitle" class="page-title">Event Title</h1>
+
+      <div class="view-details-list">
+        <div class="view-item">
+          <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div>
+            <div id="eventDateTime" class="view-title">Date and Time</div>
+            <div id="eventTimezone">Timezone</div>
           </div>
         </div>
 
-        <div id="descRow" class="event-desc hidden">
-          <div id="eventDesc">Description text goes here…</div>
+        <div id="locRow" class="view-item hidden">
+          <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+          <div id="eventLoc">Location</div>
         </div>
       </div>
 
-      <div class="section-label">Add to your calendar</div>
-      <div class="calendar-buttons">
-        <a id="btnGoogle" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+      <div id="descRow" class="view-desc hidden">
+        <div id="eventDesc">Description text goes here…</div>
+      </div>
+
+      <div class="chips-label" id="lblViewAddTitle">Add to your calendar</div>
+      <div class="view-actions">
+        <a id="btnGoogle" class="chip chip-featured" target="_blank" rel="noopener noreferrer">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-6h2v6zm2-8H7V7h10v2z"/>
           </svg>
-          Google Calendar
+          <span id="txtBtnGoogle">Google Calendar</span>
         </a>
 
-        <button id="btnApple" class="btn" type="button">
+        <button id="btnApple" class="chip" type="button">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.62-.75 1.04-1.8 0.92-2.84-.89.04-1.98.6-2.61 1.34-.56.64-1.05 1.7-0.92 2.71 1 .08 2-.46 2.61-1.21z"/>
           </svg>
-          Apple Calendar
+          <span id="txtBtnApple">Apple Calendar</span>
         </button>
 
-        <a id="btnOutlook" class="btn" target="_blank" rel="noopener noreferrer">
+        <a id="btnOutlook" class="chip" target="_blank" rel="noopener noreferrer">
           <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
             <path d="M1 5.5l10-2v17l-10-2v-13z"/>
             <path opacity="0.8" d="M11 3.5l12 2.5v12l-12 2.5v-17z"/>
           </svg>
-          Microsoft Outlook
+          <span id="txtBtnOutlook">Microsoft Outlook</span>
         </a>
 
-        <button id="btnIcs" class="btn" type="button">
+        <button id="btnIcs" class="chip" type="button">
           <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
           </svg>
-          Download .ICS (iCal)
+          <span id="txtBtnIcs">Download .ICS (iCal)</span>
         </button>
       </div>
 
-      <div class="card-footer">
-        <button id="btnCopyLink" class="footer-action" type="button">
-          <svg aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="view-footer">
+        <button id="btnCopyLink" class="footer-link" type="button">
+          <svg aria-hidden="true" width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
           </svg>
-          Copy Event Link
+          <span id="txtViewCopyLink">Copy Event Link</span>
         </button>
-        <button id="btnEditLink" class="footer-action" type="button">
-          Open Generator
+        <button id="btnEditLink" class="footer-link" type="button">
+          <span id="txtViewCreateNew">Create New Event</span>
         </button>
       </div>
     </div>
 
-    <!-- FORM MODE: GENERATOR / BUILDER -->
-    <div id="formMode" class="card hidden">
-      <div class="event-header">
-        <h1 class="event-title">Event Link Generator</h1>
-        <p class="lead">
-          Set event parameters below. Links update live on every keystroke.
-        </p>
-      </div>
-
+    <!-- FORM MODE: BORDERLESS INTERIOR FLOATING LABELS -->
+    <div id="formMode" class="surface hidden">
       <form id="generatorForm">
-        <div class="form-group">
-          <label class="form-label" for="inputTitle">Event title</label>
-          <input type="text" id="inputTitle" class="form-input" placeholder="Quarterly Project Sync" value="Project Sync" required>
+        <!-- 1. EVENT TITLE (FLOATING LABEL, REQUIRED) -->
+        <div class="floating-field">
+          <input type="text" id="inputTitle" class="floating-input" placeholder=" " value="" required>
+          <label for="inputTitle" class="floating-label" id="lblFieldTitle">Event title</label>
+          <span class="floating-line"></span>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="inputDate">Date</label>
-            <input type="date" id="inputDate" class="form-input" required>
+        <!-- 2. DATE, TIME, DURATION ROW -->
+        <div class="row-3">
+          <div class="floating-field">
+            <input type="date" id="inputDate" class="floating-input">
+            <label for="inputDate" class="floating-label floated" id="lblFieldDate">Date</label>
+            <span class="floating-line"></span>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="inputTime">Start time</label>
-            <input type="time" id="inputTime" class="form-input" value="15:00" required>
-          </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="inputDuration">Duration</label>
-            <select id="inputDuration" class="form-select">
-              <option value="15">15 minutes</option>
-              <option value="30">30 minutes</option>
-              <option value="45">45 minutes</option>
-              <option value="60" selected>1 hour</option>
-              <option value="90">1.5 hours</option>
-              <option value="120">2 hours</option>
-              <option value="allDay">All day event</option>
+          <div class="floating-field">
+            <input type="time" id="inputTime" class="floating-input" value="10:00">
+            <label for="inputTime" class="floating-label floated" id="lblFieldTime">Time</label>
+            <span class="floating-line"></span>
+          </div>
+
+          <div class="floating-field">
+            <select id="inputDuration" class="floating-select" aria-label="Duration">
+              <option value="15" id="optDur15">15 min</option>
+              <option value="30" id="optDur30">30 min</option>
+              <option value="45" id="optDur45">45 min</option>
+              <option value="60" id="optDur60" selected>1 hour</option>
+              <option value="90" id="optDur90">1.5 hours</option>
+              <option value="120" id="optDur120">2 hours</option>
+              <option value="allDay" id="optDurAllDay">All day</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="inputTimezone">Timezone (optional)</label>
-            <input type="text" id="inputTimezone" class="form-input" placeholder="Europe/Kyiv">
+            <label for="inputDuration" class="floating-label floated" id="lblFieldDuration">Duration</label>
+            <span class="floating-line"></span>
           </div>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="inputLocation">Location or meeting URL</label>
-          <input type="text" id="inputLocation" class="form-input" placeholder="https://meet.google.com/xyz">
+        <!-- 3. MANDATORY TIMEZONE (UTC) WITH DROPDOWN & LATIN SEARCH -->
+        <div class="floating-field">
+          <input type="text" id="inputTimezone" class="floating-input" list="tzDatalist" placeholder=" " autocomplete="off">
+          <label for="inputTimezone" class="floating-label" id="lblFieldTimezone">Timezone (UTC)</label>
+          <span class="floating-line"></span>
+          <datalist id="tzDatalist">
+            <option value="UTC-12:00 - Baker Island">Baker Island, Howland Island (UTC-12)</option>
+            <option value="UTC-11:00 - Pago Pago">Pago Pago, Niue, Midway (UTC-11)</option>
+            <option value="UTC-10:00 - Honolulu">Honolulu, Papeete, Hawaii (UTC-10)</option>
+            <option value="UTC-09:30 - Marquesas">Taiohae, Marquesas Islands (UTC-9:30)</option>
+            <option value="UTC-09:00 - Anchorage">Anchorage, Juneau, Alaska (UTC-9)</option>
+            <option value="UTC-08:00 - Los Angeles">Los Angeles, San Francisco, Vancouver, Seattle (UTC-8)</option>
+            <option value="UTC-07:00 - Denver">Denver, Phoenix, Calgary, Salt Lake City (UTC-7)</option>
+            <option value="UTC-06:00 - Chicago">Chicago, Dallas, Houston, Mexico City, Winnipeg (UTC-6)</option>
+            <option value="UTC-05:00 - New York">New York, Miami, Toronto, Washington, Bogota (UTC-5)</option>
+            <option value="UTC-04:00 - Santiago">Santiago, Halifax, Caracas, Santo Domingo, Manaus (UTC-4)</option>
+            <option value="UTC-03:30 - St. Johns">St. Johns, Newfoundland (UTC-3:30)</option>
+            <option value="UTC-03:00 - Sao Paulo">Sao Paulo, Buenos Aires, Montevideo, Rio de Janeiro (UTC-3)</option>
+            <option value="UTC-02:00 - South Georgia">South Georgia, Fernando de Noronha (UTC-2)</option>
+            <option value="UTC-01:00 - Azores">Praia, Cape Verde, Azores (UTC-1)</option>
+            <option value="UTC+00:00 - London">London, Dublin, Lisbon, Casablanca, Accra, Reykjavik, UTC, GMT (UTC+0)</option>
+            <option value="UTC+01:00 - Berlin">Berlin, Paris, Rome, Madrid, Warsaw, Amsterdam, Vienna, Brussels (UTC+1)</option>
+            <option value="UTC+02:00 - Kaliningrad">Kaliningrad, Kyiv, Athens, Helsinki, Bucharest, Cairo, Jerusalem, Riga (UTC+2)</option>
+            <option value="UTC+02:00 - Kyiv">Kyiv, Athens, Helsinki, Bucharest, Sofia, Cairo, Jerusalem, Riga (UTC+2)</option>
+            <option value="UTC+03:00 - Moscow">Moscow, Saint Petersburg, Istanbul, Minsk, Riyadh, Doha, Nairobi (MSK / UTC+3)</option>
+            <option value="UTC+03:30 - Tehran">Tehran (UTC+3:30)</option>
+            <option value="UTC+04:00 - Samara">Samara, Saratov, Izhevsk, Ulyanovsk, Dubai, Baku, Tbilisi, Yerevan (UTC+4)</option>
+            <option value="UTC+04:00 - Dubai">Dubai, Abu Dhabi, Baku, Tbilisi, Yerevan, Muscat (UTC+4)</option>
+            <option value="UTC+04:30 - Kabul">Kabul (UTC+4:30)</option>
+            <option value="UTC+05:00 - Yekaterinburg">Yekaterinburg, Chelyabinsk, Ufa, Perm, Tyumen, Tashkent, Karachi (UTC+5)</option>
+            <option value="UTC+05:30 - Delhi">Delhi, Mumbai, Bengaluru, Kolkata, Colombo (UTC+5:30)</option>
+            <option value="UTC+05:45 - Kathmandu">Kathmandu (UTC+5:45)</option>
+            <option value="UTC+06:00 - Omsk">Omsk, Almaty, Astana, Dhaka, Bishkek (UTC+6)</option>
+            <option value="UTC+06:30 - Yangon">Yangon, Cocos (UTC+6:30)</option>
+            <option value="UTC+07:00 - Novosibirsk">Novosibirsk, Krasnoyarsk, Tomsk, Kemerovo, Barnaul, Bangkok, Jakarta (UTC+7)</option>
+            <option value="UTC+07:00 - Krasnoyarsk">Krasnoyarsk, Novosibirsk, Tomsk, Bangkok, Hanoi (UTC+7)</option>
+            <option value="UTC+08:00 - Irkutsk">Irkutsk, Ulan-Ude, Singapore, Hong Kong, Beijing, Shanghai, Perth (UTC+8)</option>
+            <option value="UTC+08:45 - Eucla">Eucla (UTC+8:45)</option>
+            <option value="UTC+09:00 - Yakutsk">Yakutsk, Chita, Blagoveshchensk, Tokyo, Seoul (UTC+9)</option>
+            <option value="UTC+09:00 - Tokyo">Tokyo, Seoul, Osaka, Sapporo (UTC+9)</option>
+            <option value="UTC+09:30 - Adelaide">Adelaide, Darwin (UTC+9:30)</option>
+            <option value="UTC+10:00 - Vladivostok">Vladivostok, Khabarovsk, Sydney, Melbourne, Brisbane (UTC+10)</option>
+            <option value="UTC+10:30 - Lord Howe">Lord Howe Island (UTC+10:30)</option>
+            <option value="UTC+11:00 - Magadan">Magadan, Sakhalin, Yuzhno-Sakhalinsk, Noumea, Solomon Islands (UTC+11)</option>
+            <option value="UTC+12:00 - Kamchatka">Kamchatka, Petropavlovsk-Kamchatsky, Anadyr, Auckland, Fiji (UTC+12)</option>
+            <option value="UTC+12:45 - Chatham">Chatham Islands (UTC+12:45)</option>
+            <option value="UTC+13:00 - Samoa">Apia, Samoa, Nukualofa, Tonga (UTC+13)</option>
+            <option value="UTC+14:00 - Kiritimati">Kiritimati, Line Islands (UTC+14)</option>
+          </datalist>
         </div>
 
-        <div class="form-group">
-          <label class="form-label" for="inputDescription">Description</label>
-          <textarea id="inputDescription" class="form-textarea" rows="3" placeholder="Agenda or placeholders like {name} and {ticket}"></textarea>
-          <div class="form-hint">Placeholders like {var} or {name} interpolate from URL parameters.</div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="inputExtraProps">Extra properties</label>
-            <input type="text" id="inputExtraProps" class="form-input" placeholder="name=Dima&amp;ticket=VIP">
-            <div class="form-hint">Key-value query pairs</div>
+        <!-- 4. DESCRIPTION (PRIMARY FIELD WITH URL SAFE LIMIT COUNTER) -->
+        <div class="floating-field" id="fieldDescWrap">
+          <textarea id="inputDescription" class="floating-textarea" rows="2" placeholder=" "></textarea>
+          <label for="inputDescription" class="floating-label" id="lblFieldDescription">Описание</label>
+          <span class="floating-line" id="lineDesc"></span>
+          <div class="field-meta-row">
+            <span class="field-error-msg hidden" id="descLimitError"></span>
+            <span class="field-counter" id="descCharCount">0 симв. (осталось ~2000)</span>
           </div>
-          <div class="form-group">
-            <label class="form-label" for="inputColor">Page tint</label>
-            <div style="display: flex; gap: var(--space-xs); align-items: center;">
-              <input type="color" id="inputColorPicker" value="#f8fafc" style="width: 44px; height: 38px; padding: var(--space-2xs); border: 1px solid var(--color-rule-2); border-radius: var(--radius-input); cursor: pointer; background: var(--color-paper-2);" aria-label="Color Picker">
-              <input type="text" id="inputColor" class="form-input" placeholder="0f172a or navy">
+        </div>
+
+        <!-- 5. PROGRESSIVE DISCLOSURE FOR EXTRA SETTINGS -->
+        <details class="details-clean">
+          <summary class="summary-clean" id="summaryMoreParams">
+            <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+            <span id="txtMoreParams">Дополнительные параметры</span>
+          </summary>
+          <div class="details-body">
+            <div class="floating-field">
+              <input type="text" id="inputLocation" class="floating-input" placeholder=" ">
+              <label for="inputLocation" class="floating-label" id="lblFieldLocation">Location or meeting URL</label>
+              <span class="floating-line"></span>
             </div>
-            <div class="form-hint">HEX or CSS color name</div>
+
+            <div class="floating-field">
+              <input type="text" id="inputExtraProps" class="floating-input" placeholder=" ">
+              <label for="inputExtraProps" class="floating-label" id="lblFieldExtraProps">Variables (name=Barry Allen)</label>
+              <span class="floating-line"></span>
+            </div>
+
+            <div class="floating-field color-field">
+              <div class="color-picker-input-wrap">
+                <input type="color" id="inputColorPicker" class="color-picker-swatch" value="#ffffff" title="Background color">
+                <input type="text" id="inputColor" class="floating-input with-color-swatch" placeholder=" ">
+                <label for="inputColor" class="floating-label" id="lblFieldColor">Background color</label>
+                <span class="floating-line"></span>
+              </div>
+            </div>
           </div>
-        </div>
+        </details>
       </form>
 
-      <!-- RESULTS SECTION -->
-      <div class="output-section">
-        <div class="output-header">
-          <div class="output-title">Generated links</div>
+      <!-- 4. GENERATED LINK SECTION -->
+      <div class="output-area">
+        <div class="floating-field" style="margin-bottom: var(--space-xs);">
+          <input type="text" id="outMainUrl" class="floating-input code-font" readonly onclick="this.select()" placeholder=" ">
+          <label for="outMainUrl" class="floating-label floated" id="lblFieldShareUrl">Shareable Event URL</label>
+          <span class="floating-line"></span>
         </div>
 
-        <!-- MAIN CALENDARFACTORY LINK -->
-        <div class="main-link-box">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2xs);">
-            <span style="font-family: var(--font-display); font-size: var(--text-xs); font-weight: 600; color: var(--color-accent);">CalendarFactory Page</span>
-            <span class="badge">recommended</span>
-          </div>
-          <p style="font-size: var(--text-xs); color: var(--color-muted); margin: 0 0 var(--space-xs) 0;">
-            Interactive card with instant buttons for Google, Apple, and Outlook.
-          </p>
-          <div class="link-row">
-            <input type="text" id="outMainUrl" class="form-input code-font" readonly onclick="this.select()" aria-label="Main CalendarFactory URL">
-            <button type="button" class="btn-copy" data-target="outMainUrl">
-              <svg aria-hidden="true" width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-              Copy
+        <!-- FULL-WIDTH SPLIT BUTTON -->
+        <div class="btn-split">
+          <button type="button" class="btn-split-main" id="btnCopyMain">
+            <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+            </svg>
+            <span id="txtBtnCopyMain">Copy Event Link</span>
+          </button>
+          <div class="split-divider" aria-hidden="true"></div>
+          <a id="btnPreviewMain" href="#" target="_blank" class="btn-split-open" title="Open event page in new tab" aria-label="Open event page in new tab">
+            <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+            </svg>
+          </a>
+        </div>
+
+        <!-- DIRECT 1-CLICK ENDPOINTS -->
+        <div class="chips-section">
+          <div class="chips-label" id="lblDirectLinksTitle">Direct calendar links</div>
+          <div class="chips-row">
+            <button type="button" id="linkOpenGoogle" class="chip" title="Copy Google Calendar link">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-6h2v6zm2-8H7V7h10v2z"/>
+              </svg>
+              <span id="txtChipGoogle">Google</span>
             </button>
-            <a id="btnPreviewMain" href="#" target="_blank" class="btn-open" title="Preview page">↗</a>
-          </div>
-        </div>
 
-        <!-- DIRECT SERVICE LINKS -->
-        <div class="section-label">Direct service endpoints</div>
-        <p style="font-size: var(--text-xs); color: var(--color-muted); margin: 0 0 var(--space-sm) 0;">
-          Direct web actions to embed into emails, bots, or markdown.
-        </p>
+            <button type="button" id="linkOpenOutlook" class="chip" title="Copy Outlook Calendar link">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M1 5.5l10-2v17l-10-2v-13z"/>
+                <path opacity="0.8" d="M11 3.5l12 2.5v12l-12 2.5v-17z"/>
+              </svg>
+              <span id="txtChipOutlook">Outlook</span>
+            </button>
 
-        <div class="direct-links-list">
-          <!-- Google Calendar -->
-          <div class="direct-link-row">
-            <div class="direct-link-head">
-              <div class="direct-link-service">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm4 0h-2v-6h2v6zm2-8H7V7h10v2z"/>
-                </svg>
-                Google Calendar
-              </div>
-              <a id="linkOpenGoogle" href="#" target="_blank" class="footer-action">Test ↗</a>
-            </div>
-            <div class="link-row">
-              <input type="text" id="outGoogleUrl" class="form-input code-font" readonly onclick="this.select()" aria-label="Direct Google Calendar URL">
-              <button type="button" class="btn-copy" data-target="outGoogleUrl">Copy</button>
-            </div>
-          </div>
+            <button type="button" id="linkOpenApple" class="chip" title="Copy Apple Calendar link">
+              <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.06 1.71-.93 2.74 1.01.08 2.03-.5 2.64-1.24z"/>
+              </svg>
+              <span id="txtChipApple">Apple</span>
+            </button>
 
-          <!-- Microsoft Outlook Web -->
-          <div class="direct-link-row">
-            <div class="direct-link-head">
-              <div class="direct-link-service">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M1 5.5l10-2v17l-10-2v-13z"/>
-                  <path opacity="0.8" d="M11 3.5l12 2.5v12l-12 2.5v-17z"/>
-                </svg>
-                Microsoft Outlook Live
-              </div>
-              <a id="linkOpenOutlook" href="#" target="_blank" class="footer-action">Test ↗</a>
-            </div>
-            <div class="link-row">
-              <input type="text" id="outOutlookUrl" class="form-input code-font" readonly onclick="this.select()" aria-label="Direct Outlook URL">
-              <button type="button" class="btn-copy" data-target="outOutlookUrl">Copy</button>
-            </div>
-          </div>
-
-          <!-- Office 365 -->
-          <div class="direct-link-row">
-            <div class="direct-link-head">
-              <div class="direct-link-service">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M1 5.5l10-2v17l-10-2v-13z"/>
-                  <path opacity="0.8" d="M11 3.5l12 2.5v12l-12 2.5v-17z"/>
-                </svg>
-                Office 365
-              </div>
-              <a id="linkOpenOffice365" href="#" target="_blank" class="footer-action">Test ↗</a>
-            </div>
-            <div class="link-row">
-              <input type="text" id="outOffice365Url" class="form-input code-font" readonly onclick="this.select()" aria-label="Direct Office 365 URL">
-              <button type="button" class="btn-copy" data-target="outOffice365Url">Copy</button>
-            </div>
-          </div>
-
-          <!-- Apple Calendar / Download ICS -->
-          <div class="direct-link-row">
-            <div class="direct-link-head">
-              <div class="direct-link-service">
-                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.84c.62-.75 1.04-1.8 0.92-2.84-.89.04-1.98.6-2.61 1.34-.56.64-1.05 1.7-0.92 2.71 1 .08 2-.46 2.61-1.21z"/>
-                </svg>
-                Apple Calendar and ICS
-              </div>
-            </div>
-            <div style="margin-top: var(--space-xs);">
-              <button type="button" id="btnDownloadIcsDirect" class="btn">
-                <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                Download Event .ICS
-              </button>
-            </div>
+            <button type="button" id="btnDownloadIcsDirect" class="chip" title="Download .ICS file">
+              <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+              </svg>
+              <span id="txtChipIcs">.ICS file</span>
+            </button>
           </div>
         </div>
       </div>
     </div>
+
+    <footer class="service-footer">
+      <div class="footer-links">
+        <a href="docs.html" id="linkFooterDocs" class="footer-docs-link" title="Documentation & Parameters">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span id="txtFooterDocs">Справка и параметры URL</span>
+        </a>
+      </div>
+      <div class="footer-copy">
+        <span>CalendarFactory © 2026</span>
+        <span class="footer-sep" aria-hidden="true">·</span>
+        <span>created by <a href="https://batalshikov.com/" target="_blank" rel="noopener noreferrer">dba</a></span>
+      </div>
+    </footer>
   </div>
 
-  <div id="toast" class="toast">Copied to clipboard</div>
+  <div id="toast" class="toast">Link copied to clipboard</div>
 
   <script>
     (function () {
+      // Dynamic random wavy background generation
+      function generateWavyBackground() {
+        const svg = document.getElementById('bgSvg');
+        if (!svg) return;
+
+        function rand(min, max) {
+          return min + Math.random() * (max - min);
+        }
+
+        const paths = [];
+
+        // 1. Left flank contour waves (5 to 7 lines) — kept to left of center form (x < 440)
+        const leftCount = Math.floor(rand(5, 7));
+        const leftBaseOffset = rand(45, 65);
+        for (let i = 0; i < leftCount; i++) {
+          const shift = i * leftBaseOffset + rand(-15, 15);
+          const x0 = rand(-120, -50) + shift * 0.4;
+          const y0 = rand(-80, 50) - shift * 0.3;
+          const cp1x = rand(120, 260) + shift;
+          const cp1y = rand(140, 260);
+          const cp2x = rand(60, 180) + shift * 0.7;
+          const cp2y = rand(420, 560);
+          const p1x = rand(180, 320) + shift * 0.8;
+          const p1y = rand(640, 740);
+          const cp3x = rand(240, 380) + shift;
+          const cp3y = rand(760, 840);
+          const cp4x = rand(160, 300) + shift * 0.9;
+          const cp4y = rand(880, 960);
+          const p2x = rand(140, 320) + shift * 0.8;
+          const p2y = rand(980, 1050);
+
+          const d = `M ${x0.toFixed(1)},${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`;
+          const isDashed = (i === 3 || (i === 1 && Math.random() > 0.6));
+          paths.push({ d, dashed: isDashed });
+        }
+
+        // 2. Right flank contour waves (5 to 7 lines) — kept to right of center form (x > 1000)
+        const rightCount = Math.floor(rand(5, 7));
+        const rightBaseOffset = rand(45, 65);
+        for (let i = 0; i < rightCount; i++) {
+          const shift = i * rightBaseOffset + rand(-15, 15);
+          const x0 = rand(1480, 1560) - shift * 0.4;
+          const y0 = rand(-80, 50) - shift * 0.3;
+          const cp1x = rand(1200, 1340) - shift;
+          const cp1y = rand(140, 260);
+          const cp2x = rand(1260, 1380) - shift * 0.7;
+          const cp2y = rand(420, 560);
+          const p1x = rand(1120, 1260) - shift * 0.8;
+          const p1y = rand(640, 740);
+          const cp3x = rand(1060, 1200) - shift;
+          const cp3y = rand(760, 840);
+          const cp4x = rand(1140, 1280) - shift * 0.9;
+          const cp4y = rand(880, 960);
+          const p2x = rand(1120, 1300) - shift * 0.8;
+          const p2y = rand(980, 1050);
+
+          const d = `M ${x0.toFixed(1)},${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`;
+          const isDashed = (i === 3 || (i === 2 && Math.random() > 0.6));
+          paths.push({ d, dashed: isDashed });
+        }
+
+        // 3. Top margin flowing waves (3 to 4 lines) — staying above y = 140
+        const topCount = Math.floor(rand(3, 5));
+        const topBaseStep = rand(35, 55);
+        for (let i = 0; i < topCount; i++) {
+          const baseStep = i * topBaseStep + rand(-10, 10);
+          const y0 = rand(20, 50) + baseStep;
+          const cp1x = rand(300, 420);
+          const cp1y = rand(-40, 0) + baseStep;
+          const cp2x = rand(600, 720);
+          const cp2y = rand(70, 120) + baseStep;
+          const p1x = rand(980, 1100);
+          const p1y = rand(-20, 20) + baseStep;
+          const cp3x = rand(1200, 1320);
+          const cp3y = rand(-60, -10) + baseStep;
+          const cp4x = rand(1400, 1500);
+          const cp4y = rand(50, 90) + baseStep;
+          const p2x = rand(1540, 1600);
+          const p2y = rand(10, 60) + baseStep;
+
+          const d = `M -100,${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`;
+          const isDashed = (i === topCount - 1);
+          paths.push({ d, dashed: isDashed });
+        }
+
+        // 4. Bottom margin flowing waves (3 to 4 lines) — staying below y = 780
+        const bottomCount = Math.floor(rand(3, 5));
+        const bottomBaseStep = rand(35, 55);
+        for (let i = 0; i < bottomCount; i++) {
+          const baseStep = i * bottomBaseStep + rand(-10, 10);
+          const y0 = rand(780, 820) + baseStep;
+          const cp1x = rand(280, 400);
+          const cp1y = rand(700, 740) + baseStep;
+          const cp2x = rand(620, 740);
+          const cp2y = rand(860, 900) + baseStep;
+          const p1x = rand(980, 1100);
+          const p1y = rand(750, 790) + baseStep;
+          const cp3x = rand(1200, 1320);
+          const cp3y = rand(690, 730) + baseStep;
+          const cp4x = rand(1400, 1500);
+          const cp4y = rand(830, 870) + baseStep;
+          const p2x = rand(1540, 1600);
+          const p2y = rand(770, 810) + baseStep;
+
+          const d = `M -100,${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`;
+          const isDashed = (i === 1 && Math.random() > 0.5);
+          paths.push({ d, dashed: isDashed });
+        }
+
+        // 5. Cradling & framing curves skirting above and below the center form
+        const archTopY = rand(-70, -30);
+        const archLeftY = rand(220, 280);
+        const archRightY = rand(220, 280);
+        const dArch = `M -100,${archLeftY.toFixed(1)} C ${rand(160, 220).toFixed(1)},${rand(280, 320).toFixed(1)} ${rand(340, 380).toFixed(1)},${rand(140, 180).toFixed(1)} ${rand(420, 460).toFixed(1)},${rand(60, 80).toFixed(1)} C ${rand(480, 520).toFixed(1)},${rand(-10, 20).toFixed(1)} ${rand(600, 660).toFixed(1)},${archTopY.toFixed(1)} ${rand(760, 820).toFixed(1)},${archTopY.toFixed(1)} C ${rand(920, 980).toFixed(1)},${archTopY.toFixed(1)} ${rand(1020, 1060).toFixed(1)},${rand(20, 40).toFixed(1)} ${rand(1080, 1120).toFixed(1)},${rand(90, 120).toFixed(1)} C ${rand(1140, 1180).toFixed(1)},${rand(170, 210).toFixed(1)} ${rand(1300, 1340).toFixed(1)},${rand(270, 310).toFixed(1)} 1560,${archRightY.toFixed(1)}`;
+        paths.push({ d: dArch, dashed: false });
+
+        const cradleBotY = rand(930, 970);
+        const cradleLeftY = rand(660, 720);
+        const cradleRightY = rand(680, 740);
+        const dCradle = `M -100,${cradleLeftY.toFixed(1)} C ${rand(160, 220).toFixed(1)},${rand(610, 650).toFixed(1)} ${rand(340, 380).toFixed(1)},${rand(730, 770).toFixed(1)} ${rand(420, 460).toFixed(1)},${rand(810, 850).toFixed(1)} C ${rand(480, 520).toFixed(1)},${rand(870, 910).toFixed(1)} ${rand(620, 680).toFixed(1)},${cradleBotY.toFixed(1)} ${rand(780, 840).toFixed(1)},${cradleBotY.toFixed(1)} C ${rand(940, 1000).toFixed(1)},${cradleBotY.toFixed(1)} ${rand(1060, 1100).toFixed(1)},${rand(850, 890).toFixed(1)} ${rand(1140, 1180).toFixed(1)},${rand(770, 810).toFixed(1)} C ${rand(1220, 1260).toFixed(1)},${rand(690, 730).toFixed(1)} ${rand(1380, 1420).toFixed(1)},${rand(630, 670).toFixed(1)} 1560,${cradleRightY.toFixed(1)}`;
+        paths.push({ d: dCradle, dashed: false });
+
+        let svgHtml = '';
+        for (const p of paths) {
+          const dash = p.dashed ? ' stroke-dasharray="6 8"' : '';
+          const sw = p.dashed ? '1' : '1.1';
+          svgHtml += `<path d="${p.d}" stroke="var(--color-stripe)" stroke-width="${sw}"${dash} vector-effect="non-scaling-stroke" />\n`;
+        }
+        svg.innerHTML = svgHtml;
+      }
+
+      // Generate random wavy background on page load
+      generateWavyBackground();
+
+      const I18N = {
+        en: {
+          code: 'en',
+          formTitle: "Event Link Generator",
+          fieldTitle: "Event title",
+          fieldDate: "Date",
+          fieldTime: "Time",
+          fieldDuration: "Duration",
+          dur15: "15 min",
+          dur30: "30 min",
+          dur45: "45 min",
+          dur60: "1 hour",
+          dur90: "1.5 hours",
+          dur120: "2 hours",
+          durAllDay: "All day",
+          moreParams: "Additional parameters",
+          fieldLoc: "Location or meeting URL",
+          fieldDesc: "Description",
+          fieldVars: "Variables (e.g. name=Barry Allen)",
+          fieldTz: "Timezone (UTC)",
+          fieldColor: "Background color",
+          fieldTheme: "Dark mode",
+          fieldShareUrl: "Shareable Event URL",
+          copyBtn: "Copy Event Link",
+          copiedBtn: "Copied!",
+          openNewTab: "Open event page in new tab",
+          directLinksTitle: "Direct calendar links",
+          googleCal: "Google",
+          outlookCal: "Outlook",
+          office365Cal: "Office 365",
+          appleCal: "Apple",
+          icsDirect: ".ICS file",
+          viewTzPrefix: "Timezone:",
+          viewAllDay: "(All day)",
+          viewAddTitle: "Add to your calendar",
+          viewGoogleBtn: "Google Calendar",
+          viewAppleBtn: "Apple Calendar",
+          viewOutlookBtn: "Microsoft Outlook",
+          viewIcsBtn: "Download .ICS (iCal)",
+          viewCopyLink: "Copy Event Link",
+          viewCreateNew: "Create New Event",
+          toastCopied: "Link copied to clipboard",
+          toastTitleRequired: "Event title is required",
+          toastUrlExceeded: "Safe URL limit exceeded (2000 chars)",
+          descLimitError: "Safe URL limit exceeded (max 2000 chars). Please shorten description.",
+          charCountRemaining: "chars (~{n} left)",
+          charCountOver: "chars (+{n} over limit)",
+          tooltipCopied: "Link copied!",
+          tooltipCopyGoogle: "Copy Google Calendar link",
+          tooltipCopyOutlook: "Copy Outlook link",
+          tooltipCopyApple: "Copy Apple Calendar link",
+          tooltipDownloadIcs: "Download .ICS file",
+          footerDocs: "Guide & URL parameters"
+        },
+        ru: {
+          code: 'ru',
+          formTitle: "Генератор ссылок на события",
+          fieldTitle: "Название события",
+          fieldDate: "Дата",
+          fieldTime: "Время",
+          fieldDuration: "Длительность",
+          dur15: "15 мин",
+          dur30: "30 мин",
+          dur45: "45 мин",
+          dur60: "1 час",
+          dur90: "1.5 часа",
+          dur120: "2 часа",
+          durAllDay: "Весь день",
+          moreParams: "Дополнительные параметры",
+          fieldLoc: "Место или ссылка на встречу",
+          fieldDesc: "Описание",
+          fieldVars: "Переменные (напр. name=Barry Allen)",
+          fieldTz: "Часовой пояс (UTC)",
+          fieldColor: "Цвет фона",
+          fieldTheme: "Тёмная тема",
+          fieldShareUrl: "Ссылка для отправки",
+          copyBtn: "Скопировать ссылку",
+          copiedBtn: "Скопировано!",
+          openNewTab: "Открыть страницу события в новой вкладке",
+          directLinksTitle: "Прямые ссылки в календарь",
+          googleCal: "Google",
+          outlookCal: "Outlook",
+          office365Cal: "Office 365",
+          appleCal: "Apple",
+          icsDirect: ".ICS файл",
+          viewTzPrefix: "Часовой пояс:",
+          viewAllDay: "(Весь день)",
+          viewAddTitle: "Добавить в свой календарь",
+          viewGoogleBtn: "Google Календарь",
+          viewAppleBtn: "Apple Календарь",
+          viewOutlookBtn: "Microsoft Outlook",
+          viewIcsBtn: "Скачать .ICS (iCal)",
+          viewCopyLink: "Скопировать ссылку",
+          viewCreateNew: "Создать новое событие",
+          toastCopied: "Ссылка скопирована в буфер",
+          toastTitleRequired: "Название события обязательно для заполнения",
+          toastUrlExceeded: "Длина ссылки превышает безопасный лимит (2000 символов)",
+          descLimitError: "Превышен лимит длины ссылки календаря (макс. 2000 символов). Сократите описание.",
+          charCountRemaining: "симв. (осталось ~{n})",
+          charCountOver: "симв. (+{n} сверх лимита)",
+          tooltipCopied: "Ссылка скопирована!",
+          tooltipCopyGoogle: "Скопировать ссылку для Google",
+          tooltipCopyOutlook: "Скопировать ссылку для Outlook",
+          tooltipCopyApple: "Скопировать ссылку для Apple",
+          tooltipDownloadIcs: "Скачать файл .ICS",
+          footerDocs: "Справка и параметры URL"
+        },
+        ua: {
+          code: 'ua',
+          formTitle: "Генератор посилань на події",
+          fieldTitle: "Назва події",
+          fieldDate: "Дата",
+          fieldTime: "Час",
+          fieldDuration: "Тривалість",
+          dur15: "15 хв",
+          dur30: "30 хв",
+          dur45: "45 хв",
+          dur60: "1 година",
+          dur90: "1.5 години",
+          dur120: "2 години",
+          durAllDay: "Весь день",
+          moreParams: "Додаткові параметри",
+          fieldLoc: "Місце або посилання на зустріч",
+          fieldDesc: "Опис",
+          fieldVars: "Змінні (напр. name=Barry Allen)",
+          fieldTz: "Часовий пояс (UTC)",
+          fieldColor: "Колір фону",
+          fieldTheme: "Темна тема",
+          fieldShareUrl: "Посилання для надсилання",
+          copyBtn: "Скопіювати посилання",
+          copiedBtn: "Скопійовано!",
+          openNewTab: "Відкрити сторінку події у новій вкладці",
+          directLinksTitle: "Прямі посилання в календар",
+          googleCal: "Google",
+          outlookCal: "Outlook",
+          office365Cal: "Office 365",
+          appleCal: "Apple",
+          icsDirect: ".ICS файл",
+          viewTzPrefix: "Часовий пояс:",
+          viewAllDay: "(Весь день)",
+          viewAddTitle: "Додати у свій календар",
+          viewGoogleBtn: "Google Календар",
+          viewAppleBtn: "Apple Календар",
+          viewOutlookBtn: "Microsoft Outlook",
+          viewIcsBtn: "Завантажити .ICS (iCal)",
+          viewCopyLink: "Скопіювати посилання",
+          viewCreateNew: "Створити нову подію",
+          toastCopied: "Посилання скопійовано в буфер",
+          toastTitleRequired: "Назва події обов'язкова для заповнення",
+          toastUrlExceeded: "Довжина посилання перевищує безпечний limit (2000 символів)",
+          descLimitError: "Перевищено ліміт довжини посилання календаря (макс. 2000 символів). Скоротіть опис.",
+          charCountRemaining: "симв. (залишилось ~{n})",
+          charCountOver: "симв. (+{n} понад ліміт)",
+          tooltipCopied: "Посилання скопійовано!",
+          tooltipCopyGoogle: "Скопіювати посилання для Google",
+          tooltipCopyOutlook: "Скопіювати посилання для Outlook",
+          tooltipCopyApple: "Скопіювати посилання для Apple",
+          tooltipDownloadIcs: "Завантажити файл .ICS",
+          footerDocs: "Довідка та параметри URL"
+        }
+      };
+
       const queryParams = new URLSearchParams(window.location.search);
       const hash = window.location.hash.startsWith('#') ? window.location.hash.substring(1) : '';
       const hashParams = new URLSearchParams(hash);
@@ -865,50 +1937,276 @@ body {
         return null;
       }
 
-      // Page tint
-      const rawColor = getVal(['color', 'c', 'bg']);
-      if (rawColor) {
-        let parsedColor = rawColor.trim();
-        if (/^[0-9a-fA-F]{3,8}$/.test(parsedColor)) {
-          parsedColor = '#' + parsedColor;
+      // Detect language from URL param (lang= or l=) or browser navigator
+      function detectLanguage() {
+        const paramLang = (getVal(['lang', 'l', 'locale']) || '').toLowerCase();
+        if (paramLang === 'ru') return 'ru';
+        if (paramLang === 'ua' || paramLang === 'uk') return 'ua';
+        if (paramLang === 'en') return 'en';
+
+        // Check browser language
+        const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        if (navLang.startsWith('uk')) return 'ua';
+        if (navLang.startsWith('ru') || navLang.startsWith('be')) return 'ru';
+        return 'en';
+      }
+
+      let currentLang = detectLanguage();
+
+      function applyTranslations(langKey) {
+        currentLang = langKey;
+        const dict = I18N[langKey] || I18N.en;
+
+        // Update active class on language items & trigger label
+        const langLabel = document.getElementById('currentLangLabel');
+        if (langLabel) langLabel.textContent = langKey.toUpperCase();
+
+        document.querySelectorAll('.lang-item').forEach(btn => {
+          if (btn.getAttribute('data-lang') === langKey) {
+            btn.classList.add('active');
+          } else {
+            btn.classList.remove('active');
+          }
+        });
+
+        // Form mode strings
+        const elFormTitle = document.getElementById('lblFormTitle');
+        if (elFormTitle) elFormTitle.textContent = dict.formTitle;
+        const elFormDesc = document.getElementById('lblFormDesc');
+        if (elFormDesc) elFormDesc.textContent = dict.formDesc;
+        const elFieldTitle = document.getElementById('lblFieldTitle');
+        if (elFieldTitle) elFieldTitle.textContent = dict.fieldTitle;
+        const elFieldDate = document.getElementById('lblFieldDate');
+        if (elFieldDate) elFieldDate.textContent = dict.fieldDate;
+        const elFieldTime = document.getElementById('lblFieldTime');
+        if (elFieldTime) elFieldTime.textContent = dict.fieldTime;
+        const elFieldDuration = document.getElementById('lblFieldDuration');
+        if (elFieldDuration) elFieldDuration.textContent = dict.fieldDuration;
+
+        const optDur15 = document.getElementById('optDur15');
+        if (optDur15) optDur15.textContent = dict.dur15;
+        const optDur30 = document.getElementById('optDur30');
+        if (optDur30) optDur30.textContent = dict.dur30;
+        const optDur45 = document.getElementById('optDur45');
+        if (optDur45) optDur45.textContent = dict.dur45;
+        const optDur60 = document.getElementById('optDur60');
+        if (optDur60) optDur60.textContent = dict.dur60;
+        const optDur90 = document.getElementById('optDur90');
+        if (optDur90) optDur90.textContent = dict.dur90;
+        const optDur120 = document.getElementById('optDur120');
+        if (optDur120) optDur120.textContent = dict.dur120;
+        const optDurAllDay = document.getElementById('optDurAllDay');
+        if (optDurAllDay) optDurAllDay.textContent = dict.durAllDay;
+
+        const elMoreParams = document.getElementById('txtMoreParams');
+        if (elMoreParams) elMoreParams.textContent = dict.moreParams;
+        const elFieldLoc = document.getElementById('lblFieldLocation');
+        if (elFieldLoc) elFieldLoc.textContent = dict.fieldLoc;
+        const elFieldDesc = document.getElementById('lblFieldDescription');
+        if (elFieldDesc) elFieldDesc.textContent = dict.fieldDesc;
+        const elFieldVars = document.getElementById('lblFieldExtraProps');
+        if (elFieldVars) elFieldVars.textContent = dict.fieldVars;
+        const elFieldTz = document.getElementById('lblFieldTimezone');
+        if (elFieldTz) elFieldTz.textContent = dict.fieldTz;
+        const elFieldColor = document.getElementById('lblFieldColor');
+        if (elFieldColor) elFieldColor.textContent = dict.fieldColor;
+        const elFieldTheme = document.getElementById('lblFieldTheme');
+        if (elFieldTheme) elFieldTheme.textContent = dict.fieldTheme;
+        const elToggleTheme = document.getElementById('toggleTheme');
+        if (elToggleTheme) {
+          elToggleTheme.setAttribute('aria-label', dict.fieldTheme);
+          const elSwitchLabel = elToggleTheme.closest('.ss-liquid-switch');
+          if (elSwitchLabel) {
+            elSwitchLabel.setAttribute('title', dict.fieldTheme);
+            elSwitchLabel.setAttribute('aria-label', dict.fieldTheme);
+          }
+        }
+        const elFieldShareUrl = document.getElementById('lblFieldShareUrl');
+        if (elFieldShareUrl) elFieldShareUrl.textContent = dict.fieldShareUrl;
+
+        const elBtnCopyMain = document.getElementById('txtBtnCopyMain');
+        if (elBtnCopyMain) elBtnCopyMain.textContent = dict.copyBtn;
+
+        const elBtnPreview = document.getElementById('btnPreviewMain');
+        if (elBtnPreview) {
+          elBtnPreview.setAttribute('title', dict.openNewTab);
+          elBtnPreview.setAttribute('aria-label', dict.openNewTab);
         }
 
-        document.documentElement.style.setProperty('--color-paper', parsedColor);
+        const elDirectTitle = document.getElementById('lblDirectLinksTitle');
+        if (elDirectTitle) elDirectTitle.textContent = dict.directLinksTitle;
+        const elChipGoogle = document.getElementById('txtChipGoogle');
+        if (elChipGoogle) elChipGoogle.textContent = dict.googleCal;
+        const btnOpenGoogle = document.getElementById('linkOpenGoogle');
+        if (btnOpenGoogle) {
+          btnOpenGoogle.setAttribute('title', dict.tooltipCopyGoogle || 'Copy Google Calendar link');
+          btnOpenGoogle.setAttribute('aria-label', dict.tooltipCopyGoogle || 'Copy Google Calendar link');
+        }
+        const elChipOutlook = document.getElementById('txtChipOutlook');
+        if (elChipOutlook) elChipOutlook.textContent = dict.outlookCal;
+        const btnOpenOutlook = document.getElementById('linkOpenOutlook');
+        if (btnOpenOutlook) {
+          btnOpenOutlook.setAttribute('title', dict.tooltipCopyOutlook || 'Copy Outlook Calendar link');
+          btnOpenOutlook.setAttribute('aria-label', dict.tooltipCopyOutlook || 'Copy Outlook Calendar link');
+        }
+        const elChipOffice365 = document.getElementById('txtChipOffice365');
+        if (elChipOffice365) elChipOffice365.textContent = dict.office365Cal;
+        const elChipApple = document.getElementById('txtChipApple');
+        if (elChipApple) elChipApple.textContent = dict.appleCal || 'Apple';
+        const btnOpenApple = document.getElementById('linkOpenApple');
+        if (btnOpenApple) {
+          btnOpenApple.setAttribute('title', dict.tooltipCopyApple || 'Copy Apple Calendar link');
+          btnOpenApple.setAttribute('aria-label', dict.tooltipCopyApple || 'Copy Apple Calendar link');
+        }
+        const elChipIcs = document.getElementById('txtChipIcs');
+        if (elChipIcs) elChipIcs.textContent = dict.icsDirect;
+        const btnDirectIcs = document.getElementById('btnDownloadIcsDirect');
+        if (btnDirectIcs) {
+          btnDirectIcs.setAttribute('title', dict.tooltipDownloadIcs || 'Download .ICS file');
+          btnDirectIcs.setAttribute('aria-label', dict.tooltipDownloadIcs || 'Download .ICS file');
+        }
 
-        try {
-          const temp = document.createElement('div');
-          temp.style.color = parsedColor;
-          document.body.appendChild(temp);
-          const cs = window.getComputedStyle(temp).color;
-          document.body.removeChild(temp);
-          const match = cs.match(/\(([^)]+)\)/);
-          if (match) {
-            const parts = match[1].split(',').map(x => parseFloat(x));
-            if (parts.length >= 3) {
-              const [r, g, b] = parts.slice(0, 3).map(c => {
-                c /= 255;
-                return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-              });
-              const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-              if (lum < 0.35) {
-                document.documentElement.style.setProperty('--color-ink', 'oklch(96% 0.005 250)');
-                document.documentElement.style.setProperty('--color-ink-2', 'oklch(88% 0.01 250)');
-                document.documentElement.style.setProperty('--color-muted', 'oklch(75% 0.015 250)');
-                document.documentElement.style.setProperty('--color-paper-2', 'oklch(22% 0.024 262)');
-                document.documentElement.style.setProperty('--color-paper-3', 'oklch(28% 0.024 262)');
-                document.documentElement.style.setProperty('--color-rule', 'oklch(32% 0.02 262)');
-                document.documentElement.style.setProperty('--color-rule-2', 'oklch(40% 0.02 262)');
-                document.documentElement.style.setProperty('--color-key-face', 'oklch(26% 0.025 262)');
-                document.documentElement.style.setProperty('--color-key-edge', 'oklch(15% 0.02 262)');
-              } else {
-                document.documentElement.style.setProperty('--color-paper-2', 'oklch(96% 0.006 250)');
+        // View mode strings
+        const elViewAddTitle = document.getElementById('lblViewAddTitle');
+        if (elViewAddTitle) elViewAddTitle.textContent = dict.viewAddTitle;
+        const elTxtGoogle = document.getElementById('txtBtnGoogle');
+        if (elTxtGoogle) elTxtGoogle.textContent = dict.viewGoogleBtn;
+        const elTxtApple = document.getElementById('txtBtnApple');
+        if (elTxtApple) elTxtApple.textContent = dict.viewAppleBtn;
+        const elTxtOutlook = document.getElementById('txtBtnOutlook');
+        if (elTxtOutlook) elTxtOutlook.textContent = dict.viewOutlookBtn;
+        const elTxtIcs = document.getElementById('txtBtnIcs');
+        if (elTxtIcs) elTxtIcs.textContent = dict.viewIcsBtn;
+        const elTxtViewCopy = document.getElementById('txtViewCopyLink');
+        if (elTxtViewCopy) elTxtViewCopy.textContent = dict.viewCopyLink;
+        const elTxtViewCreate = document.getElementById('txtViewCreateNew');
+        if (elTxtViewCreate) elTxtViewCreate.textContent = dict.viewCreateNew;
+
+        const elFooterDocs = document.getElementById('txtFooterDocs');
+        if (elFooterDocs) elFooterDocs.textContent = dict.footerDocs;
+
+        document.documentElement.setAttribute('lang', langKey === 'ua' ? 'uk' : langKey);
+      }
+
+      // Theme & Background color handling
+      let currentTheme = 'light'; // 'light' (default) or 'dark'
+      let customBgColor = '';
+
+      function applyTheme(themeMode) {
+        currentTheme = (themeMode === 'dark') ? 'dark' : 'light';
+        if (currentTheme === 'dark') {
+          document.body.setAttribute('data-theme', 'dark');
+        } else {
+          document.body.removeAttribute('data-theme');
+        }
+
+        const toggle = document.getElementById('toggleTheme');
+        if (toggle) toggle.checked = (currentTheme === 'dark');
+
+        if (!customBgColor) {
+          const defaultBg = (currentTheme === 'dark') ? '#1f1f21' : '#ffffff';
+          document.documentElement.style.removeProperty('--color-paper');
+          document.body.style.backgroundColor = '';
+          const metaTheme = document.querySelector('meta[name="theme-color"]');
+          if (metaTheme) metaTheme.setAttribute('content', defaultBg);
+
+          const inputPicker = document.getElementById('inputColorPicker');
+          if (inputPicker) inputPicker.value = defaultBg;
+        }
+      }
+
+      function applyBackgroundColor(colorStr) {
+        customBgColor = colorStr ? colorStr.trim() : '';
+        if (!customBgColor) {
+          document.documentElement.style.removeProperty('--color-paper');
+          document.body.style.backgroundColor = '';
+          const defaultBg = (currentTheme === 'dark') ? '#1f1f21' : '#ffffff';
+          const metaTheme = document.querySelector('meta[name="theme-color"]');
+          if (metaTheme) metaTheme.setAttribute('content', defaultBg);
+          return;
+        }
+        let parsed = customBgColor;
+        if (/^[0-9a-fA-F]{3,8}$/.test(parsed)) {
+          parsed = '#' + parsed;
+        }
+        document.documentElement.style.setProperty('--color-paper', parsed);
+        document.body.style.backgroundColor = parsed;
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) metaTheme.setAttribute('content', parsed);
+      }
+
+      // Initial theme from URL: 'dark' / 'd' (defaults to 'light')
+      const rawTheme = (getVal(['theme', 'm', 'mode']) || '').toLowerCase();
+      const hasDarkParam = rawTheme === 'dark' || rawTheme === 'd' || allParams['dark'] !== undefined || (getVal(['tc', 'text']) || '').toLowerCase() === 'w' || (getVal(['btn', 'b']) || '').toLowerCase() === 'w';
+
+      if (hasDarkParam) {
+        applyTheme('dark');
+      } else {
+        applyTheme('light');
+      }
+
+      // Initial custom color from URL
+      const rawColor = getVal(['c', 'color', 'bg']);
+      if (rawColor) {
+        const clean = rawColor.trim().replace(/^#/, '').toLowerCase();
+        const isDefaultLight = (currentTheme === 'light' && (clean === 'ffffff' || clean === 'fff'));
+        const isDefaultDark = (currentTheme === 'dark' && (clean === '1f1f21'));
+        if (!isDefaultLight && !isDefaultDark) {
+          applyBackgroundColor(rawColor);
+        }
+      }
+
+      // Timezone URL helpers: convert to "utc=2" or expand "2" to "UTC+02:00 - Kaliningrad"
+      function formatUtcParam(tzStr) {
+        if (!tzStr) return '';
+        const trimmed = tzStr.trim();
+        if (/^[+-]?\d+(\.\d+)?$/.test(trimmed)) {
+          return trimmed.replace(/^\+/, '');
+        }
+        const m = trimmed.match(/UTC\s*([+-])(\d{1,2})(?::(\d{2}))?/i);
+        if (m) {
+          const sign = m[1] === '-' ? -1 : 1;
+          const hours = parseInt(m[2], 10);
+          const minutes = m[3] ? parseInt(m[3], 10) : 0;
+          if (minutes === 0) {
+            return String(sign * hours);
+          }
+          const frac = minutes / 60;
+          return String(sign * (hours + frac));
+        }
+        const datalist = document.getElementById('tzDatalist');
+        if (datalist && datalist.options) {
+          const lower = trimmed.toLowerCase();
+          for (const opt of datalist.options) {
+            if (opt.value.toLowerCase().includes(lower) || opt.textContent.toLowerCase().includes(lower)) {
+              return formatUtcParam(opt.value);
+            }
+          }
+        }
+        return '';
+      }
+
+      function expandUtcParam(rawUtc) {
+        if (!rawUtc) return '';
+        const trimmed = rawUtc.trim();
+        const num = parseFloat(trimmed);
+        if (!isNaN(num)) {
+          const sign = num >= 0 ? '+' : '-';
+          const abs = Math.abs(num);
+          const hrs = Math.floor(abs);
+          const mins = Math.round((abs - hrs) * 60);
+          const prefix = `UTC${sign}${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+          const datalist = document.getElementById('tzDatalist');
+          if (datalist && datalist.options) {
+            for (const opt of datalist.options) {
+              if (opt.value.startsWith(prefix)) {
+                return opt.value;
               }
             }
           }
-        } catch (e) {}
-
-        const metaTheme = document.querySelector('meta[name="theme-color"]');
-        if (metaTheme) metaTheme.setAttribute('content', parsedColor);
+          return prefix;
+        }
+        return trimmed;
       }
 
       function replacePlaceholders(text, paramMap) {
@@ -923,412 +2221,913 @@ body {
         return result;
       }
 
-      function getParams() {
-        const rawTitle = getVal(['title', 't', 'summary', 'name']);
-        const start = getVal(['start', 's', 'dtstart', 'begin', 'from']);
-        const end = getVal(['end', 'e', 'dtend', 'to']);
-        const duration = getVal(['duration', 'dur', 'd']);
-        const rawDesc = getVal(['desc', 'description', 'details', 'body']);
-        const rawLoc = getVal(['loc', 'location', 'venue', 'where']);
-        const tz = getVal(['tz', 'timezone']);
-        const allDayRaw = getVal(['allDay', 'allday']);
-        const allDay = allDayRaw === '1' || allDayRaw === 'true' || allDayRaw === 'yes';
-
-        if (!rawTitle && !start) {
-          return null;
-        }
-
-        const title = replacePlaceholders(rawTitle || 'Untitled Event', allParams);
-        const desc = replacePlaceholders(rawDesc || '', allParams);
-        const loc = replacePlaceholders(rawLoc || '', allParams);
-
-        return {
-          title,
-          start,
-          end,
-          duration: duration ? parseInt(duration, 10) : 60,
-          desc,
-          loc,
-          tz: tz || '',
-          allDay,
-          color: rawColor
-        };
+      function formatIsoCompact(d) {
+        const year = d.getUTCFullYear();
+        const month = String(d.getUTCMonth() + 1).padStart(2, '0');
+        const day = String(d.getUTCDate()).padStart(2, '0');
+        const hours = String(d.getUTCHours()).padStart(2, '0');
+        const minutes = String(d.getUTCMinutes()).padStart(2, '0');
+        const seconds = String(d.getUTCSeconds()).padStart(2, '0');
+        return `${year}${month}${day}T${hours}${minutes}${seconds}Z`;
       }
 
-      function parseDateTime(str, isAllDay) {
-        if (!str) return new Date();
-
-        const match = str.match(/^(\d{4})-(\d{2})-(\d{2})(?:[T ](\d{2}):(\d{2})(?::(\d{2}))?)?(Z)?$/i);
-        if (match) {
-          const y = parseInt(match[1], 10);
-          const m = parseInt(match[2], 10) - 1;
-          const d = parseInt(match[3], 10);
-          if (!match[4] || isAllDay) {
-            return new Date(y, m, d);
-          }
-          const h = parseInt(match[4], 10);
-          const min = parseInt(match[5], 10);
-          const s = match[6] ? parseInt(match[6], 10) : 0;
-          if (match[7] === 'Z' || match[7] === 'z') {
-            return new Date(Date.UTC(y, m, d, h, min, s));
-          }
-          return new Date(y, m, d, h, min, s);
-        }
-
-        const compactMatch = str.match(/^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2})(\d{2})?)?(Z)?$/i);
-        if (compactMatch) {
-          const y = parseInt(compactMatch[1], 10);
-          const m = parseInt(compactMatch[2], 10) - 1;
-          const d = parseInt(compactMatch[3], 10);
-          if (!compactMatch[4] || isAllDay) {
-            return new Date(y, m, d);
-          }
-          const h = parseInt(compactMatch[4], 10);
-          const min = parseInt(compactMatch[5], 10);
-          const s = compactMatch[6] ? parseInt(compactMatch[6], 10) : 0;
-          if (compactMatch[7] === 'Z' || compactMatch[7] === 'z') {
-            return new Date(Date.UTC(y, m, d, h, min, s));
-          }
-          return new Date(y, m, d, h, min, s);
-        }
-
-        const parsed = new Date(str);
-        return isNaN(parsed.getTime()) ? new Date() : parsed;
-      }
-
-      function formatCompact(d) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
+      function formatDayCompact(d) {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        const h = String(d.getHours()).padStart(2, '0');
-        const min = String(d.getMinutes()).padStart(2, '0');
-        const s = String(d.getSeconds()).padStart(2, '0');
-        return `${y}${m}${day}T${h}${min}${s}`;
+        return `${year}${month}${day}`;
       }
 
-      function formatCompactDate(d) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${y}${m}${day}`;
-      }
+      function parseEventParams() {
+        const title = getVal(['title', 't']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : 'Calendar Event');
+        const rawDesc = getVal(['description', 'desc', 'details', 'd']) || '';
+        const rawLoc = getVal(['location', 'loc', 'address', 'l']) || '';
+        const rawUrl = getVal(['url', 'link', 'u']) || '';
 
-      function formatIsoNoZ(d) {
-        const y = d.getFullYear();
-        const m = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        const h = String(d.getHours()).padStart(2, '0');
-        const min = String(d.getMinutes()).padStart(2, '0');
-        const s = String(d.getSeconds()).padStart(2, '0');
-        return `${y}-${m}-${day}T${h}:${min}:${s}`;
-      }
-
-      function escapeIcs(str) {
-        return (str || '')
-          .replace(/\\/g, '\\\\')
-          .replace(/;/g, '\\;')
-          .replace(/,/g, '\\,')
-          .replace(/\r?\n/g, '\\n');
-      }
-
-      function showToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2400);
-      }
-
-      function buildCalendarUrls(data) {
-        const startDate = parseDateTime(data.start, data.allDay);
-        let endDate;
-        if (data.end) {
-          endDate = parseDateTime(data.end, data.allDay);
+        let tz = '';
+        const rawUtc = getVal(['utc', 'u']);
+        if (rawUtc !== null && rawUtc !== '') {
+          tz = expandUtcParam(rawUtc);
         } else {
-          endDate = new Date(startDate.getTime() + (data.duration * 60 * 1000));
+          tz = getVal(['timezone', 'tz']) || '';
         }
 
-        const googleDates = data.allDay
-          ? `${formatCompactDate(startDate)}/${formatCompactDate(new Date(endDate.getTime() + 86400000))}`
-          : `${formatCompact(startDate)}/${formatCompact(endDate)}`;
-        
-        const gUrl = new URL('https://calendar.google.com/calendar/render');
-        gUrl.searchParams.set('action', 'TEMPLATE');
-        gUrl.searchParams.set('text', data.title);
-        gUrl.searchParams.set('dates', googleDates);
-        if (data.desc) gUrl.searchParams.set('details', data.desc);
-        if (data.loc) gUrl.searchParams.set('location', data.loc);
-        if (data.tz && !data.allDay) gUrl.searchParams.set('ctz', data.tz);
+        const desc = replacePlaceholders(rawDesc, allParams);
+        const loc = replacePlaceholders(rawLoc, allParams);
 
-        const outUrl = new URL('https://outlook.live.com/calendar/0/deeplink/compose');
-        outUrl.searchParams.set('path', '/calendar/action/compose');
-        outUrl.searchParams.set('rru', 'addevent');
-        outUrl.searchParams.set('subject', data.title);
-        outUrl.searchParams.set('startdt', formatIsoNoZ(startDate));
-        outUrl.searchParams.set('enddt', formatIsoNoZ(endDate));
-        outUrl.searchParams.set('allday', data.allDay ? 'true' : 'false');
-        if (data.desc) outUrl.searchParams.set('body', data.desc);
-        if (data.loc) outUrl.searchParams.set('location', data.loc);
+        const startRaw = getVal(['start', 's', 'date', 'time', 'dt']);
+        const endRaw = getVal(['end', 'e']);
+        const durRaw = getVal(['duration', 'dur']);
 
-        const o365Url = new URL('https://outlook.office.com/calendar/0/deeplink/compose');
-        o365Url.searchParams.set('path', '/calendar/action/compose');
-        o365Url.searchParams.set('rru', 'addevent');
-        o365Url.searchParams.set('subject', data.title);
-        o365Url.searchParams.set('startdt', formatIsoNoZ(startDate));
-        o365Url.searchParams.set('enddt', formatIsoNoZ(endDate));
-        o365Url.searchParams.set('allday', data.allDay ? 'true' : 'false');
-        if (data.desc) o365Url.searchParams.set('body', data.desc);
-        if (data.loc) o365Url.searchParams.set('location', data.loc);
+        let startDate = null;
+        let isAllDay = false;
 
-        const nowStr = formatCompact(new Date()) + 'Z';
-        const dtStart = data.allDay
-          ? `DTSTART;VALUE=DATE:${formatCompactDate(startDate)}`
-          : (data.tz ? `DTSTART;TZID=${data.tz}:${formatCompact(startDate)}` : `DTSTART:${formatCompact(startDate)}`);
-        const dtEnd = data.allDay
-          ? `DTEND;VALUE=DATE:${formatCompactDate(new Date(endDate.getTime() + 86400000))}`
-          : (data.tz ? `DTEND;TZID=${data.tz}:${formatCompact(endDate)}` : `DTEND:${formatCompact(endDate)}`);
+        if (startRaw) {
+          const trimmed = startRaw.trim();
+          if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+            const parts = trimmed.split('-');
+            startDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 0, 0, 0);
+            isAllDay = true;
+          } else if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(trimmed)) {
+            const [datePart, timePart] = trimmed.split('T');
+            const [y, m, d] = datePart.split('-').map(x => parseInt(x, 10));
+            const [hh, mm] = timePart.split(':').map(x => parseInt(x, 10));
+            startDate = new Date(y, m - 1, d, hh, mm, 0);
+          } else {
+            const parsed = new Date(trimmed);
+            if (!isNaN(parsed.getTime())) {
+              startDate = parsed;
+            }
+          }
+        }
 
-        const icsContent = [
+        if (!startDate) {
+          startDate = new Date();
+          startDate.setMinutes(0, 0, 0);
+          startDate.setHours(startDate.getHours() + 1);
+        }
+
+        let endDate = null;
+        if (endRaw) {
+          const trimmed = endRaw.trim();
+          if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+            const parts = trimmed.split('-');
+            endDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 0, 0, 0);
+          } else if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(trimmed)) {
+            const [datePart, timePart] = trimmed.split('T');
+            const [y, m, d] = datePart.split('-').map(x => parseInt(x, 10));
+            const [hh, mm] = timePart.split(':').map(x => parseInt(x, 10));
+            endDate = new Date(y, m - 1, d, hh, mm, 0);
+          } else {
+            const parsed = new Date(trimmed);
+            if (!isNaN(parsed.getTime())) {
+              endDate = parsed;
+            }
+          }
+        } else if (durRaw) {
+          const mins = parseInt(durRaw, 10);
+          if (!isNaN(mins) && mins > 0) {
+            endDate = new Date(startDate.getTime() + mins * 60000);
+          }
+        }
+
+        if (!endDate) {
+          if (isAllDay) {
+            endDate = new Date(startDate.getTime() + 86400000);
+          } else {
+            endDate = new Date(startDate.getTime() + 3600000);
+          }
+        }
+
+        return { title, desc, loc, url: rawUrl, tz, startDate, endDate, isAllDay };
+      }
+
+      function detectDefaultTimezone() {
+        try {
+          const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+          const now = new Date();
+          const offsetMin = -now.getTimezoneOffset();
+          const sign = offsetMin >= 0 ? '+' : '-';
+          const absMin = Math.abs(offsetMin);
+          const hrs = String(Math.floor(absMin / 60)).padStart(2, '0');
+          const mins = String(absMin % 60).padStart(2, '0');
+          const offsetPrefix = `UTC${sign}${hrs}:${mins}`;
+
+          const datalist = document.getElementById('tzDatalist');
+          if (datalist && datalist.options) {
+            const cityPart = tz ? tz.split('/').pop().replace(/_/g, ' ').toLowerCase() : '';
+            if (cityPart) {
+              for (const opt of datalist.options) {
+                if (opt.value.toLowerCase().includes(cityPart) || opt.textContent.toLowerCase().includes(cityPart)) {
+                  return opt.value;
+                }
+              }
+            }
+            for (const opt of datalist.options) {
+              if (opt.value.startsWith(offsetPrefix)) {
+                return opt.value;
+              }
+            }
+          }
+          return `${offsetPrefix} - ${tz || 'UTC'}`;
+        } catch (e) {
+          return 'UTC+00:00 - London';
+        }
+      }
+
+      function getGoogleCtz(tzStr) {
+        if (!tzStr) return '';
+        const s = tzStr.toLowerCase();
+        if (s.includes('kyiv') || s.includes('kiev')) return 'Europe/Kyiv';
+        if (s.includes('kaliningrad')) return 'Europe/Kaliningrad';
+        if (s.includes('moscow') || s.includes('saint petersburg') || s.includes('spb') || s.includes('msk')) return 'Europe/Moscow';
+        if (s.includes('samara') || s.includes('saratov') || s.includes('izhevsk') || s.includes('ulyanovsk')) return 'Europe/Samara';
+        if (s.includes('yekaterinburg') || s.includes('ekaterinburg') || s.includes('chelyabinsk') || s.includes('ufa') || s.includes('perm') || s.includes('tyumen')) return 'Asia/Yekaterinburg';
+        if (s.includes('omsk')) return 'Asia/Omsk';
+        if (s.includes('novosibirsk') || s.includes('tomsk') || s.includes('barnaul') || s.includes('kemerovo')) return 'Asia/Novosibirsk';
+        if (s.includes('krasnoyarsk')) return 'Asia/Krasnoyarsk';
+        if (s.includes('irkutsk') || s.includes('ulan-ude')) return 'Asia/Irkutsk';
+        if (s.includes('yakutsk') || s.includes('chita') || s.includes('blagoveshchensk')) return 'Asia/Yakutsk';
+        if (s.includes('vladivostok') || s.includes('khabarovsk')) return 'Asia/Vladivostok';
+        if (s.includes('magadan') || s.includes('sakhalin') || s.includes('yuzhno-sakhalinsk')) return 'Asia/Magadan';
+        if (s.includes('kamchatka') || s.includes('petropavlovsk') || s.includes('anadyr')) return 'Asia/Kamchatka';
+        if (s.includes('london')) return 'Europe/London';
+        if (s.includes('berlin') || s.includes('germany')) return 'Europe/Berlin';
+        if (s.includes('paris')) return 'Europe/Paris';
+        if (s.includes('warsaw')) return 'Europe/Warsaw';
+        if (s.includes('new york')) return 'America/New_York';
+        if (s.includes('los angeles')) return 'America/Los_Angeles';
+        if (s.includes('chicago')) return 'America/Chicago';
+        if (s.includes('denver')) return 'America/Denver';
+        if (s.includes('tokyo')) return 'Asia/Tokyo';
+        if (s.includes('dubai')) return 'Asia/Dubai';
+        if (s.includes('singapore')) return 'Asia/Singapore';
+        if (s.includes('hong kong')) return 'Asia/Hong_Kong';
+        if (s.includes('sydney')) return 'Australia/Sydney';
+        if (s.includes('auckland')) return 'Pacific/Auckland';
+        if (s.includes('istanbul')) return 'Europe/Istanbul';
+        if (s.includes('delhi') || s.includes('mumbai') || s.includes('kolkata')) return 'Asia/Kolkata';
+        if (s.includes('almaty') || s.includes('astana')) return 'Asia/Almaty';
+        if (s.includes('tashkent')) return 'Asia/Tashkent';
+        if (s.includes('sao paulo')) return 'America/Sao_Paulo';
+        if (s.includes('toronto')) return 'America/Toronto';
+        if (s.includes('vancouver')) return 'America/Vancouver';
+        if (s.includes('honolulu')) return 'Pacific/Honolulu';
+        if (s.includes('athens')) return 'Europe/Athens';
+        if (s.includes('helsinki')) return 'Europe/Helsinki';
+        if (s.includes('bucharest')) return 'Europe/Bucharest';
+        if (s.includes('cairo')) return 'Africa/Cairo';
+        if (s.includes('rome')) return 'Europe/Rome';
+        if (s.includes('madrid')) return 'Europe/Madrid';
+        if (s.includes('amsterdam')) return 'Europe/Amsterdam';
+        if (s.includes('vienna')) return 'Europe/Vienna';
+        if (s.includes('brussels')) return 'Europe/Brussels';
+        if (s.includes('prague')) return 'Europe/Prague';
+        if (s.includes('seoul')) return 'Asia/Seoul';
+        if (s.includes('beijing') || s.includes('shanghai')) return 'Asia/Shanghai';
+        if (s.includes('bangkok')) return 'Asia/Bangkok';
+        if (s.includes('jakarta')) return 'Asia/Jakarta';
+        if (tzStr.includes('/')) return tzStr;
+        const m = tzStr.match(/UTC\s*([+-]\d+)/i);
+        if (m) {
+          const num = parseInt(m[1], 10);
+          return num === 0 ? 'UTC' : (num > 0 ? `Etc/GMT-${num}` : `Etc/GMT+${Math.abs(num)}`);
+        }
+        return tzStr;
+      }
+
+      function buildGoogleUrl(ev) {
+        const p = new URLSearchParams();
+        p.set('action', 'TEMPLATE');
+        p.set('text', ev.title);
+
+        if (ev.isAllDay) {
+          const nextDay = new Date(ev.startDate.getTime() + 86400000);
+          p.set('dates', `${formatDayCompact(ev.startDate)}/${formatDayCompact(nextDay)}`);
+        } else {
+          p.set('dates', `${formatIsoCompact(ev.startDate)}/${formatIsoCompact(ev.endDate)}`);
+        }
+
+        let details = ev.desc;
+        if (ev.url) {
+          details = details ? `${details}\n\n${ev.url}` : ev.url;
+        }
+        if (details) p.set('details', details);
+        if (ev.loc) p.set('location', ev.loc);
+        if (ev.tz) p.set('ctz', getGoogleCtz(ev.tz));
+
+        return `https://calendar.google.com/calendar/render?${p.toString()}`;
+      }
+
+      function buildOutlookUrl(ev, isOffice365 = false) {
+        const base = isOffice365
+          ? 'https://outlook.office.com/calendar/0/deeplink/compose'
+          : 'https://outlook.live.com/calendar/0/deeplink/compose';
+
+        const p = new URLSearchParams();
+        p.set('path', '/calendar/action/compose');
+        p.set('rru', 'addevent');
+        p.set('subject', ev.title);
+
+        if (ev.isAllDay) {
+          p.set('allday', 'true');
+          p.set('startdt', ev.startDate.toISOString().split('T')[0]);
+          p.set('enddt', ev.endDate.toISOString().split('T')[0]);
+        } else {
+          p.set('startdt', ev.startDate.toISOString());
+          p.set('enddt', ev.endDate.toISOString());
+        }
+
+        let body = ev.desc;
+        if (ev.url) body = body ? `${body}\n\n${ev.url}` : ev.url;
+        if (body) p.set('body', body);
+        if (ev.loc) p.set('location', ev.loc);
+
+        return `${base}?${p.toString()}`;
+      }
+
+      function generateIcs(ev) {
+        function escapeIcs(str) {
+          if (!str) return '';
+          return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+        }
+
+        const now = new Date();
+        const stamp = formatIsoCompact(now);
+        const uid = `cf-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@calendarfactory.pages.dev`;
+
+        let dtStart = '';
+        let dtEnd = '';
+        if (ev.isAllDay) {
+          dtStart = `DTSTART;VALUE=DATE:${formatDayCompact(ev.startDate)}`;
+          dtEnd = `DTEND;VALUE=DATE:${formatDayCompact(ev.endDate)}`;
+        } else {
+          dtStart = `DTSTART:${formatIsoCompact(ev.startDate)}`;
+          dtEnd = `DTEND:${formatIsoCompact(ev.endDate)}`;
+        }
+
+        let fullDesc = ev.desc;
+        if (ev.url) fullDesc = fullDesc ? `${fullDesc}\\n\\n${ev.url}` : ev.url;
+
+        return [
           'BEGIN:VCALENDAR',
           'VERSION:2.0',
-          'PRODID:-//CalendarFactory//EN',
+          'PRODID:-//CalendarFactory//CalendarFactory Edge Link//EN',
           'CALSCALE:GREGORIAN',
           'METHOD:PUBLISH',
           'BEGIN:VEVENT',
-          `UID:${Date.now()}-${Math.random().toString(36).substr(2, 9)}@calendarfactory`,
-          `DTSTAMP:${nowStr}`,
+          `UID:${uid}`,
+          `DTSTAMP:${stamp}`,
           dtStart,
           dtEnd,
-          `SUMMARY:${escapeIcs(data.title)}`,
-          data.desc ? `DESCRIPTION:${escapeIcs(data.desc)}` : '',
-          data.loc ? `LOCATION:${escapeIcs(data.loc)}` : '',
+          `SUMMARY:${escapeIcs(ev.title)}`,
+          fullDesc ? `DESCRIPTION:${escapeIcs(fullDesc)}` : '',
+          ev.loc ? `LOCATION:${escapeIcs(ev.loc)}` : '',
+          ev.url ? `URL:${ev.url}` : '',
           'STATUS:CONFIRMED',
           'END:VEVENT',
           'END:VCALENDAR'
         ].filter(Boolean).join('\r\n');
+      }
 
-        return {
-          startDate,
-          endDate,
-          google: gUrl.toString(),
-          outlook: outUrl.toString(),
-          office365: o365Url.toString(),
-          icsContent
+      function downloadIcsFile(ev) {
+        const icsContent = generateIcs(ev);
+        const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const safeTitle = (ev.title || 'event').replace(/[^a-z0-9_-]/gi, '_').toLowerCase();
+        link.setAttribute('download', `${safeTitle}.ics`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      }
+
+      function showToast(msg) {
+        const dict = I18N[currentLang] || I18N.en;
+        const toast = document.getElementById('toast');
+        toast.textContent = msg || dict.toastCopied;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2000);
+      }
+
+      // Check whether URL has event parameters
+      const hasCoreParams = ['title', 't', 'start', 's', 'date', 'dt'].some(k => allParams[k] !== undefined);
+
+      // Initialize translations
+      applyTranslations(currentLang);
+
+      // Header language dropdown interactions
+      const langDropdown = document.getElementById('langDropdown');
+      const langTrigger = document.getElementById('langTrigger');
+      if (langTrigger && langDropdown) {
+        langTrigger.addEventListener('click', function (e) {
+          e.stopPropagation();
+          const isOpen = langDropdown.classList.toggle('open');
+          langTrigger.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        });
+
+        document.addEventListener('click', function (e) {
+          if (!langDropdown.contains(e.target)) {
+            langDropdown.classList.remove('open');
+            langTrigger.setAttribute('aria-expanded', 'false');
+          }
+        });
+
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape') {
+            langDropdown.classList.remove('open');
+            langTrigger.setAttribute('aria-expanded', 'false');
+          }
+        });
+      }
+
+      document.querySelectorAll('.lang-item').forEach(btn => {
+        btn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          const selected = this.getAttribute('data-lang');
+          if (selected && selected !== currentLang) {
+            applyTranslations(selected);
+            if (hasCoreParams) {
+              renderViewMode();
+            } else {
+              updateGeneratedLinks();
+            }
+          }
+          if (langDropdown) {
+            langDropdown.classList.remove('open');
+            if (langTrigger) langTrigger.setAttribute('aria-expanded', 'false');
+          }
+        });
+      });
+
+      // Brand link resets or reloads with current language & theme
+      const brandLink = document.getElementById('brandLink');
+      if (brandLink) {
+        brandLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          const p = new URLSearchParams();
+          if (currentLang) p.set('lang', currentLang);
+          if (currentTheme === 'dark') p.set('theme', 'dark');
+          const qs = p.toString();
+          window.location.href = `${window.location.pathname}${qs ? '?' + qs : ''}`;
+        });
+      }
+
+      function renderViewMode() {
+        const dict = I18N[currentLang] || I18N.en;
+        const ev = parseEventParams();
+        document.getElementById('eventTitle').textContent = ev.title;
+
+        // Date & Time formatting according to current language
+        const localeCode = currentLang === 'ua' ? 'uk-UA' : currentLang === 'ru' ? 'ru-RU' : 'en-US';
+        const dateOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
+        const timeOptions = { hour: '2-digit', minute: '2-digit' };
+        let dtText = '';
+
+        if (ev.isAllDay) {
+          dtText = `${ev.startDate.toLocaleDateString(localeCode, dateOptions)} ${dict.viewAllDay}`;
+        } else {
+          const dateStr = ev.startDate.toLocaleDateString(localeCode, dateOptions);
+          const startStr = ev.startDate.toLocaleTimeString(localeCode, timeOptions);
+          const endStr = ev.endDate.toLocaleTimeString(localeCode, timeOptions);
+          dtText = `${dateStr} · ${startStr} – ${endStr}`;
+        }
+        document.getElementById('eventDateTime').textContent = dtText;
+
+        const tzEl = document.getElementById('eventTimezone');
+        if (ev.tz) {
+          tzEl.textContent = `${dict.viewTzPrefix} ${ev.tz}`;
+        } else {
+          try {
+            const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            tzEl.textContent = detectedTz ? `${dict.viewTzPrefix} ${detectedTz}` : '';
+          } catch (e) {
+            tzEl.textContent = '';
+          }
+        }
+
+        if (ev.loc) {
+          const locRow = document.getElementById('locRow');
+          const locEl = document.getElementById('eventLoc');
+          locRow.classList.remove('hidden');
+          if (/^https?:\/\//i.test(ev.loc)) {
+            locEl.innerHTML = `<a href="${ev.loc}" target="_blank" rel="noopener noreferrer">${ev.loc}</a>`;
+          } else {
+            locEl.textContent = ev.loc;
+          }
+        }
+
+        if (ev.desc || ev.url) {
+          const descRow = document.getElementById('descRow');
+          const descEl = document.getElementById('eventDesc');
+          descRow.classList.remove('hidden');
+
+          let combined = ev.desc;
+          if (ev.url) {
+            combined = combined ? `${combined}\n\n${ev.url}` : ev.url;
+          }
+          descEl.textContent = combined;
+        }
+
+        // Calendar link bindings
+        document.getElementById('btnGoogle').href = buildGoogleUrl(ev);
+        document.getElementById('btnOutlook').href = buildOutlookUrl(ev, false);
+
+        document.getElementById('btnApple').onclick = function () {
+          downloadIcsFile(ev);
+        };
+        document.getElementById('btnIcs').onclick = function () {
+          downloadIcsFile(ev);
+        };
+
+        document.getElementById('btnCopyLink').onclick = function () {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(window.location.href).then(() => showToast(dict.toastCopied));
+          } else {
+            showToast('Press Cmd+C to copy URL');
+          }
+        };
+
+        document.getElementById('btnEditLink').onclick = function () {
+          const p = new URLSearchParams();
+          if (currentLang) p.set('lang', currentLang);
+          if (currentTheme === 'dark') p.set('theme', 'dark');
+          if (customBgColor) {
+            const clean = customBgColor.replace(/^#/, '').toLowerCase();
+            const isDefaultLight = (currentTheme === 'light' && (clean === 'ffffff' || clean === 'fff'));
+            const isDefaultDark = (currentTheme === 'dark' && (clean === '1f1f21'));
+            if (!isDefaultLight && !isDefaultDark) p.set('c', clean);
+          }
+          const qs = p.toString();
+          window.location.href = `${window.location.pathname}${qs ? '?' + qs : ''}`;
         };
       }
 
-      function downloadIcsBlob(title, icsString) {
-        const blob = new Blob([icsString], { type: 'text/calendar;charset=utf-8' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${title.toLowerCase().replace(/[^a-z0-9]/g, '-') || 'event'}.ics`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
+      // --- CONSTRUCTOR / FORM MODE LOGIC ---
+      const inputTitle = document.getElementById('inputTitle');
+      const inputDate = document.getElementById('inputDate');
+      const inputTime = document.getElementById('inputTime');
+      const inputDuration = document.getElementById('inputDuration');
+      const inputLocation = document.getElementById('inputLocation');
+      const inputDescription = document.getElementById('inputDescription');
+      const inputExtraProps = document.getElementById('inputExtraProps');
+      const inputTimezone = document.getElementById('inputTimezone');
+      const inputColor = document.getElementById('inputColor');
+
+      const outMainUrl = document.getElementById('outMainUrl');
+      const btnCopyMain = document.getElementById('btnCopyMain');
+      const btnPreviewMain = document.getElementById('btnPreviewMain');
+      const linkOpenGoogle = document.getElementById('linkOpenGoogle');
+      const linkOpenOutlook = document.getElementById('linkOpenOutlook');
+      const linkOpenApple = document.getElementById('linkOpenApple');
+      const btnDownloadIcsDirect = document.getElementById('btnDownloadIcsDirect');
+      const descCharCount = document.getElementById('descCharCount');
+      const descLimitError = document.getElementById('descLimitError');
+      const fieldDescWrap = document.getElementById('fieldDescWrap');
+
+      const MAX_SAFE_URL_LENGTH = 2000;
+
+      function getCurrentFormEvent() {
+        const title = inputTitle ? inputTitle.value.trim() : '';
+        const dateVal = inputDate ? inputDate.value : '';
+        const timeVal = inputTime ? inputTime.value || '10:00' : '10:00';
+        const durVal = inputDuration ? inputDuration.value : '60';
+        const loc = inputLocation ? inputLocation.value.trim() : '';
+        const desc = inputDescription ? inputDescription.value.trim() : '';
+        const tz = inputTimezone ? inputTimezone.value.trim() : '';
+
+        const isAllDay = durVal === 'allDay';
+        let startDate = null;
+        let endDate = null;
+
+        if (dateVal) {
+          const [y, m, d] = dateVal.split('-').map(x => parseInt(x, 10));
+          if (isAllDay) {
+            startDate = new Date(y, m - 1, d, 0, 0, 0);
+            endDate = new Date(y, m - 1, d + 1, 0, 0, 0);
+          } else {
+            const [hh, mm] = timeVal.split(':').map(x => parseInt(x, 10));
+            startDate = new Date(y, m - 1, d, hh, mm, 0);
+            const durMins = parseInt(durVal, 10) || 60;
+            endDate = new Date(startDate.getTime() + durMins * 60000);
+          }
+        } else {
+          startDate = new Date();
+          endDate = new Date(startDate.getTime() + 3600000);
+        }
+
+        return { title, desc, loc, url: '', tz, startDate, endDate, isAllDay };
       }
 
-      const params = getParams();
+      function updateGeneratedLinks() {
+        if (!inputTitle) return;
+        const title = inputTitle.value.trim();
+        const dateVal = inputDate.value;
+        const timeVal = inputTime.value || '10:00';
+        const durVal = inputDuration.value;
+        const loc = inputLocation.value.trim();
+        const desc = inputDescription.value.trim();
+        const extraProps = inputExtraProps.value.trim();
+        const tz = inputTimezone.value.trim();
+        const color = inputColor.value.trim();
+        const dict = I18N[currentLang] || I18N.en;
 
-      if (params) {
-        document.getElementById('viewMode').classList.remove('hidden');
+        const p = new URLSearchParams();
+        if (title) p.set('title', title);
 
-        const calData = buildCalendarUrls(params);
-
-        document.getElementById('eventTitle').textContent = params.title;
-        document.title = `${params.title} (CalendarFactory)`;
-
-        const dtOptions = params.allDay
-          ? { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }
-          : { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-        
-        let dtString = calData.startDate.toLocaleDateString(undefined, dtOptions);
-        if (!params.allDay) {
-          const endTimeStr = calData.endDate.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' });
-          dtString += `, ${endTimeStr}`;
-        }
-        document.getElementById('eventDateTime').textContent = dtString;
-        document.getElementById('eventTimezone').textContent = params.allDay ? 'All day event' : (params.tz || Intl.DateTimeFormat().resolvedOptions().timeZone || 'Local time');
-
-        if (params.loc) {
-          const locEl = document.getElementById('eventLoc');
-          if (params.loc.startsWith('http://') || params.loc.startsWith('https://')) {
-            locEl.innerHTML = `<a href="${encodeURI(params.loc)}" target="_blank" rel="noopener noreferrer">${escapeHtml(params.loc)}</a>`;
+        if (dateVal) {
+          if (durVal === 'allDay') {
+            p.set('start', dateVal);
           } else {
-            locEl.textContent = params.loc;
+            p.set('start', `${dateVal}T${timeVal}`);
+            if (durVal !== '60') {
+              p.set('duration', durVal);
+            }
           }
-          document.getElementById('locRow').classList.remove('hidden');
         }
 
-        if (params.desc) {
-          document.getElementById('eventDesc').textContent = params.desc;
-          document.getElementById('descRow').classList.remove('hidden');
+        if (loc) p.set('loc', loc);
+        if (desc) p.set('desc', desc);
+        const shortUtc = formatUtcParam(tz);
+        if (shortUtc) p.set('utc', shortUtc);
+        if (currentTheme === 'dark') {
+          p.set('theme', 'dark');
         }
 
-        document.getElementById('btnGoogle').href = calData.google;
-        document.getElementById('btnOutlook').href = calData.outlook;
-        document.getElementById('btnApple').addEventListener('click', () => downloadIcsBlob(params.title, calData.icsContent));
-        document.getElementById('btnIcs').addEventListener('click', () => downloadIcsBlob(params.title, calData.icsContent));
-
-        document.getElementById('btnCopyLink').addEventListener('click', () => {
-          if (navigator.clipboard) {
-            navigator.clipboard.writeText(window.location.href).then(() => {
-              showToast('Link copied');
-            });
+        if (color) {
+          const cleanColor = color.replace(/^#/, '').toLowerCase();
+          const isDefaultLight = (currentTheme === 'light' && (cleanColor === 'ffffff' || cleanColor === 'fff'));
+          const isDefaultDark = (currentTheme === 'dark' && (cleanColor === '1f1f21'));
+          if (cleanColor && !isDefaultLight && !isDefaultDark) {
+            p.set('c', cleanColor);
           }
-        });
+        }
 
-        document.getElementById('btnEditLink').addEventListener('click', () => {
-          window.location.href = window.location.pathname;
-        });
+        // Include chosen language in shareable URL
+        p.set('lang', currentLang);
 
+        let finalUrl = `${window.location.origin}${window.location.pathname}?${p.toString()}`;
+
+        if (extraProps) {
+          const pairs = extraProps.split(/[&,]/);
+          for (const pair of pairs) {
+            const [k, v] = pair.split('=').map(x => x.trim());
+            if (k && v) {
+              finalUrl += `&${encodeURIComponent(k)}=${encodeURIComponent(v)}`;
+            }
+          }
+        }
+
+        const urlLength = finalUrl.length;
+        const isOverLimit = urlLength > MAX_SAFE_URL_LENGTH;
+
+        if (descCharCount) {
+          if (isOverLimit) {
+            const over = urlLength - MAX_SAFE_URL_LENGTH;
+            descCharCount.textContent = `${desc.length} ${dict.charCountOver.replace('{n}', over)}`;
+          } else {
+            const remaining = MAX_SAFE_URL_LENGTH - urlLength;
+            descCharCount.textContent = `${desc.length} ${dict.charCountRemaining.replace('{n}', Math.max(0, remaining))}`;
+          }
+        }
+
+        if (fieldDescWrap) {
+          if (isOverLimit) {
+            fieldDescWrap.classList.add('has-error');
+          } else {
+            fieldDescWrap.classList.remove('has-error');
+          }
+        }
+
+        if (descLimitError) {
+          if (isOverLimit) {
+            descLimitError.textContent = dict.descLimitError;
+            descLimitError.classList.remove('hidden');
+          } else {
+            descLimitError.classList.add('hidden');
+          }
+        }
+
+        outMainUrl.dataset.urlLen = urlLength;
+
+        if (!title || isOverLimit) {
+          outMainUrl.value = '';
+          btnPreviewMain.removeAttribute('href');
+          return;
+        }
+
+        outMainUrl.value = finalUrl;
+        btnPreviewMain.href = finalUrl;
+
+      }
+
+      function buildAppleUrl() {
+        const title = inputTitle ? inputTitle.value.trim() : '';
+        const dateVal = inputDate ? inputDate.value : '';
+        const timeVal = inputTime ? inputTime.value || '10:00' : '10:00';
+        const durVal = inputDuration ? inputDuration.value : '60';
+        const loc = inputLocation ? inputLocation.value.trim() : '';
+        const desc = inputDescription ? inputDescription.value.trim() : '';
+
+        const p = new URLSearchParams();
+        if (title) p.set('title', title);
+        if (dateVal) {
+          if (durVal === 'allDay') {
+            p.set('start', dateVal);
+            p.set('duration', 'allDay');
+          } else {
+            p.set('start', `${dateVal}T${timeVal}`);
+            if (durVal !== '60') p.set('duration', durVal);
+          }
+        }
+        if (loc) p.set('loc', loc);
+        if (desc) p.set('desc', desc);
+        return `${window.location.origin}/event.ics?${p.toString()}`;
+      }
+
+      const siteHeader = document.querySelector('.site-header');
+      const topCornerControls = document.querySelector('.top-corner-controls');
+      const footerLinks = document.querySelector('.footer-links');
+
+      if (hasCoreParams) {
+        document.getElementById('viewMode').classList.remove('hidden');
+        document.getElementById('formMode').classList.add('hidden');
+        if (siteHeader) siteHeader.classList.add('hidden');
+        if (topCornerControls) topCornerControls.classList.add('hidden');
+        if (footerLinks) footerLinks.classList.add('hidden');
+        renderViewMode();
       } else {
         document.getElementById('formMode').classList.remove('hidden');
-        document.getElementById('appContainer').classList.add('wide');
+        document.getElementById('viewMode').classList.add('hidden');
+        if (siteHeader) siteHeader.classList.remove('hidden');
+        if (topCornerControls) topCornerControls.classList.remove('hidden');
+        if (footerLinks) footerLinks.classList.remove('hidden');
 
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const yyyy = tomorrow.getFullYear();
-        const mm = String(tomorrow.getMonth() + 1).padStart(2, '0');
-        const dd = String(tomorrow.getDate()).padStart(2, '0');
-        document.getElementById('inputDate').value = `${yyyy}-${mm}-${dd}`;
-        document.getElementById('inputTimezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+        // Form fields default empty, except Duration (60 mins = 1 hour) and Time (10:00)
+        inputTitle.value = getVal(['title', 't']) || '';
 
-        const colorPicker = document.getElementById('inputColorPicker');
-        const colorInput = document.getElementById('inputColor');
-        colorPicker.addEventListener('input', () => {
-          colorInput.value = colorPicker.value.replace('#', '');
-          updateOutputs();
-        });
-        colorInput.addEventListener('input', () => {
-          if (/^[0-9a-fA-F]{6}$/.test(colorInput.value.trim())) {
-            colorPicker.value = '#' + colorInput.value.trim();
+        const startVal = getVal(['start', 's', 'date', 'dt']);
+        if (startVal) {
+          const dateOnly = startVal.split('T')[0];
+          if (/^\d{4}-\d{2}-\d{2}$/.test(dateOnly)) {
+            inputDate.value = dateOnly;
           }
-          updateOutputs();
-        });
-
-        let currentIcsString = '';
-        let currentTitle = 'event';
-
-        function updateOutputs() {
-          const title = document.getElementById('inputTitle').value.trim() || 'Event';
-          const date = document.getElementById('inputDate').value;
-          const time = document.getElementById('inputTime').value || '15:00';
-          const duration = document.getElementById('inputDuration').value;
-          const loc = document.getElementById('inputLocation').value.trim();
-          let desc = document.getElementById('inputDescription').value.trim();
-          const extraPropsStr = document.getElementById('inputExtraProps').value.trim();
-          const tz = document.getElementById('inputTimezone').value.trim();
-          const color = colorInput.value.trim();
-
-          const isAllDay = duration === 'allDay';
-          const startVal = isAllDay ? date : `${date}T${time}`;
-
-          const extraMap = {};
-          if (extraPropsStr) {
-            const pairs = extraPropsStr.split('&');
-            for (const p of pairs) {
-              const [k, v] = p.split('=');
-              if (k && v !== undefined) {
-                extraMap[k.trim()] = decodeURIComponent(v.trim());
-              }
-            }
-          }
-
-          const mainUrl = new URL(window.location.origin + window.location.pathname);
-          mainUrl.search = '';
-          mainUrl.hash = '';
-          mainUrl.searchParams.set('title', title);
-          mainUrl.searchParams.set('start', startVal);
-
-          if (isAllDay) {
-            mainUrl.searchParams.set('allDay', '1');
-          } else {
-            mainUrl.searchParams.set('duration', duration);
-          }
-          if (loc) mainUrl.searchParams.set('loc', loc);
-          if (desc) mainUrl.searchParams.set('desc', desc);
-          if (tz) mainUrl.searchParams.set('tz', tz);
-          if (color) mainUrl.searchParams.set('c', color.replace('#', ''));
-
-          for (const [k, v] of Object.entries(extraMap)) {
-            mainUrl.searchParams.set(k, v);
-          }
-
-          const computedDesc = replacePlaceholders(desc, extraMap);
-          const computedTitle = replacePlaceholders(title, extraMap);
-          const computedLoc = replacePlaceholders(loc, extraMap);
-
-          const calData = buildCalendarUrls({
-            title: computedTitle,
-            start: startVal,
-            duration: isAllDay ? 60 : parseInt(duration, 10),
-            desc: computedDesc,
-            loc: computedLoc,
-            tz,
-            allDay: isAllDay
-          });
-
-          currentIcsString = calData.icsContent;
-          currentTitle = computedTitle;
-
-          document.getElementById('outMainUrl').value = mainUrl.toString();
-          document.getElementById('btnPreviewMain').href = mainUrl.toString();
-
-          document.getElementById('outGoogleUrl').value = calData.google;
-          document.getElementById('linkOpenGoogle').href = calData.google;
-
-          document.getElementById('outOutlookUrl').value = calData.outlook;
-          document.getElementById('linkOpenOutlook').href = calData.outlook;
-
-          document.getElementById('outOffice365Url').value = calData.office365;
-          document.getElementById('linkOpenOffice365').href = calData.office365;
+        } else {
+          inputDate.value = '';
         }
 
-        const formInputs = document.querySelectorAll('#generatorForm input, #generatorForm select, #generatorForm textarea');
-        formInputs.forEach(el => {
-          el.addEventListener('input', updateOutputs);
-          el.addEventListener('change', updateOutputs);
-        });
-
-        document.querySelectorAll('.btn-copy').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const targetId = btn.getAttribute('data-target');
-            const targetInput = document.getElementById(targetId);
-            if (targetInput && targetInput.value) {
-              if (navigator.clipboard) {
-                navigator.clipboard.writeText(targetInput.value).then(() => {
-                  const originalHtml = btn.innerHTML;
-                  btn.classList.add('copied');
-                  btn.textContent = 'Copied';
-                  showToast('Copied to clipboard');
-                  setTimeout(() => {
-                    btn.classList.remove('copied');
-                    btn.innerHTML = originalHtml;
-                  }, 1800);
-                });
-              } else {
-                targetInput.select();
-                document.execCommand('copy');
-                showToast('Copied to clipboard');
-              }
-            }
-          });
-        });
-
-        document.getElementById('btnDownloadIcsDirect').addEventListener('click', () => {
-          if (currentIcsString) {
-            downloadIcsBlob(currentTitle, currentIcsString);
+        if (startVal && startVal.includes('T')) {
+          const timeOnly = startVal.split('T')[1]?.slice(0, 5);
+          if (/^\d{2}:\d{2}$/.test(timeOnly)) {
+            inputTime.value = timeOnly;
           }
+        } else {
+          inputTime.value = '10:00';
+        }
+
+        inputDuration.value = getVal(['duration', 'dur']) || '60';
+
+        const rawUtc = getVal(['utc', 'u']);
+        if (rawUtc) {
+          inputTimezone.value = expandUtcParam(rawUtc);
+        } else if (getVal(['timezone', 'tz'])) {
+          inputTimezone.value = getVal(['timezone', 'tz']);
+        } else {
+          inputTimezone.value = '';
+        }
+
+        const inputColorPicker = document.getElementById('inputColorPicker');
+        const btnThemeToggle = document.getElementById('btnThemeToggle');
+
+        if (inputColorPicker && inputColor) {
+          if (customBgColor) {
+            let parsed = customBgColor.trim();
+            if (/^[0-9a-fA-F]{3,8}$/.test(parsed)) parsed = '#' + parsed;
+            inputColor.value = customBgColor;
+            if (/^#[0-9a-fA-F]{6}$/i.test(parsed)) {
+              inputColorPicker.value = parsed;
+            }
+          } else {
+            inputColorPicker.value = (currentTheme === 'dark') ? '#1f1f21' : '#ffffff';
+          }
+
+          inputColorPicker.addEventListener('input', function () {
+            inputColor.value = this.value;
+            applyBackgroundColor(this.value);
+            updateGeneratedLinks();
+          });
+
+          inputColor.addEventListener('input', function () {
+            const val = this.value.trim();
+            applyBackgroundColor(val);
+            let hex = val;
+            if (!hex.startsWith('#') && /^[0-9a-fA-F]{6}$/.test(hex)) {
+              hex = '#' + hex;
+            }
+            if (/^#[0-9a-fA-F]{6}$/i.test(hex)) {
+              inputColorPicker.value = hex;
+            } else if (!val) {
+              inputColorPicker.value = (currentTheme === 'dark') ? '#1f1f21' : '#ffffff';
+            }
+            updateGeneratedLinks();
+          });
+        }
+
+        const toggleTheme = document.getElementById('toggleTheme');
+        if (toggleTheme) {
+          toggleTheme.checked = (currentTheme === 'dark');
+          toggleTheme.addEventListener('change', function () {
+            applyTheme(this.checked ? 'dark' : 'light');
+            if (inputColor && !inputColor.value.trim() && inputColorPicker) {
+              inputColorPicker.value = (currentTheme === 'dark') ? '#1f1f21' : '#ffffff';
+            }
+            updateGeneratedLinks();
+          });
+        }
+
+        const allInputs = [
+          inputTitle, inputDate, inputTime, inputDuration,
+          inputLocation, inputDescription, inputExtraProps,
+          inputTimezone, inputColor
+        ];
+
+        allInputs.forEach(el => {
+          if (!el) return;
+          el.addEventListener('input', updateGeneratedLinks);
+          el.addEventListener('change', updateGeneratedLinks);
         });
 
-        updateOutputs();
-      }
+        if (inputTimezone) {
+          inputTimezone.addEventListener('click', function () {
+            try {
+              if (typeof this.showPicker === 'function') {
+                this.showPicker();
+              }
+            } catch (err) {}
+          });
+        }
 
-      function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
+        btnDownloadIcsDirect.onclick = function () {
+          const dict = I18N[currentLang] || I18N.en;
+          if (!inputTitle.value.trim()) {
+            inputTitle.focus();
+            if (inputTitle.reportValidity) inputTitle.reportValidity();
+            showToast(dict.toastTitleRequired);
+            return;
+          }
+          const currentLen = parseInt(outMainUrl.dataset.urlLen || '0', 10);
+          if (currentLen > MAX_SAFE_URL_LENGTH) {
+            showToast(dict.toastUrlExceeded);
+            return;
+          }
+          const ev = getCurrentFormEvent();
+          downloadIcsFile(ev);
+        };
+
+        let chipTooltipTimer = null;
+        function showChipTooltip(btn, msg) {
+          if (!btn) return;
+          let tip = btn.querySelector('.chip-tooltip');
+          if (!tip) {
+            tip = document.createElement('span');
+            tip.className = 'chip-tooltip';
+            tip.setAttribute('role', 'status');
+            btn.appendChild(tip);
+          }
+          const dict = I18N[currentLang] || I18N.en;
+          tip.textContent = msg || dict.tooltipCopied || 'Ссылка скопирована!';
+          tip.classList.remove('show');
+          void tip.offsetWidth;
+          tip.classList.add('show');
+
+          if (chipTooltipTimer) clearTimeout(chipTooltipTimer);
+          chipTooltipTimer = setTimeout(() => {
+            tip.classList.remove('show');
+          }, 1800);
+        }
+
+        function copyChipLink(getUrlFn, btn) {
+          const dict = I18N[currentLang] || I18N.en;
+          if (!inputTitle.value.trim()) {
+            inputTitle.focus();
+            if (inputTitle.reportValidity) inputTitle.reportValidity();
+            showToast(dict.toastTitleRequired);
+            return;
+          }
+          const currentLen = parseInt(outMainUrl.dataset.urlLen || '0', 10);
+          if (currentLen > MAX_SAFE_URL_LENGTH) {
+            showToast(dict.toastUrlExceeded);
+            return;
+          }
+          const url = getUrlFn();
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(() => {
+              showToast(dict.toastCopied);
+              showChipTooltip(btn, dict.tooltipCopied);
+            }).catch(() => {
+              showToast(dict.toastCopied);
+              showChipTooltip(btn, dict.tooltipCopied);
+            });
+          } else {
+            showToast(dict.toastCopied);
+            showChipTooltip(btn, dict.tooltipCopied);
+          }
+        }
+
+        if (linkOpenGoogle) {
+          linkOpenGoogle.onclick = function (e) {
+            if (e) e.preventDefault();
+            const ev = getCurrentFormEvent();
+            copyChipLink(() => buildGoogleUrl(ev), linkOpenGoogle);
+          };
+        }
+
+        if (linkOpenOutlook) {
+          linkOpenOutlook.onclick = function (e) {
+            if (e) e.preventDefault();
+            const ev = getCurrentFormEvent();
+            copyChipLink(() => buildOutlookUrl(ev, false), linkOpenOutlook);
+          };
+        }
+
+        if (linkOpenApple) {
+          linkOpenApple.onclick = function (e) {
+            if (e) e.preventDefault();
+            copyChipLink(() => buildAppleUrl(), linkOpenApple);
+          };
+        }
+
+        btnCopyMain.onclick = function () {
+          const dict = I18N[currentLang] || I18N.en;
+          if (!inputTitle.value.trim()) {
+            inputTitle.focus();
+            if (inputTitle.reportValidity) inputTitle.reportValidity();
+            showToast(dict.toastTitleRequired);
+            return;
+          }
+          const currentLen = parseInt(outMainUrl.dataset.urlLen || '0', 10);
+          if (currentLen > MAX_SAFE_URL_LENGTH) {
+            showToast(dict.toastUrlExceeded);
+            return;
+          }
+          outMainUrl.select();
+          const labelSpan = document.getElementById('txtBtnCopyMain');
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(outMainUrl.value).then(() => {
+              showToast(dict.toastCopied);
+              if (labelSpan) {
+                const prev = labelSpan.textContent;
+                labelSpan.textContent = dict.copiedBtn;
+                setTimeout(() => { labelSpan.textContent = prev; }, 1500);
+              }
+            });
+          } else {
+            document.execCommand('copy');
+            showToast(dict.toastCopied);
+          }
+        };
+
+        const linkFooterDocs = document.getElementById('linkFooterDocs');
+        if (linkFooterDocs) {
+          linkFooterDocs.addEventListener('click', function (e) {
+            e.preventDefault();
+            const p = new URLSearchParams();
+            if (currentLang) p.set('lang', currentLang);
+            if (currentTheme === 'dark') p.set('theme', 'dark');
+            if (customBgColor) {
+              const clean = customBgColor.replace(/^#/, '').toLowerCase();
+              const isDefaultLight = (currentTheme === 'light' && (clean === 'ffffff' || clean === 'fff'));
+              const isDefaultDark = (currentTheme === 'dark' && (clean === '1f1f21'));
+              if (!isDefaultLight && !isDefaultDark) p.set('c', clean);
+            }
+            const qs = p.toString();
+            window.location.href = `docs.html${qs ? '?' + qs : ''}`;
+          });
+        }
+
+        updateGeneratedLinks();
       }
     })();
   </script>
