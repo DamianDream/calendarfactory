@@ -1206,11 +1206,71 @@ body[data-theme="dark"] .toast {
         }
       };
 
-      const queryParams = new URLSearchParams(window.location.search);
-      let currentLang = queryParams.get('lang') || 'ru';
-      if (!['en', 'ru', 'ua'].includes(currentLang)) currentLang = 'ru';
+      // Helpers for persistent cookies & localStorage
+      function getCookie(name) {
+        try {
+          const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+          return match ? decodeURIComponent(match[1]) : null;
+        } catch (e) {
+          return null;
+        }
+      }
 
-      let currentTheme = queryParams.get('theme') === 'dark' ? 'dark' : 'light';
+      function setCookie(name, value, days = 365) {
+        try {
+          const maxAge = days * 24 * 60 * 60;
+          document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+          localStorage.setItem(name, value);
+        } catch (e) {}
+      }
+
+      function getSavedLang() {
+        const cookieVal = getCookie('cf_lang');
+        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua')) return cookieVal;
+        try {
+          const localVal = localStorage.getItem('cf_lang');
+          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua')) return localVal;
+        } catch (e) {}
+        return null;
+      }
+
+      function getSavedTheme() {
+        const cookieVal = getCookie('cf_theme');
+        if (cookieVal === 'dark' || cookieVal === 'light') return cookieVal;
+        try {
+          const localVal = localStorage.getItem('cf_theme');
+          if (localVal === 'dark' || localVal === 'light') return localVal;
+        } catch (e) {}
+        return null;
+      }
+
+      const queryParams = new URLSearchParams(window.location.search);
+      const urlLang = (queryParams.get('lang') || '').toLowerCase();
+      let currentLang = 'en';
+      if (['en', 'ru', 'ua'].includes(urlLang)) {
+        currentLang = urlLang;
+      } else {
+        const savedLang = getSavedLang();
+        if (savedLang) {
+          currentLang = savedLang;
+        } else {
+          const navLang = (navigator.language || '').toLowerCase();
+          if (navLang.startsWith('uk')) currentLang = 'ua';
+          else if (navLang.startsWith('ru') || navLang.startsWith('be')) currentLang = 'ru';
+          else currentLang = 'en';
+        }
+      }
+
+      const rawTheme = (queryParams.get('theme') || '').toLowerCase();
+      let currentTheme = 'light';
+      if (rawTheme === 'dark') {
+        currentTheme = 'dark';
+      } else if (rawTheme === 'light') {
+        currentTheme = 'light';
+      } else {
+        const savedTheme = getSavedTheme();
+        if (savedTheme) currentTheme = savedTheme;
+      }
       let customColor = queryParams.get('c') || queryParams.get('color') || '';
 
       function applyTheme(theme) {
@@ -1348,7 +1408,9 @@ body[data-theme="dark"] .toast {
       if (toggleTheme) {
         toggleTheme.checked = (currentTheme === 'dark');
         toggleTheme.addEventListener('change', function () {
-          applyTheme(this.checked ? 'dark' : 'light');
+          const nextTheme = this.checked ? 'dark' : 'light';
+          applyTheme(nextTheme);
+          setCookie('cf_theme', nextTheme);
           applyTranslations(currentLang);
         });
       }
@@ -1374,6 +1436,7 @@ body[data-theme="dark"] .toast {
           e.stopPropagation();
           const selected = this.getAttribute('data-lang');
           if (selected) {
+            setCookie('cf_lang', selected);
             applyTranslations(selected);
           }
           if (langDropdown) {

@@ -1937,12 +1937,54 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         return null;
       }
 
-      // Detect language from URL param (lang= or l=) or browser navigator
+      // Helpers for persistent cookies & localStorage
+      function getCookie(name) {
+        try {
+          const match = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]*)'));
+          return match ? decodeURIComponent(match[1]) : null;
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function setCookie(name, value, days = 365) {
+        try {
+          const maxAge = days * 24 * 60 * 60;
+          document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax`;
+          localStorage.setItem(name, value);
+        } catch (e) {}
+      }
+
+      function getSavedLang() {
+        const cookieVal = getCookie('cf_lang');
+        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua')) return cookieVal;
+        try {
+          const localVal = localStorage.getItem('cf_lang');
+          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua')) return localVal;
+        } catch (e) {}
+        return null;
+      }
+
+      function getSavedTheme() {
+        const cookieVal = getCookie('cf_theme');
+        if (cookieVal === 'dark' || cookieVal === 'light') return cookieVal;
+        try {
+          const localVal = localStorage.getItem('cf_theme');
+          if (localVal === 'dark' || localVal === 'light') return localVal;
+        } catch (e) {}
+        return null;
+      }
+
+      // Detect language from URL param (lang= or l=), saved cookie, or browser navigator
       function detectLanguage() {
         const paramLang = (getVal(['lang', 'l', 'locale']) || '').toLowerCase();
         if (paramLang === 'ru') return 'ru';
         if (paramLang === 'ua' || paramLang === 'uk') return 'ua';
         if (paramLang === 'en') return 'en';
+
+        // Check saved preference in cookie / localStorage
+        const saved = getSavedLang();
+        if (saved) return saved;
 
         // Check browser language
         const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
@@ -2135,14 +2177,22 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (metaTheme) metaTheme.setAttribute('content', parsed);
       }
 
-      // Initial theme from URL: 'dark' / 'd' (defaults to 'light')
+      // Initial theme from URL: 'dark' / 'd' or from saved cookie
       const rawTheme = (getVal(['theme', 'm', 'mode']) || '').toLowerCase();
       const hasDarkParam = rawTheme === 'dark' || rawTheme === 'd' || allParams['dark'] !== undefined || (getVal(['tc', 'text']) || '').toLowerCase() === 'w' || (getVal(['btn', 'b']) || '').toLowerCase() === 'w';
+      const hasLightParam = rawTheme === 'light';
 
       if (hasDarkParam) {
         applyTheme('dark');
-      } else {
+      } else if (hasLightParam) {
         applyTheme('light');
+      } else {
+        const savedTheme = getSavedTheme();
+        if (savedTheme) {
+          applyTheme(savedTheme);
+        } else {
+          applyTheme('light');
+        }
       }
 
       // Initial custom color from URL
@@ -2567,12 +2617,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         btn.addEventListener('click', function (e) {
           e.stopPropagation();
           const selected = this.getAttribute('data-lang');
-          if (selected && selected !== currentLang) {
-            applyTranslations(selected);
-            if (hasCoreParams) {
-              renderViewMode();
-            } else {
-              updateGeneratedLinks();
+          if (selected) {
+            setCookie('cf_lang', selected);
+            if (selected !== currentLang) {
+              applyTranslations(selected);
+              if (hasCoreParams) {
+                renderViewMode();
+              } else {
+                updateGeneratedLinks();
+              }
             }
           }
           if (langDropdown) {
@@ -2959,7 +3012,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (toggleTheme) {
           toggleTheme.checked = (currentTheme === 'dark');
           toggleTheme.addEventListener('change', function () {
-            applyTheme(this.checked ? 'dark' : 'light');
+            const nextTheme = this.checked ? 'dark' : 'light';
+            applyTheme(nextTheme);
+            setCookie('cf_theme', nextTheme);
             if (inputColor && !inputColor.value.trim() && inputColorPicker) {
               inputColorPicker.value = (currentTheme === 'dark') ? '#1f1f21' : '#ffffff';
             }
