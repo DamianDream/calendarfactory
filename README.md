@@ -1,169 +1,180 @@
 # CalendarFactory 🗓️
 
-Простой, быстрый и бесплатный сервис для генерации ссылок на добавление событий в **Google Calendar**, **Apple Calendar**, **Microsoft Outlook** и скачивания универсальных файлов **.ICS**.
-
-Вся информация о событии передается прямо через параметры в URL. Работает без регистрации, серверов и баз данных.
-
-👉 **Онлайн-генератор:** [https://calendarfactory.pages.dev](https://calendarfactory.pages.dev)
-
----
-
-## 🚀 Как пользоваться
-
-Вы можете:
-1. Зайти на [calendarfactory.pages.dev](https://calendarfactory.pages.dev) и создать ссылку через форму.
-2. Сформировать нужный URL вручную или автоматически через переменные вашего сервиса рассылок, чат-бота (ManyChat, Smart Sender) или CRM.
-
-При переходе по ссылке открывается чистая карточка события с кнопками добавления в календарь в один клик.
+<p align="center">
+  <b>English</b> ·
+  <a href="README.ru.md">Русский</a> ·
+  <a href="README.ua.md">Українська</a> ·
+  <a href="README.es.md">Español</a> ·
+  <a href="README.zh.md">简体中文</a> ·
+  <a href="README.fr.md">Français</a> ·
+  <a href="README.de.md">Deutsch</a>
+</p>
 
 ---
 
-## 📋 Справочник параметров URL
+Simple, fast, and free generator for **1-click Add to Calendar** links (**Google Calendar**, **Apple Calendar**, **Microsoft Outlook**) and universal **.ICS** calendar file downloads.
 
-Все параметры передаются в строке запроса (`?параметр=значение`) через знак `&`.
+All event details are encoded directly in URL parameters. Zero registration, zero database, 100% client-side edge performance.
 
-| Параметр | Алиасы | Обязательный | Формат / Значения | Описание |
+👉 **Online Generator:** [https://calendarfactory.pages.dev](https://calendarfactory.pages.dev)
+
+---
+
+## 🚀 How to Use
+
+You can:
+1. Visit [calendarfactory.pages.dev](https://calendarfactory.pages.dev) and create your link using the clean interactive form.
+2. Build custom URLs manually or automatically with variables from your email service, CRM, or chatbot platform (**ManyChat**, **Smart Sender**, **HubSpot**, **Zapier**, **Make**).
+
+Opening the generated URL presents attendees with an elegant, responsive event card featuring 1-click calendar buttons.
+
+---
+
+## 📋 URL Parameters Reference
+
+Parameters are passed in query string (`?key=value`) separated by `&`.
+
+| Parameter | Aliases | Required | Format / Values | Description |
 | :--- | :--- | :---: | :--- | :--- |
-| **`title`** | `t`, `name`, `summary`, `event`, `subject` | **Да** | Текст | Название мероприятия. Пример: `title=Встреча+команды` |
-| **`start`** | `s`, `date`, `d`, `dt`, `dtstart`, `datetime` | **Да** | Любой популярный формат даты | Дата и время начала. Поддерживает ISO 8601, RFC 2822, европейский формат, Unix Timestamp, или только дату для событий на весь день. |
-| **`time`** | `tm`, `t_time`, `hour`, `event_time` | Нет | `14:30`, `14:30:00`, `2:30 PM` | Время начала, если дата передается в отдельном параметре (`?date=2026-11-20&time=14:30`). |
-| **`duration`** | `dur`, `len` | Нет | Число или `allDay` | Длительность в минутах (`15`, `30`, `45`, `60`, `90`, `120`) или `allDay`. По умолчанию: `60`. |
-| **`end`** | `e`, `dtend`, `finish` | Нет | Формат даты/времени | Время окончания (если нужно указать конкретное время вместо `duration`). |
-| **`utc`** | `u`, `tz`, `timezone`, `zone` | Нет | Число (`3`, `+2`, `-5`) или город | Смещение часового пояса от UTC (`Europe/Kyiv`, `UTC+03:00`, `London`). При передаче смещения в самой дате (`+02:00` или `Z`) часовой пояс определяется автоматически. |
-| **`desc`** | `d`, `details`, `text`, `body`, `notes` | Нет | Текст | Описание встречи или повестка. Поддерживает переносы строк `\n`. |
-| **`loc`** | `l`, `location`, `place`, `venue` | Нет | Текст или URL | Место встречи: ссылка на Zoom/Google Meet или физический адрес. |
-| **`allDay`** | `allday` | Нет | `1` или `true` | Флаг события на весь день. |
-| **`theme`** | `m`, `mode` | Нет | `dark` \| `light` | Тема оформления карточки (`dark` для темной темы). |
-| **`c`** | `color`, `bg` | Нет | HEX-код цвета | Произвольный цвет фона страницы (`0f172a`, `ffffff`). |
-| **`lang`** | — | Нет | `en` \| `ru` \| `ua` | Язык интерфейса карточки события. |
-| **`{переменные}`** | Любое имя | Нет | Текст | Значение подставляется в `{имя}`, `{{имя}}` или `[имя]` внутри `title`, `desc` и `loc`. |
+| **`title`** | `t`, `name`, `summary`, `event`, `subject` | **Yes** | Text | Event title in calendar. Example: `title=Team+Sync` |
+| **`start`** | `s`, `date`, `d`, `dt`, `dtstart`, `datetime` | **Yes** | Any popular date format | Event start time. Supports ISO 8601, RFC 2822, European format, Unix timestamps, or date-only for all-day events. |
+| **`time`** | `tm`, `t_time`, `hour`, `event_time` | No | `14:30`, `14:30:00`, `2:30 PM` | Start time when passing date and time in separate query parameters (`?date=2026-11-20&time=14:30`). |
+| **`duration`** | `dur`, `len` | No | Number or `allDay` | Duration in minutes (`15`, `30`, `45`, `60`, `90`, `120`) or `allDay`. Default: `60`. |
+| **`end`** | `e`, `dtend`, `finish` | No | Date/time format | Explicit event end time (alternative to `duration`). |
+| **`utc`** | `u`, `tz`, `timezone`, `zone` | No | Number (`3`, `+2`, `-5`) or city | UTC timezone offset (`Europe/Kyiv`, `UTC+03:00`, `London`). Timezone offsets passed inside the start string (`+02:00`, `Z`) are auto-detected. |
+| **`desc`** | `d`, `details`, `text`, `body`, `notes` | No | Text | Event agenda or description. Supports line breaks `\n`. |
+| **`loc`** | `l`, `location`, `place`, `venue` | No | Text or URL | Meeting place: Zoom/Meet link or physical address. |
+| **`allDay`** | `allday` | No | `1` or `true` | All-day event flag. |
+| **`theme`** | `m`, `mode` | No | `dark` \| `light` | Visual card theme (`dark` for dark mode). |
+| **`c`** | `color`, `bg` | No | HEX color code | Custom page background color (`0f172a`, `ffffff`). |
+| **`lang`** | — | No | `en` \| `ru` \| `ua` | Landing card interface language. |
+| **`{variables}`** | Any name | No | Text | Replaces `{var}`, `{{var}}`, or `[var]` inside `title`, `desc`, and `loc`. |
 
 ---
 
-## 📅 Поддерживаемые форматы даты и времени
+## 📅 Supported Date & Time Formats
 
-Сервис спроектирован так, чтобы принимать дату в том виде, в котором её генерируют современные SaaS-платформы, боты и CRM:
+CalendarFactory natively recognizes formats produced by SaaS tools, CRMs, and bots:
 
-1. **ISO 8601 (с таймзоной или без):**
+1. **ISO 8601 (with or without timezone offset):**
    - `2026-11-20T14:30`
-   - `2026-11-20T14:30:00+02:00` (смещение таймзоны считывается автоматически)
+   - `2026-11-20T14:30:00+02:00` (timezone offset is auto-extracted)
    - `2026-11-20T14:30:00Z`
-   - `2026-11-20 14:30` (пробел или `+` между датой и временем)
-2. **Раздельные параметры даты и времени:**
+   - `2026-11-20 14:30` (space or `+` between date and time)
+2. **Split Date & Time parameters:**
    - `?date=2026-11-20&time=14:30`
    - `?date=20.11.2026&time=14:30`
-   - `?date=2026-11-20&time=2:30 PM` (12-часовой формат AM/PM)
+   - `?date=2026-11-20&time=2:30 PM` (12-hour AM/PM format)
 3. **Unix Timestamp:**
-   - В секундах (10 цифр, стандарт PHP / Smart Sender `{date:U}`): `?start=1762086842`
-   - В миллисекундах (13 цифр, стандарт JS / HubSpot / Make): `?start=1762086842000`
-4. **Европейский формат с точками:**
+   - In seconds (10 digits, PHP / Smart Sender `{date:U}`): `?start=1762086842`
+   - In milliseconds (13 digits, JavaScript / HubSpot / Make): `?start=1762086842000`
+4. **European dot format:**
    - `20.11.2026 14:30`
-   - `20.11.2026` (автоматически определяется как событие на весь день)
-5. **RFC 2822 (стандарт Smart Sender `{date:r}`):**
+   - `20.11.2026` (auto-detected as all-day event)
+5. **RFC 2822 format (Smart Sender `{date:r}`):**
    - `Fri, 12 Apr 2026 12:01:05 +0200`
-6. **Событие на весь день:**
-   - Укажите только дату: `?start=2026-11-20` или параметр `&duration=allDay`.
+6. **All-day event:**
+   - Pass date only: `?start=2026-11-20` or parameter `&duration=allDay`.
 
 ---
 
-## 🤖 Интеграция с ManyChat, Smart Sender и чат-ботами
+## 🤖 Integrations: ManyChat, Smart Sender & Chatbots
 
-Вы можете генерировать персональные ссылки прямо в кнопках сообщений Telegram, Instagram, WhatsApp, Viber или в рассылках.
+Easily generate dynamic calendar invite links inside buttons for Telegram, WhatsApp, Instagram Direct, Viber, or email newsletters.
 
 ### 1. Smart Sender
 
-В Smart Sender переменные даты можно выводить с помощью встроенного синтаксиса форматирования `{date:...}` или использовать кастомные переменные контакта `[appointment_date]`, `[first_name]`.
+In Smart Sender, dates can be formatted using PHP date syntax `{date:...}` or custom contact variables `[appointment_date]`, `[first_name]`.
 
-В конструкторе сообщений Smart Sender создайте кнопку типа **URL** (Ссылка) и вставьте один из вариантов:
+In the message builder, create a **URL button** and paste one of the following patterns:
 
-* **Вариант А: Стандартный ISO-8601 формат `{date:c}` (Рекомендуется):**
+* **Pattern A: Standard ISO-8601 `{date:c}` (Recommended):**
   ```text
-  https://calendarfactory.pages.dev/?title=Консультация&start={date:c}&duration=45&desc=Привет,+[first_name]!&loc=Zoom
+  https://calendarfactory.pages.dev/?title=Consultation&start={date:c}&duration=45&desc=Hello,+[first_name]!&loc=Zoom
   ```
 
-* **Вариант Б: Формат Unix Timestamp `{date:U}`:**
+* **Pattern B: Unix Timestamp `{date:U}`:**
   ```text
-  https://calendarfactory.pages.dev/?title=Встреча&start={date:U}&duration=60&desc=Привет,+[first_name]!
+  https://calendarfactory.pages.dev/?title=Meeting&start={date:U}&duration=60&desc=Hi,+[first_name]!
   ```
 
-* **Вариант В: Формат даты и времени через пробел `{date:Y-m-d H:i}`:**
+* **Pattern C: Space-separated Date & Time `{date:Y-m-d H:i}`:**
   ```text
-  https://calendarfactory.pages.dev/?title=Вебинар&start={date:Y-m-d H:i}&utc=3&loc=https://zoom.us/j/123456
+  https://calendarfactory.pages.dev/?title=Webinar&start={date:Y-m-d H:i}&utc=3&loc=https://zoom.us/j/123456
   ```
 
-* **Вариант Г: Раздельные кастомные переменные даты и времени:**
-  Если дата и время встречи записаны в разные переменные контакта:
+* **Pattern D: Separate Custom Variables for Date and Time:**
   ```text
-  https://calendarfactory.pages.dev/?title=Запись+на+услугу&date=[appointment_date]&time=[appointment_time]&desc=Клиент:+[full_name]
+  https://calendarfactory.pages.dev/?title=Appointment&date=[appointment_date]&time=[appointment_time]&desc=Client:+[full_name]
   ```
 
 ---
 
 ### 2. ManyChat
 
-В ManyChat значения пользовательских полей подставляются через синтаксис `{{имя_поля}}`.
+In ManyChat, custom user fields (CUF) are referenced using `{{field_name}}`.
 
-В блоке сообщения Flow Builder добавьте кнопку с типом **Open website** и укажите URL:
+In Flow Builder, add a button with type **Open website**:
 
-* **Вариант А: Поле типа Date & Time (CUF):**
-  ManyChat сохраняет даты в формате ISO (`YYYY-MM-DDTHH:mm:ssZ`):
+* **Pattern A: Date & Time field (CUF):**
+  ManyChat serializes date/time values in standard ISO format (`YYYY-MM-DDTHH:mm:ssZ`):
   ```text
-  https://calendarfactory.pages.dev/?title=Онлайн-консультация&start={{appointment_datetime}}&duration=60&desc=Привет,+{{first_name}}!+Твоя+запись+подтверждена.&loc=Google+Meet
+  https://calendarfactory.pages.dev/?title=Online+Consultation&start={{appointment_datetime}}&duration=60&desc=Hi,+{{first_name}}!+Your+booking+is+confirmed.&loc=Google+Meet
   ```
 
-* **Вариант Б: Раздельные поля даты и времени:**
-  Если в воронке дата выбирается отдельно от времени (например, `{{booking_date}}` и `{{booking_time}}`):
+* **Pattern B: Separate Date and Time fields:**
+  If date and time are collected separately in your flow (`{{booking_date}}` and `{{booking_time}}`):
   ```text
-  https://calendarfactory.pages.dev/?title=Встреча&date={{booking_date}}&time={{booking_time}}&duration=30&desc=Привет,+{{first_name}}!
+  https://calendarfactory.pages.dev/?title=Meeting&date={{booking_date}}&time={{booking_time}}&duration=30&desc=Hi,+{{first_name}}!
   ```
 
-* **Вариант В: Передача параметров пользователя:**
-  Любые кастомные переменные ManyChat можно передать в URL, и они подставятся в текст описания:
+* **Pattern C: Passing Dynamic Attendee Data:**
+  Any user variable can be forwarded in the URL to fill placeholders in the event description:
   ```text
-  https://calendarfactory.pages.dev/?title=Консультация&start={{booking_datetime}}&desc=Заказчик:+{name},+телефон:+{phone}&name={{first_name}}&phone={{phone}}
+  https://calendarfactory.pages.dev/?title=Consultation&start={{booking_datetime}}&desc=Attendee:+{name},+Phone:+{phone}&name={{first_name}}&phone={{phone}}
   ```
 
 ---
 
-### 3. CRM и Webhook-платформы (Make / Zapier / n8n / HubSpot)
+### 3. CRMs & Webhook Platforms (Make / Zapier / n8n / HubSpot)
 
-При интеграции через вебхуки и CRM можно передавать миллисекундный или секундный Unix-timestamp:
+Pass millisecond or second Unix timestamps directly:
 ```text
-https://calendarfactory.pages.dev/?title=Демонстрация+продукта&start={{1762086842000}}&duration=45&utc=Europe/Kyiv
+https://calendarfactory.pages.dev/?title=Product+Demo&start={{1762086842000}}&duration=45&utc=Europe/Kyiv
 ```
 
 ---
 
-## 🧩 Динамические плейсхолдеры в тексте
+## 🧩 Dynamic Text Placeholders
 
-В полях описания (`desc`), названия (`title`) и места встречи (`loc`) можно использовать плейсхолдеры `{name}`, `{ticket}`, `{{user}}`, `[id]`.
+Placeholders `{name}`, `{ticket}`, `{{user}}`, `[id]` inside `title`, `desc`, and `loc` are automatically replaced by matching query parameters.
 
-Если добавить одноименный параметр в URL (например, `&name=Алексей`), он автоматически подставится в текст:
+For example, appending `&name=Alex` replaces `{name}` dynamically:
 
 ```text
-https://calendarfactory.pages.dev/?title=Встреча+с+{name}&start=2026-11-20T14:00&duration=45&loc={zoom}&desc=Привет,+{name}!+Твой+билет:+{ticket}&name=Алексей&ticket=VIP-777&zoom=https://zoom.us/j/123456
+https://calendarfactory.pages.dev/?title=Meeting+with+{name}&start=2026-11-20T14:00&duration=45&loc={zoom}&desc=Hello,+{name}!+Ticket:+{ticket}&name=Alex&ticket=VIP-777&zoom=https://zoom.us/j/123456
 ```
 
 ---
 
-## 💡 Примеры готовых ссылок
+## 💡 Quick Examples
 
-### 1. Онлайн-встреча в Zoom (длительность 90 минут, UTC+3)
+### 1. Online Webinar via Zoom (90 min, UTC+3)
 ```text
-https://calendarfactory.pages.dev/?title=Webinar+Sync&start=2026-11-25T19:00&duration=90&utc=3&loc=https://zoom.us/j/123456789&desc=Ссылка+на+материалы+внутри
+https://calendarfactory.pages.dev/?title=Webinar+Sync&start=2026-11-25T19:00&duration=90&utc=3&loc=https://zoom.us/j/123456789&desc=Zoom+link+and+materials+inside
 ```
 
-### 2. Событие на весь день (Конференция / День рождения)
+### 2. All-Day Event (Conference / Holiday)
 ```text
-https://calendarfactory.pages.dev/?title=Design+Conference&start=2026-12-05&duration=allDay&loc=Online&desc=Ежегодная+конференция
+https://calendarfactory.pages.dev/?title=Design+Conference&start=2026-12-05&duration=allDay&loc=Online&desc=Annual+tech+conference
 ```
 
-### 3. Ссылка с тёмной темой и фирменным цветом фона
+### 3. Dark Theme with Custom Hex Background
 ```text
 https://calendarfactory.pages.dev/?title=Product+Launch&start=2026-11-30T17:00&duration=60&theme=dark&c=0f172a&loc=YouTube+Live
 ```
 
-### 4. Прямая ссылка на файл календаря Apple (.ICS)
+### 4. Direct Apple Calendar / iCal (.ICS) Stream
 ```text
-https://calendarfactory.pages.dev/event.ics?title=Вебинар&start=2026-11-20T14:30&duration=60
+https://calendarfactory.pages.dev/event.ics?title=Webinar&start=2026-11-20T14:30&duration=60
 ```
