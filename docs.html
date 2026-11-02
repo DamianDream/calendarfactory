@@ -6,6 +6,16 @@
   <title>CalendarFactory: Справка и параметры URL</title>
   <meta name="description" content="Подробная документация сервиса CalendarFactory: руководство по формированию ссылок, параметры URL и интеграция с календарями.">
   <meta name="theme-color" content="#ffffff">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZX1HGH60Z"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-QZX1HGH60Z');
+  </script>
   <link rel="preconnect" href="https://api.fontshare.com">
   <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
   <style>
@@ -1206,6 +1216,15 @@ body[data-theme="dark"] .toast {
         }
       };
 
+      // Analytics helper
+      function trackEvent(name, params) {
+        if (typeof window.gtag === 'function') {
+          try {
+            window.gtag('event', name, params || {});
+          } catch (e) {}
+        }
+      }
+
       // Helpers for persistent cookies & localStorage
       function getCookie(name) {
         try {
@@ -1411,6 +1430,7 @@ body[data-theme="dark"] .toast {
           const nextTheme = this.checked ? 'dark' : 'light';
           applyTheme(nextTheme);
           setCookie('cf_theme', nextTheme);
+          trackEvent('toggle_theme', { theme: nextTheme, source: 'docs' });
           applyTranslations(currentLang);
         });
       }
@@ -1437,6 +1457,7 @@ body[data-theme="dark"] .toast {
           const selected = this.getAttribute('data-lang');
           if (selected) {
             setCookie('cf_lang', selected);
+            trackEvent('change_language', { language: selected, source: 'docs' });
             applyTranslations(selected);
           }
           if (langDropdown) {
@@ -1451,6 +1472,7 @@ body[data-theme="dark"] .toast {
         btn.addEventListener('click', function () {
           const textToCopy = this.getAttribute('data-copy');
           const dict = I18N[currentLang] || I18N.ru;
+          trackEvent('copy_example_code', { code: textToCopy });
           if (textToCopy && navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(textToCopy).then(() => {
               showToast(dict.copiedToast);

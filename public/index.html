@@ -6,6 +6,16 @@
   <title>CalendarFactory: Add to Calendar and Link Generator</title>
   <meta name="description" content="Minimalist calendar event link generator and viewer with floating labels. 100% client-side edge utility.">
   <meta name="theme-color" content="#ffffff">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZX1HGH60Z"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-QZX1HGH60Z');
+  </script>
   <link rel="preconnect" href="https://api.fontshare.com">
   <link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600&display=swap" rel="stylesheet">
   <style>
@@ -1937,6 +1947,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         return null;
       }
 
+      // Analytics helper
+      function trackEvent(name, params) {
+        if (typeof window.gtag === 'function') {
+          try {
+            window.gtag('event', name, params || {});
+          } catch (e) {}
+        }
+      }
+
       // Helpers for persistent cookies & localStorage
       function getCookie(name) {
         try {
@@ -2619,6 +2638,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           const selected = this.getAttribute('data-lang');
           if (selected) {
             setCookie('cf_lang', selected);
+            trackEvent('change_language', { language: selected });
             if (selected !== currentLang) {
               applyTranslations(selected);
               if (hasCoreParams) {
@@ -2705,17 +2725,29 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         }
 
         // Calendar link bindings
-        document.getElementById('btnGoogle').href = buildGoogleUrl(ev);
-        document.getElementById('btnOutlook').href = buildOutlookUrl(ev, false);
+        const btnGoogle = document.getElementById('btnGoogle');
+        btnGoogle.href = buildGoogleUrl(ev);
+        btnGoogle.onclick = function () {
+          trackEvent('add_to_calendar', { calendar_type: 'google' });
+        };
+
+        const btnOutlook = document.getElementById('btnOutlook');
+        btnOutlook.href = buildOutlookUrl(ev, false);
+        btnOutlook.onclick = function () {
+          trackEvent('add_to_calendar', { calendar_type: 'outlook' });
+        };
 
         document.getElementById('btnApple').onclick = function () {
+          trackEvent('add_to_calendar', { calendar_type: 'apple' });
           downloadIcsFile(ev);
         };
         document.getElementById('btnIcs').onclick = function () {
+          trackEvent('download_ics', { source: 'landing_view' });
           downloadIcsFile(ev);
         };
 
         document.getElementById('btnCopyLink').onclick = function () {
+          trackEvent('copy_event_link', { source: 'landing_view' });
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(window.location.href).then(() => showToast(dict.toastCopied));
           } else {
@@ -3015,6 +3047,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             const nextTheme = this.checked ? 'dark' : 'light';
             applyTheme(nextTheme);
             setCookie('cf_theme', nextTheme);
+            trackEvent('toggle_theme', { theme: nextTheme });
             if (inputColor && !inputColor.value.trim() && inputColorPicker) {
               inputColorPicker.value = (currentTheme === 'dark') ? '#1f1f21' : '#ffffff';
             }
@@ -3057,6 +3090,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             showToast(dict.toastUrlExceeded);
             return;
           }
+          trackEvent('download_ics', { source: 'form_direct' });
           const ev = getCurrentFormEvent();
           downloadIcsFile(ev);
         };
@@ -3083,7 +3117,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }, 1800);
         }
 
-        function copyChipLink(getUrlFn, btn) {
+        function copyChipLink(getUrlFn, btn, calType) {
           const dict = I18N[currentLang] || I18N.en;
           if (!inputTitle.value.trim()) {
             inputTitle.focus();
@@ -3097,6 +3131,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             return;
           }
           const url = getUrlFn();
+          trackEvent('copy_direct_calendar', { calendar_type: calType || 'generic' });
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(url).then(() => {
               showToast(dict.toastCopied);
@@ -3115,7 +3150,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           linkOpenGoogle.onclick = function (e) {
             if (e) e.preventDefault();
             const ev = getCurrentFormEvent();
-            copyChipLink(() => buildGoogleUrl(ev), linkOpenGoogle);
+            copyChipLink(() => buildGoogleUrl(ev), linkOpenGoogle, 'google');
           };
         }
 
@@ -3123,14 +3158,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           linkOpenOutlook.onclick = function (e) {
             if (e) e.preventDefault();
             const ev = getCurrentFormEvent();
-            copyChipLink(() => buildOutlookUrl(ev, false), linkOpenOutlook);
+            copyChipLink(() => buildOutlookUrl(ev, false), linkOpenOutlook, 'outlook');
           };
         }
 
         if (linkOpenApple) {
           linkOpenApple.onclick = function (e) {
             if (e) e.preventDefault();
-            copyChipLink(() => buildAppleUrl(), linkOpenApple);
+            copyChipLink(() => buildAppleUrl(), linkOpenApple, 'apple');
           };
         }
 
@@ -3147,6 +3182,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             showToast(dict.toastUrlExceeded);
             return;
           }
+          trackEvent('copy_event_link', { source: 'form' });
           outMainUrl.select();
           const labelSpan = document.getElementById('txtBtnCopyMain');
           if (navigator.clipboard && navigator.clipboard.writeText) {
