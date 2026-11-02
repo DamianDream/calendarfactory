@@ -89,8 +89,8 @@
   --color-text-light-rule: #38383c;
 
   /* Abstract background stripes */
-  --color-stripe-light: rgba(31, 31, 33, 0.18);
-  --color-stripe-dark: rgba(255, 255, 255, 0.18);
+  --color-stripe-light: rgba(31, 31, 33, 0.05);
+  --color-stripe-dark: rgba(255, 255, 255, 0.05);
   --color-stripe: var(--color-stripe-light);
 
   /* Light mode (default) tokens */
@@ -1767,12 +1767,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         paths.push({ d: dCradle, dashed: false });
 
         let svgHtml = '';
-        for (let i = 0; i < paths.length; i++) {
-          const p = paths[i];
-          const dash = p.dashed ? ' stroke-dasharray="8 12"' : '';
-          const sw = p.dashed ? '2.5' : (i % 3 === 0 ? '4' : (i % 2 === 0 ? '3' : '2.5'));
-          const op = p.dashed ? '0.7' : (i % 3 === 0 ? '1' : (i % 2 === 0 ? '0.85' : '0.65'));
-          svgHtml += `<path d="${p.d}" stroke="var(--color-stripe)" stroke-width="${sw}" stroke-opacity="${op}"${dash} stroke-linecap="round" vector-effect="non-scaling-stroke" />\n`;
+        for (const p of paths) {
+          const dash = p.dashed ? ' stroke-dasharray="6 8"' : '';
+          const sw = p.dashed ? '1' : '1.1';
+          svgHtml += `<path d="${p.d}" stroke="var(--color-stripe)" stroke-width="${sw}"${dash} vector-effect="non-scaling-stroke" />\n`;
         }
         svg.innerHTML = svgHtml;
       }
