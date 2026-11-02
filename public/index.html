@@ -2323,46 +2323,169 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         return `${year}${month}${day}`;
       }
 
+      function parseFlexibleTime(timeStr) {
+        if (!timeStr) return null;
+        const t = timeStr.trim();
+        const ampmMatch = t.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(am|pm)?$/i);
+        if (!ampmMatch) return null;
+        let hh = parseInt(ampmMatch[1], 10);
+        const mm = parseInt(ampmMatch[2], 10);
+        const ss = ampmMatch[3] ? parseInt(ampmMatch[3], 10) : 0;
+        const modifier = ampmMatch[4] ? ampmMatch[4].toLowerCase() : null;
+        if (modifier === 'pm' && hh < 12) hh += 12;
+        if (modifier === 'am' && hh === 12) hh = 0;
+        return { hh, mm, ss };
+      }
+
+      function parseFlexibleDateTime(rawDate, rawTime) {
+        if (!rawDate && !rawTime) return null;
+        let str = (rawDate || '').trim();
+        const timeStr = (rawTime || '').trim();
+
+        // 1. Unix timestamp (seconds: 10 digits, milliseconds: 13 digits)
+        if (/^\d{10}$/.test(str)) {
+          return { date: new Date(parseInt(str, 10) * 1000), isAllDay: false, detectedTz: '' };
+        }
+        if (/^\d{13}$/.test(str)) {
+          return { date: new Date(parseInt(str, 10)), isAllDay: false, detectedTz: '' };
+        }
+
+        // 2. Decode "+" between date and time (e.g. from URL decoding "2026-11-20+14:30")
+        str = str.replace(/^(\d{4}[-/.]\d{1,2}[-/.]\d{1,2})\+(\d{1,2}:\d{2})/, '$1 $2');
+        str = str.replace(/^(\d{1,2}[-/.]\d{1,2}[-/.]\d{4})\+(\d{1,2}:\d{2})/, '$1 $2');
+
+        // 3. Merge separate time parameter if str does not already contain a time component
+        if (timeStr && !/[:\s]/.test(str)) {
+          const tParsed = parseFlexibleTime(timeStr);
+          if (tParsed) {
+            const hh = String(tParsed.hh).padStart(2, '0');
+            const mm = String(tParsed.mm).padStart(2, '0');
+            const ss = String(tParsed.ss).padStart(2, '0');
+            str = `${str}T${hh}:${mm}:${ss}`;
+          }
+        }
+
+        // 4. Check for timezone offset in string (e.g. +02:00, +0200, -05:00, Z)
+        let detectedTz = '';
+        const tzMatch = str.match(/([+-]\d{2}):?(\d{2})$/) || str.match(/(Z)$/i);
+        if (tzMatch) {
+          if (tzMatch[1].toUpperCase() === 'Z') {
+            detectedTz = 'UTC';
+          } else {
+            const sign = tzMatch[1].charAt(0);
+            const hrs = tzMatch[1].slice(1);
+            const mins = tzMatch[2] || '00';
+            detectedTz = `UTC${sign}${hrs}:${mins}`;
+          }
+        }
+
+        // 5. ISO with timezone offset or RFC 2822 (e.g. "Fri, 12 Apr 2026 12:01:05 +0200")
+        if (tzMatch || /^[a-z]{3},\s/i.test(str)) {
+          const d = new Date(str);
+          if (!isNaN(d.getTime())) {
+            return { date: d, isAllDay: false, detectedTz };
+          }
+        }
+
+        // 6. European dot format: DD.MM.YYYY [HH:mm[:ss]]
+        const euroMatch = str.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})(?:[T\s](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+        if (euroMatch) {
+          const day = parseInt(euroMatch[1], 10);
+          const month = parseInt(euroMatch[2], 10);
+          const year = parseInt(euroMatch[3], 10);
+          if (euroMatch[4] !== undefined) {
+            const hh = parseInt(euroMatch[4], 10);
+            const mm = parseInt(euroMatch[5], 10);
+            const ss = euroMatch[6] ? parseInt(euroMatch[6], 10) : 0;
+            return { date: new Date(year, month - 1, day, hh, mm, ss), isAllDay: false, detectedTz };
+          }
+          return { date: new Date(year, month - 1, day, 0, 0, 0), isAllDay: true, detectedTz };
+        }
+
+        // 7. Slash format: DD/MM/YYYY or MM/DD/YYYY or YYYY/MM/DD
+        const slashMatch = str.match(/^(\d{1,4})\/(\d{1,2})\/(\d{1,4})(?:[T\s](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+        if (slashMatch) {
+          let year, month, day;
+          const p1 = parseInt(slashMatch[1], 10);
+          const p2 = parseInt(slashMatch[2], 10);
+          const p3 = parseInt(slashMatch[3], 10);
+          if (p1 > 1000) {
+            year = p1; month = p2; day = p3;
+          } else if (p3 > 1000) {
+            year = p3;
+            if (p1 > 12) { day = p1; month = p2; }
+            else if (p2 > 12) { month = p1; day = p2; }
+            else { day = p1; month = p2; }
+          } else {
+            year = new Date().getFullYear(); day = p1; month = p2;
+          }
+          if (slashMatch[4] !== undefined) {
+            const hh = parseInt(slashMatch[4], 10);
+            const mm = parseInt(slashMatch[5], 10);
+            const ss = slashMatch[6] ? parseInt(slashMatch[6], 10) : 0;
+            return { date: new Date(year, month - 1, day, hh, mm, ss), isAllDay: false, detectedTz };
+          }
+          return { date: new Date(year, month - 1, day, 0, 0, 0), isAllDay: true, detectedTz };
+        }
+
+        // 8. Standard ISO without timezone offset: YYYY-MM-DD [T/space HH:mm[:ss]]
+        const isoMatch = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s](\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+        if (isoMatch) {
+          const year = parseInt(isoMatch[1], 10);
+          const month = parseInt(isoMatch[2], 10);
+          const day = parseInt(isoMatch[3], 10);
+          if (isoMatch[4] !== undefined) {
+            const hh = parseInt(isoMatch[4], 10);
+            const mm = parseInt(isoMatch[5], 10);
+            const ss = isoMatch[6] ? parseInt(isoMatch[6], 10) : 0;
+            return { date: new Date(year, month - 1, day, hh, mm, ss), isAllDay: false, detectedTz };
+          }
+          return { date: new Date(year, month - 1, day, 0, 0, 0), isAllDay: true, detectedTz };
+        }
+
+        // 9. Fallback native Date
+        const parsed = new Date(str);
+        if (!isNaN(parsed.getTime())) {
+          return { date: parsed, isAllDay: false, detectedTz };
+        }
+
+        return null;
+      }
+
       function parseEventParams() {
-        const title = getVal(['title', 't']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : 'Calendar Event');
-        const rawDesc = getVal(['description', 'desc', 'details', 'd']) || '';
-        const rawLoc = getVal(['location', 'loc', 'address', 'l']) || '';
+        const rawTitle = getVal(['title', 't', 'name', 'summary', 'event', 'subject']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : 'Calendar Event');
+        const rawDesc = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
+        const rawLoc = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
         const rawUrl = getVal(['url', 'link', 'u']) || '';
 
+        const title = replacePlaceholders(rawTitle, allParams);
+        const desc = replacePlaceholders(rawDesc, allParams);
+        const loc = replacePlaceholders(rawLoc, allParams);
+
+        // Date and Time parsing supporting ManyChat, Smart Sender, Unix timestamps & ISO
+        const startRaw = getVal(['start', 's', 'dtstart', 'datetime', 'begin']);
+        const dateRaw = getVal(['date', 'd', 'event_date', 'day']);
+        const timeRaw = getVal(['time', 'tm', 't_time', 'time_start', 'hour', 'event_time']);
+
+        const startParsed = parseFlexibleDateTime(startRaw || dateRaw, timeRaw);
+
+        let startDate = startParsed ? startParsed.date : null;
+        let isAllDay = startParsed ? startParsed.isAllDay : false;
+
+        const durRaw = getVal(['duration', 'dur', 'len', 'length']);
+        if (durRaw === 'allDay' || durRaw === 'allday' || allParams['allDay'] !== undefined || allParams['allday'] !== undefined) {
+          isAllDay = true;
+        }
+
+        // Timezone resolution (explicit utc/tz, or detected from offset like +02:00 / Z)
         let tz = '';
         const rawUtc = getVal(['utc', 'u']);
         if (rawUtc !== null && rawUtc !== '') {
           tz = expandUtcParam(rawUtc);
         } else {
-          tz = getVal(['timezone', 'tz']) || '';
-        }
-
-        const desc = replacePlaceholders(rawDesc, allParams);
-        const loc = replacePlaceholders(rawLoc, allParams);
-
-        const startRaw = getVal(['start', 's', 'date', 'time', 'dt']);
-        const endRaw = getVal(['end', 'e']);
-        const durRaw = getVal(['duration', 'dur']);
-
-        let startDate = null;
-        let isAllDay = false;
-
-        if (startRaw) {
-          const trimmed = startRaw.trim();
-          if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
-            const parts = trimmed.split('-');
-            startDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 0, 0, 0);
-            isAllDay = true;
-          } else if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(trimmed)) {
-            const [datePart, timePart] = trimmed.split('T');
-            const [y, m, d] = datePart.split('-').map(x => parseInt(x, 10));
-            const [hh, mm] = timePart.split(':').map(x => parseInt(x, 10));
-            startDate = new Date(y, m - 1, d, hh, mm, 0);
-          } else {
-            const parsed = new Date(trimmed);
-            if (!isNaN(parsed.getTime())) {
-              startDate = parsed;
-            }
+          tz = getVal(['timezone', 'tz', 'zone']) || '';
+          if (!tz && startParsed && startParsed.detectedTz) {
+            tz = expandUtcParam(startParsed.detectedTz);
           }
         }
 
@@ -2372,24 +2495,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           startDate.setHours(startDate.getHours() + 1);
         }
 
-        let endDate = null;
-        if (endRaw) {
-          const trimmed = endRaw.trim();
-          if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
-            const parts = trimmed.split('-');
-            endDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10), 0, 0, 0);
-          } else if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(trimmed)) {
-            const [datePart, timePart] = trimmed.split('T');
-            const [y, m, d] = datePart.split('-').map(x => parseInt(x, 10));
-            const [hh, mm] = timePart.split(':').map(x => parseInt(x, 10));
-            endDate = new Date(y, m - 1, d, hh, mm, 0);
-          } else {
-            const parsed = new Date(trimmed);
-            if (!isNaN(parsed.getTime())) {
-              endDate = parsed;
-            }
-          }
-        } else if (durRaw) {
+        // End date parsing
+        const endRaw = getVal(['end', 'e', 'dtend', 'time_end', 'finish']);
+        const endTimeRaw = getVal(['end_time', 'endtime', 'etm']);
+        const endParsed = parseFlexibleDateTime(endRaw, endTimeRaw);
+
+        let endDate = endParsed ? endParsed.date : null;
+        if (!endDate && durRaw && durRaw !== 'allDay' && durRaw !== 'allday') {
           const mins = parseInt(durRaw, 10);
           if (!isNaN(mins) && mins > 0) {
             endDate = new Date(startDate.getTime() + mins * 60000);
@@ -2618,7 +2730,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       }
 
       // Check whether URL has event parameters
-      const hasCoreParams = ['title', 't', 'start', 's', 'date', 'dt'].some(k => allParams[k] !== undefined);
+      const hasCoreParams = [
+        'title', 't', 'name', 'summary', 'event', 'subject',
+        'start', 's', 'date', 'd', 'dt', 'dtstart', 'datetime'
+      ].some(k => allParams[k] !== undefined);
 
       // Initialize translations
       applyTranslations(currentLang);

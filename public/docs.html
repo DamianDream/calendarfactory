@@ -935,15 +935,27 @@ body[data-theme="dark"] .toast {
               </tr>
               <tr>
                 <td><span class="param-badge">start</span></td>
-                <td><span class="param-badge">s, date, dt</span></td>
+                <td><span class="param-badge">s, date, d, dt, datetime</span></td>
                 <td><code>2026-11-20T14:30</code></td>
-                <td id="paramDescStart">Дата и время начала события. Для событий на весь день укажите только дату: <code>2026-11-20</code>.</td>
+                <td id="paramDescStart">Дата и время начала события. Поддерживает ISO 8601, европейский формат (20.11.2026), Unix timestamp ({date:U}), RFC 2822 ({date:r}) или только дату для событий на весь день.</td>
+              </tr>
+              <tr>
+                <td><span class="param-badge">time</span></td>
+                <td><span class="param-badge">tm, hour, event_time</span></td>
+                <td><code>14:30</code>, <code>2:30 PM</code></td>
+                <td id="paramDescTime">Время начала при раздельной передаче даты и времени (например, <code>date=2026-11-20&time=14:30</code>).</td>
               </tr>
               <tr>
                 <td><span class="param-badge">duration</span></td>
                 <td><span class="param-badge">dur</span></td>
                 <td><code>60</code>, <code>allDay</code></td>
                 <td id="paramDescDur">Длительность в минутах (15, 30, 45, 60, 90, 120) или <code>allDay</code>. По умолчанию 60 мин.</td>
+              </tr>
+              <tr>
+                <td><span class="param-badge">end</span></td>
+                <td><span class="param-badge">e, dtend, finish</span></td>
+                <td><code>2026-11-20T15:30</code></td>
+                <td id="paramDescEnd">Время окончания события (если нужно передать конкретное время вместо duration).</td>
               </tr>
               <tr>
                 <td><span class="param-badge">utc</span></td>
@@ -1005,12 +1017,21 @@ body[data-theme="dark"] .toast {
           </div>
         </div>
 
-        <div class="feature-card">
+        <div class="feature-card" style="margin-bottom: var(--space-md);">
           <h3 class="feature-title" id="ex2Title">Персонализированная рассылка (Email)</h3>
           <p class="feature-desc" style="margin-bottom: var(--space-sm);" id="ex2Desc">Использование динамических переменных сервиса рассылки:</p>
           <div class="code-box" style="margin: 0;">
             <code>https://calendarfactory.pages.dev/?title=Консультация&start=2026-12-01T11:00&desc=Привет,+{name}!+Твой+билет:+{ticket}&name=Алексей&ticket=A-402</code>
             <button type="button" class="btn-code-copy" data-copy="https://calendarfactory.pages.dev/?title=Консультация&start=2026-12-01T11:00&desc=Привет,+{name}!+Твой+билет:+{ticket}&name=Алексей&ticket=A-402">Копировать</button>
+          </div>
+        </div>
+
+        <div class="feature-card">
+          <h3 class="feature-title" id="ex3Title">Чат-боты (ManyChat / Smart Sender)</h3>
+          <p class="feature-desc" style="margin-bottom: var(--space-sm);" id="ex3Desc">Генерация ссылки в кнопке бота через переменные платформы:</p>
+          <div class="code-box" style="margin: 0;">
+            <code>https://calendarfactory.pages.dev/?title=Консультация&start={date:c}&duration=45&desc=Привет,+[first_name]!</code>
+            <button type="button" class="btn-code-copy" data-copy="https://calendarfactory.pages.dev/?title=Консультация&start={date:c}&duration=45&desc=Привет,+[first_name]!" id="btnCopySnippet4">Копировать</button>
           </div>
         </div>
       </section>
@@ -1123,8 +1144,10 @@ body[data-theme="dark"] .toast {
           thExample: "Example",
           thDesc: "Description",
           pDescTitle: "Required. Event title displayed in the calendar.",
-          pDescStart: "Start date and time (YYYY-MM-DDTHH:mm). For all-day events, use YYYY-MM-DD.",
+          pDescStart: "Start date and time. Supports ISO 8601 (with/without timezone), European (20.11.2026), Unix timestamp ({date:U}), RFC 2822, or date-only for all-day events.",
+          pDescTime: "Start time when passing date and time in separate parameters (e.g. date=2026-11-20&time=14:30 or 2:30 PM).",
           pDescDur: "Duration in minutes (15, 30, 45, 60, 90, 120) or allDay. Default is 60.",
+          pDescEnd: "End date and time of the event (alternative to duration).",
           pDescUtc: "UTC timezone offset (e.g. 3, -5, 2:00) or city name.",
           pDescDesc: "Event description text. Safe total link limit is 2000 characters.",
           pDescLoc: "Location: physical address or meeting URL (Zoom, Google Meet).",
@@ -1137,6 +1160,8 @@ body[data-theme="dark"] .toast {
           ex1D: "Event with Zoom meeting URL in location and description details:",
           ex2T: "Personalized Email Invitation",
           ex2D: "Using merge tags and dynamic placeholders from email software:",
+          ex3T: "Chatbots (ManyChat / Smart Sender)",
+          ex3D: "Generate links in bot buttons using platform variables:",
           copyBtn: "Copy",
           copiedToast: "Copied to clipboard"
         },
@@ -1175,8 +1200,10 @@ body[data-theme="dark"] .toast {
           thExample: "Пример",
           thDesc: "Описание",
           pDescTitle: "Обязательный. Название мероприятия в календаре.",
-          pDescStart: "Дата и время начала события. Для событий на весь день укажите только дату: YYYY-MM-DD.",
+          pDescStart: "Дата и время начала. Поддерживает ISO 8601, европейский формат (20.11.2026), Unix timestamp ({date:U}), RFC 2822 или только дату для событий на весь день.",
+          pDescTime: "Время начала при раздельной передаче даты и времени (например, date=2026-11-20&time=14:30).",
           pDescDur: "Длительность в минутах (15, 30, 45, 60, 90, 120) или allDay. По умолчанию 60 мин.",
+          pDescEnd: "Время окончания события (альтернатива параметру duration).",
           pDescUtc: "Смещение часового пояса относительно UTC. Поддерживаются числа (3) или названия городов.",
           pDescDesc: "Текст описания мероприятия. Безопасный лимит всей ссылки: 2000 символов.",
           pDescLoc: "Место встречи: физический адрес или ссылка на онлайн-конференцию (Zoom, Google Meet).",
@@ -1189,6 +1216,8 @@ body[data-theme="dark"] .toast {
           ex1D: "Событие с указанием ссылки на Zoom в месте проведения и описанием:",
           ex2T: "Персонализированная рассылка (Email)",
           ex2D: "Использование динамических переменных сервиса рассылки:",
+          ex3T: "Чат-боты (ManyChat / Smart Sender)",
+          ex3D: "Генерация ссылки в кнопке бота через переменные платформы:",
           copyBtn: "Копировать",
           copiedToast: "Скопировано в буфер"
         },
@@ -1227,8 +1256,10 @@ body[data-theme="dark"] .toast {
           thExample: "Приклад",
           thDesc: "Опис",
           pDescTitle: "Обов'язковий. Назва події в календарі.",
-          pDescStart: "Дата і час початку події. Для подій на весь день вкажіть лише дату: YYYY-MM-DD.",
+          pDescStart: "Дата і час початку. Підтримує ISO 8601, європейський формат (20.11.2026), Unix timestamp ({date:U}), RFC 2822 або лише дату для подій на весь день.",
+          pDescTime: "Час початку при окремій передачі дати і часу (наприклад, date=2026-11-20&time=14:30).",
           pDescDur: "Тривалість у хвилинах (15, 30, 45, 60, 90, 120) або allDay. За замовчуванням 60 хв.",
+          pDescEnd: "Час завершення події (альтернатива параметру duration).",
           pDescUtc: "Зсув часового поясу щодо UTC. Підтримуються числа (3) або назви міст.",
           pDescDesc: "Текст опису події. Безпечний ліміт усього посилання: 2000 символів.",
           pDescLoc: "Місце зустрічі: фізична адреса або посилання на зустріч (Zoom, Google Meet).",
@@ -1241,6 +1272,8 @@ body[data-theme="dark"] .toast {
           ex1D: "Подія з посиланням на Zoom у місці проведення та планом зустрічі:",
           ex2T: "Персоналізована розсилка (Email)",
           ex2D: "Використання динамічних змінних із сервісу розсилки:",
+          ex3T: "Чат-боти (ManyChat / Smart Sender)",
+          ex3D: "Генерація посилання в кнопці бота через змінні платформи:",
           copyBtn: "Скопіювати",
           copiedToast: "Скопійовано в буфер"
         }
@@ -1390,7 +1423,11 @@ body[data-theme="dark"] .toast {
 
         document.getElementById('paramDescTitle').innerHTML = `<strong>${dict.code === 'en' ? 'Required.' : 'Обязательный.'}</strong> ${dict.pDescTitle}`;
         document.getElementById('paramDescStart').textContent = dict.pDescStart;
+        const elParamDescTime = document.getElementById('paramDescTime');
+        if (elParamDescTime) elParamDescTime.textContent = dict.pDescTime;
         document.getElementById('paramDescDur').textContent = dict.pDescDur;
+        const elParamDescEnd = document.getElementById('paramDescEnd');
+        if (elParamDescEnd) elParamDescEnd.textContent = dict.pDescEnd;
         document.getElementById('paramDescUtc').textContent = dict.pDescUtc;
         document.getElementById('paramDescDesc').textContent = dict.pDescDesc;
         document.getElementById('paramDescLoc').textContent = dict.pDescLoc;
@@ -1404,6 +1441,10 @@ body[data-theme="dark"] .toast {
         document.getElementById('ex1Desc').textContent = dict.ex1D;
         document.getElementById('ex2Title').textContent = dict.ex2T;
         document.getElementById('ex2Desc').textContent = dict.ex2D;
+        const elEx3Title = document.getElementById('ex3Title');
+        if (elEx3Title) elEx3Title.textContent = dict.ex3T;
+        const elEx3Desc = document.getElementById('ex3Desc');
+        if (elEx3Desc) elEx3Desc.textContent = dict.ex3D;
 
         const elFooterBack = document.getElementById('footerTxtBackLink');
         if (elFooterBack) elFooterBack.textContent = dict.backLink;
