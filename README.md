@@ -2,8 +2,7 @@
 
 > **Легкий, быстрый и минималистичный генератор событий для календарей через URL-параметры.**  
 > 100% Client-side: без бэкенда, без базы данных, без сторонних трекеров и вебхуков.  
-> Публичный сайт: **[https://calendarfactory.js.org](https://calendarfactory.js.org)**  
-> Зеркало Cloudflare Pages: **[https://calendarfactory.pages.dev](https://calendarfactory.pages.dev)**
+> Публичный сайт: **[https://calendarfactory.pages.dev](https://calendarfactory.pages.dev)**
 
 ---
 
@@ -40,7 +39,7 @@
 ## 🧭 Режимы работы
 
 ### 1. Режим конструктора (без параметров)
-При открытии корневого адреса `https://calendarfactory.js.org` открывается интерактивный конструктор:
+При открытии корневого адреса `https://calendarfactory.pages.dev` открывается интерактивный конструктор:
 - Вводите название, дату и время начала, длительность, часовой пояс, место встречи и описание.
 - Ссылка на событие генерируется на лету в реальном времени.
 - **Быстрое копирование ссылки**: Кнопка моментального копирования готового URL со всплывающим тултипом без смещения интерфейса.
@@ -98,7 +97,7 @@
 
 ### Пример персонализированной ссылки для email-рассылки:
 ```text
-https://calendarfactory.js.org/?title=Встреча+с+{name}&start=2026-11-20T14:00&duration=45&loc={zoom_link}&desc=Привет,+{name}!+Твой+код+доступа:+{ticket}&name=Алексей&ticket=VIP-9941&zoom_link=https://zoom.us/j/987654321
+https://calendarfactory.pages.dev/?title=Встреча+с+{name}&start=2026-11-20T14:00&duration=45&loc={zoom_link}&desc=Привет,+{name}!+Твой+код+доступа:+{ticket}&name=Алексей&ticket=VIP-9941&zoom_link=https://zoom.us/j/987654321
 ```
 
 **Результат при переходе:**
@@ -112,17 +111,17 @@ https://calendarfactory.js.org/?title=Встреча+с+{name}&start=2026-11-20T
 
 ### 1. Онлайн-вебинар с Zoom (90 минут, часовой пояс UTC+3)
 ```text
-https://calendarfactory.js.org/?title=Webinar+Architecture&start=2026-11-25T19:00&duration=90&utc=3&loc=https://zoom.us/j/123456789&desc=Ссылка+на+материалы+вебинара+внутри
+https://calendarfactory.pages.dev/?title=Webinar+Architecture&start=2026-11-25T19:00&duration=90&utc=3&loc=https://zoom.us/j/123456789&desc=Ссылка+на+материалы+вебинара+внутри
 ```
 
 ### 2. Событие на весь день (Конференция / День рождения)
 ```text
-https://calendarfactory.js.org/?title=Design+Systems+Conf+2026&start=2026-12-05&duration=allDay&loc=Online&desc=Ежегодная+конференция+по+дизайн-системам
+https://calendarfactory.pages.dev/?title=Design+Systems+Conf+2026&start=2026-12-05&duration=allDay&loc=Online&desc=Ежегодная+конференция+по+дизайн-системам
 ```
 
 ### 3. Брендированная ссылка с тёмной темой и фирменным цветом фона
 ```text
-https://calendarfactory.js.org/?title=Product+Launch&start=2026-11-30T17:00&duration=60&theme=dark&c=0f172a&loc=YouTube+Live
+https://calendarfactory.pages.dev/?title=Product+Launch&start=2026-11-30T17:00&duration=60&theme=dark&c=0f172a&loc=YouTube+Live
 ```
 
 ### 4. Прямая ссылка для вставки в письмо (Google Calendar)
@@ -165,7 +164,7 @@ open http://localhost:8080
 ### Развертывание на GitHub Pages
 1. Включите **GitHub Pages** в настройках репозитория: `Settings -> Pages`.
 2. Выберите ветку `main` и корневую папку `/`.
-3. При необходимости укажите кастомный домен (например, `calendarfactory.js.org`) в файле `CNAME`.
+3. Домен по умолчанию: `https://<username>.github.io/<repo>/` (или подключите собственный домен).
 
 ### Развертывание на Cloudflare Pages
 1. Подключите репозиторий в панели **Cloudflare Pages**.
