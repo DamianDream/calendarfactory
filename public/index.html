@@ -155,6 +155,17 @@
   --color-error-text: var(--color-error-text-light);
   --color-error-rule: var(--color-error-rule-light);
 
+  /* Social brand tokens */
+  --color-social-tg: #229ed9;
+  --color-social-tg-hover-bg: rgba(34, 158, 217, 0.1);
+  --color-social-wa: #25d366;
+  --color-social-wa-hover-bg: rgba(37, 211, 102, 0.1);
+  --color-social-fb: #1877f2;
+  --color-social-fb-hover-bg: rgba(24, 119, 242, 0.1);
+  --color-social-x-light: #1f1f21;
+  --color-social-x-dark: var(--color-btn-dark-text);
+  --color-social-x: var(--color-social-x-light);
+
   --radius-pill: 9999px;
   --radius-sm: 6px;
 
@@ -198,6 +209,7 @@ body[data-theme="dark"] {
   --switch-knob: var(--switch-knob-dark);
   --color-focus: var(--color-focus-light);
   --color-stripe: var(--color-stripe-dark);
+  --color-social-x: var(--color-social-x-dark);
   --color-error-text: var(--color-error-text-dark);
   --color-error-rule: var(--color-error-rule-dark);
 }
@@ -968,6 +980,61 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   height: 14px;
 }
 
+/* Social Share Row (compact icon buttons) */
+.share-row {
+  margin-top: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.share-row-label {
+  font-family: var(--font-display);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-muted);
+  margin-right: var(--space-2xs);
+}
+
+.share-icon-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  background: var(--color-paper-subtle);
+  border: none;
+  color: var(--color-muted);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+}
+
+.share-icon-btn:hover { transform: translateY(-1px); }
+.share-icon-btn:active { transform: translateY(1px); }
+
+.share-icon-btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.share-icon-btn svg { width: 16px; height: 16px; }
+
+.share-icon-btn--tg:hover { color: var(--color-social-tg); background: var(--color-social-tg-hover-bg); }
+.share-icon-btn--wa:hover { color: var(--color-social-wa); background: var(--color-social-wa-hover-bg); }
+.share-icon-btn--fb:hover { color: var(--color-social-fb); background: var(--color-social-fb-hover-bg); }
+.share-icon-btn--x:hover  { color: var(--color-social-x); }
+.share-icon-btn--copy:hover { color: var(--color-accent); }
+
+.share-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--color-rule);
+  margin: 0 var(--space-2xs);
+}
+
 /* View Mode Details */
 .view-details-list {
   display: flex;
@@ -1416,6 +1483,27 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         </button>
       </div>
 
+      <!-- SHARE VIA SOCIAL -->
+      <div class="share-row" id="shareRowView">
+        <span class="share-row-label" id="lblShareView">Share:</span>
+        <a class="share-icon-btn share-icon-btn--tg" id="shareViewTg" href="#" target="_blank" rel="noopener noreferrer" title="Telegram" aria-label="Share via Telegram">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        </a>
+        <a class="share-icon-btn share-icon-btn--wa" id="shareViewWa" href="#" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="Share via WhatsApp">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+        </a>
+        <a class="share-icon-btn share-icon-btn--x" id="shareViewX" href="#" target="_blank" rel="noopener noreferrer" title="X (Twitter)" aria-label="Share via X">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+        <a class="share-icon-btn share-icon-btn--fb" id="shareViewFb" href="#" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Share via Facebook">
+          <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+        <div class="share-divider" aria-hidden="true"></div>
+        <button class="share-icon-btn share-icon-btn--copy" id="shareViewCopy" type="button" title="Copy link" aria-label="Copy link">
+          <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 0 0-5.656 0l-4 4a4 4 0 1 0 5.656 5.656l1.102-1.101m-.758-4.899a4 4 0 0 0 5.656 0l4-4a4 4 0 0 0-5.656-5.656l-1.1 1.1"/></svg>
+        </button>
+      </div>
+
       <div class="view-footer">
         <button id="btnCopyLink" class="footer-link" type="button">
           <svg aria-hidden="true" width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1619,6 +1707,27 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             </button>
           </div>
         </div>
+
+        <!-- SHARE VIA SOCIAL -->
+        <div class="share-row" id="shareRowForm">
+          <span class="share-row-label" id="lblShareForm">Share:</span>
+          <a class="share-icon-btn share-icon-btn--tg" id="shareFormTg" href="#" target="_blank" rel="noopener noreferrer" title="Telegram" aria-label="Share via Telegram">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </a>
+          <a class="share-icon-btn share-icon-btn--wa" id="shareFormWa" href="#" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="Share via WhatsApp">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg>
+          </a>
+          <a class="share-icon-btn share-icon-btn--x" id="shareFormX" href="#" target="_blank" rel="noopener noreferrer" title="X (Twitter)" aria-label="Share via X">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a class="share-icon-btn share-icon-btn--fb" id="shareFormFb" href="#" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Share via Facebook">
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          </a>
+          <div class="share-divider" aria-hidden="true"></div>
+          <button class="share-icon-btn share-icon-btn--copy" id="shareFormCopy" type="button" title="Copy link" aria-label="Copy link">
+            <svg aria-hidden="true" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 0 0-5.656 0l-4 4a4 4 0 1 0 5.656 5.656l1.102-1.101m-.758-4.899a4 4 0 0 0 5.656 0l4-4a4 4 0 0 0-5.656-5.656l-1.1 1.1"/></svg>
+          </button>
+        </div>
       </div>
     </div>
 
@@ -1662,116 +1771,43 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         const paths = [];
 
-        // 1. Left flank contour waves (5 to 7 lines) — kept to left of center form (x < 440)
-        const leftCount = Math.floor(rand(5, 7));
-        const leftBaseOffset = rand(45, 65);
-        for (let i = 0; i < leftCount; i++) {
-          const shift = i * leftBaseOffset + rand(-15, 15);
-          const x0 = rand(-120, -50) + shift * 0.4;
-          const y0 = rand(-80, 50) - shift * 0.3;
-          const cp1x = rand(120, 260) + shift;
-          const cp1y = rand(140, 260);
-          const cp2x = rand(60, 180) + shift * 0.7;
-          const cp2y = rand(420, 560);
-          const p1x = rand(180, 320) + shift * 0.8;
-          const p1y = rand(640, 740);
-          const cp3x = rand(240, 380) + shift;
-          const cp3y = rand(760, 840);
-          const cp4x = rand(160, 300) + shift * 0.9;
-          const cp4y = rand(880, 960);
-          const p2x = rand(140, 320) + shift * 0.8;
-          const p2y = rand(980, 1050);
-
-          const d = `M ${x0.toFixed(1)},${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`;
-          const isDashed = (i === 3 || (i === 1 && Math.random() > 0.6));
+        // 1. Horizontal sweeping contour waves (9-12 lines, full canvas width)
+        const hCount = Math.floor(rand(9, 13));
+        const hStep = 960 / (hCount + 1);
+        for (let i = 0; i < hCount; i++) {
+          const yBase = -20 + (i + 1) * hStep + rand(-25, 25);
+          const amp1 = rand(-80, 80);
+          const amp2 = rand(-80, 80);
+          const amp3 = rand(-60, 60);
+          const x0 = rand(-120, -40);
+          const y0 = yBase + rand(-15, 15);
+          const cp1x = rand(200, 400); const cp1y = yBase + amp1;
+          const cp2x = rand(480, 680); const cp2y = yBase + amp2;
+          const midX = rand(680, 780);  const midY = yBase + (amp1 + amp2) * 0.35;
+          const cp3x = rand(800, 1000); const cp3y = yBase + amp3;
+          const cp4x = rand(1100, 1300); const cp4y = yBase - amp1 * 0.6;
+          const endX = rand(1480, 1560); const endY = yBase + rand(-15, 15);
+          const d = `M ${x0.toFixed(1)},${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${midX.toFixed(1)},${midY.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${endX.toFixed(1)},${endY.toFixed(1)}`;
+          const isDashed = (i === 2 || (i === 7 && Math.random() > 0.4));
           paths.push({ d, dashed: isDashed });
         }
 
-        // 2. Right flank contour waves (5 to 7 lines) — kept to right of center form (x > 1000)
-        const rightCount = Math.floor(rand(5, 7));
-        const rightBaseOffset = rand(45, 65);
-        for (let i = 0; i < rightCount; i++) {
-          const shift = i * rightBaseOffset + rand(-15, 15);
-          const x0 = rand(1480, 1560) - shift * 0.4;
-          const y0 = rand(-80, 50) - shift * 0.3;
-          const cp1x = rand(1200, 1340) - shift;
-          const cp1y = rand(140, 260);
-          const cp2x = rand(1260, 1380) - shift * 0.7;
-          const cp2y = rand(420, 560);
-          const p1x = rand(1120, 1260) - shift * 0.8;
-          const p1y = rand(640, 740);
-          const cp3x = rand(1060, 1200) - shift;
-          const cp3y = rand(760, 840);
-          const cp4x = rand(1140, 1280) - shift * 0.9;
-          const cp4y = rand(880, 960);
-          const p2x = rand(1120, 1300) - shift * 0.8;
-          const p2y = rand(980, 1050);
-
-          const d = `M ${x0.toFixed(1)},${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`;
-          const isDashed = (i === 3 || (i === 2 && Math.random() > 0.6));
-          paths.push({ d, dashed: isDashed });
-        }
-
-        // 3. Top margin flowing waves (3 to 4 lines) — staying above y = 140
-        const topCount = Math.floor(rand(3, 5));
-        const topBaseStep = rand(35, 55);
-        for (let i = 0; i < topCount; i++) {
-          const baseStep = i * topBaseStep + rand(-10, 10);
-          const y0 = rand(20, 50) + baseStep;
-          const cp1x = rand(300, 420);
-          const cp1y = rand(-40, 0) + baseStep;
-          const cp2x = rand(600, 720);
-          const cp2y = rand(70, 120) + baseStep;
-          const p1x = rand(980, 1100);
-          const p1y = rand(-20, 20) + baseStep;
-          const cp3x = rand(1200, 1320);
-          const cp3y = rand(-60, -10) + baseStep;
-          const cp4x = rand(1400, 1500);
-          const cp4y = rand(50, 90) + baseStep;
-          const p2x = rand(1540, 1600);
-          const p2y = rand(10, 60) + baseStep;
-
-          const d = `M -100,${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`;
-          const isDashed = (i === topCount - 1);
-          paths.push({ d, dashed: isDashed });
-        }
-
-        // 4. Bottom margin flowing waves (3 to 4 lines) — staying below y = 780
-        const bottomCount = Math.floor(rand(3, 5));
-        const bottomBaseStep = rand(35, 55);
-        for (let i = 0; i < bottomCount; i++) {
-          const baseStep = i * bottomBaseStep + rand(-10, 10);
-          const y0 = rand(780, 820) + baseStep;
-          const cp1x = rand(280, 400);
-          const cp1y = rand(700, 740) + baseStep;
-          const cp2x = rand(620, 740);
-          const cp2y = rand(860, 900) + baseStep;
-          const p1x = rand(980, 1100);
-          const p1y = rand(750, 790) + baseStep;
-          const cp3x = rand(1200, 1320);
-          const cp3y = rand(690, 730) + baseStep;
-          const cp4x = rand(1400, 1500);
-          const cp4y = rand(830, 870) + baseStep;
-          const p2x = rand(1540, 1600);
-          const p2y = rand(770, 810) + baseStep;
-
-          const d = `M -100,${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${p1x.toFixed(1)},${p1y.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${p2x.toFixed(1)},${p2y.toFixed(1)}`;
+        // 2. Sweeping diagonal contour waves traversing through center (4-6 lines)
+        const dCount = Math.floor(rand(4, 7));
+        for (let i = 0; i < dCount; i++) {
+          const spread = (i - (dCount - 1) / 2) * rand(80, 130);
+          const x0 = rand(-80, 200) + spread * 0.7;
+          const y0 = rand(-60, 100) - spread * 0.3;
+          const cp1x = rand(300, 560) + spread * 0.5;
+          const cp1y = rand(180, 380);
+          const cp2x = rand(620, 860) + spread * 0.3;
+          const cp2y = rand(420, 640);
+          const endX = rand(1240, 1560) + spread * 0.4;
+          const endY = rand(720, 960) + spread * 0.2;
+          const d = `M ${x0.toFixed(1)},${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${endX.toFixed(1)},${endY.toFixed(1)}`;
           const isDashed = (i === 1 && Math.random() > 0.5);
           paths.push({ d, dashed: isDashed });
         }
-
-        // 5. Cradling & framing curves skirting above and below the center form
-        const archTopY = rand(-70, -30);
-        const archLeftY = rand(220, 280);
-        const archRightY = rand(220, 280);
-        const dArch = `M -100,${archLeftY.toFixed(1)} C ${rand(160, 220).toFixed(1)},${rand(280, 320).toFixed(1)} ${rand(340, 380).toFixed(1)},${rand(140, 180).toFixed(1)} ${rand(420, 460).toFixed(1)},${rand(60, 80).toFixed(1)} C ${rand(480, 520).toFixed(1)},${rand(-10, 20).toFixed(1)} ${rand(600, 660).toFixed(1)},${archTopY.toFixed(1)} ${rand(760, 820).toFixed(1)},${archTopY.toFixed(1)} C ${rand(920, 980).toFixed(1)},${archTopY.toFixed(1)} ${rand(1020, 1060).toFixed(1)},${rand(20, 40).toFixed(1)} ${rand(1080, 1120).toFixed(1)},${rand(90, 120).toFixed(1)} C ${rand(1140, 1180).toFixed(1)},${rand(170, 210).toFixed(1)} ${rand(1300, 1340).toFixed(1)},${rand(270, 310).toFixed(1)} 1560,${archRightY.toFixed(1)}`;
-        paths.push({ d: dArch, dashed: false });
-
-        const cradleBotY = rand(930, 970);
-        const cradleLeftY = rand(660, 720);
-        const cradleRightY = rand(680, 740);
-        const dCradle = `M -100,${cradleLeftY.toFixed(1)} C ${rand(160, 220).toFixed(1)},${rand(610, 650).toFixed(1)} ${rand(340, 380).toFixed(1)},${rand(730, 770).toFixed(1)} ${rand(420, 460).toFixed(1)},${rand(810, 850).toFixed(1)} C ${rand(480, 520).toFixed(1)},${rand(870, 910).toFixed(1)} ${rand(620, 680).toFixed(1)},${cradleBotY.toFixed(1)} ${rand(780, 840).toFixed(1)},${cradleBotY.toFixed(1)} C ${rand(940, 1000).toFixed(1)},${cradleBotY.toFixed(1)} ${rand(1060, 1100).toFixed(1)},${rand(850, 890).toFixed(1)} ${rand(1140, 1180).toFixed(1)},${rand(770, 810).toFixed(1)} C ${rand(1220, 1260).toFixed(1)},${rand(690, 730).toFixed(1)} ${rand(1380, 1420).toFixed(1)},${rand(630, 670).toFixed(1)} 1560,${cradleRightY.toFixed(1)}`;
-        paths.push({ d: dCradle, dashed: false });
 
         let svgHtml = '';
         for (const p of paths) {
@@ -1837,7 +1873,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           tooltipCopyOutlook: "Copy Outlook link",
           tooltipCopyApple: "Copy Apple Calendar link",
           tooltipDownloadIcs: "Download .ICS file",
-          footerDocs: "Guide & URL parameters"
+          footerDocs: "Guide & URL parameters",
+          shareTitle: "Share:",
+          shareMsg: "Calendar Event Invitation"
         },
         ru: {
           code: 'ru',
@@ -1890,7 +1928,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           tooltipCopyOutlook: "Скопировать ссылку для Outlook",
           tooltipCopyApple: "Скопировать ссылку для Apple",
           tooltipDownloadIcs: "Скачать файл .ICS",
-          footerDocs: "Справка и параметры URL"
+          footerDocs: "Справка и параметры URL",
+          shareTitle: "Поделиться:",
+          shareMsg: "Приглашение на событие"
         },
         ua: {
           code: 'ua',
@@ -1943,7 +1983,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           tooltipCopyOutlook: "Скопіювати посилання для Outlook",
           tooltipCopyApple: "Скопіювати посилання для Apple",
           tooltipDownloadIcs: "Завантажити файл .ICS",
-          footerDocs: "Довідка та параметри URL"
+          footerDocs: "Довідка та параметри URL",
+          shareTitle: "Поділитися:",
+          shareMsg: "Запрошення на подію"
         }
       };
 
@@ -2166,6 +2208,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         const elFooterDocs = document.getElementById('txtFooterDocs');
         if (elFooterDocs) elFooterDocs.textContent = dict.footerDocs;
+
+        var elShareFormLabel = document.getElementById('lblShareForm');
+        if (elShareFormLabel) elShareFormLabel.textContent = dict.shareTitle || 'Share:';
+        var elShareViewLabel = document.getElementById('lblShareView');
+        if (elShareViewLabel) elShareViewLabel.textContent = dict.shareTitle || 'Share:';
 
         document.documentElement.setAttribute('lang', langKey === 'ua' ? 'uk' : langKey);
       }
@@ -2804,6 +2851,19 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         });
       }
 
+      function shareToNetwork(network, url, title) {
+        var dict = I18N[currentLang] || I18N.en;
+        var msg = (dict.shareMsg || 'Calendar Event') + (title ? ': ' + title : '');
+        var target = '';
+        switch (network) {
+          case 'telegram': target = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(msg); break;
+          case 'whatsapp': target = 'https://wa.me/?text=' + encodeURIComponent(msg + ' ' + url); break;
+          case 'x':        target = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(msg); break;
+          case 'facebook':  target = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url); break;
+        }
+        if (target) { trackEvent('share_social', { network: network }); window.open(target, '_blank', 'noopener,noreferrer'); }
+      }
+
       function renderViewMode() {
         const dict = I18N[currentLang] || I18N.en;
         const ev = parseEventParams();
@@ -2903,6 +2963,22 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
           const qs = p.toString();
           window.location.href = `${window.location.pathname}${qs ? '?' + qs : ''}`;
+        };
+
+        // Social share handlers for view mode
+        var viewUrl = window.location.href;
+        var viewTitle = ev.title || '';
+        var shareViewMap = { shareViewTg: 'telegram', shareViewWa: 'whatsapp', shareViewX: 'x', shareViewFb: 'facebook' };
+        Object.keys(shareViewMap).forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.onclick = function(e) { e.preventDefault(); shareToNetwork(shareViewMap[id], viewUrl, viewTitle); };
+        });
+        var shareViewCopy = document.getElementById('shareViewCopy');
+        if (shareViewCopy) shareViewCopy.onclick = function() {
+          trackEvent('share_social', { network: 'copy' });
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(viewUrl).then(function() { showToast(dict.toastCopied); });
+          }
         };
       }
 
@@ -3304,6 +3380,28 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             copyChipLink(() => buildAppleUrl(), linkOpenApple, 'apple');
           };
         }
+
+        // Social share handlers for form mode
+        var shareFormMap = { shareFormTg: 'telegram', shareFormWa: 'whatsapp', shareFormX: 'x', shareFormFb: 'facebook' };
+        Object.keys(shareFormMap).forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.onclick = function(e) {
+            e.preventDefault();
+            var url = outMainUrl.value;
+            if (!url) return;
+            shareToNetwork(shareFormMap[id], url, inputTitle.value.trim());
+          };
+        });
+        var shareFormCopyBtn = document.getElementById('shareFormCopy');
+        if (shareFormCopyBtn) shareFormCopyBtn.onclick = function() {
+          var url = outMainUrl.value;
+          if (!url) return;
+          var d = I18N[currentLang] || I18N.en;
+          trackEvent('share_social', { network: 'copy' });
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(url).then(function() { showToast(d.toastCopied); });
+          }
+        };
 
         btnCopyMain.onclick = function () {
           const dict = I18N[currentLang] || I18N.en;
