@@ -556,10 +556,17 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   font-weight: 500;
   line-height: 1.35;
   margin-top: var(--space-2xs);
+  text-decoration: none;
+  border: none;
 }
 
 .field-meta-row .field-error-msg {
   margin-top: 0;
+}
+
+.floating-control {
+  position: relative;
+  width: 100%;
 }
 
 .floating-field.has-error .floating-input,
@@ -572,8 +579,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 }
 
 .floating-field.has-error .floating-line {
-  background: var(--color-error-rule);
-  transform: scaleX(1);
+  display: none !important;
 }
 
 .floating-field.has-error .field-counter {
@@ -1556,9 +1562,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       <form id="generatorForm">
         <!-- 1. EVENT TITLE (FLOATING LABEL, REQUIRED) -->
         <div class="floating-field" id="fieldTitleWrap">
-          <input type="text" id="inputTitle" class="floating-input" placeholder=" " value="" required>
-          <label for="inputTitle" class="floating-label" id="lblFieldTitle">Event title</label>
-          <span class="floating-line"></span>
+          <div class="floating-control">
+            <input type="text" id="inputTitle" class="floating-input" placeholder=" " value="" required>
+            <label for="inputTitle" class="floating-label" id="lblFieldTitle">Event title</label>
+            <span class="floating-line"></span>
+          </div>
           <span class="field-error-msg hidden" id="titleRequiredError"></span>
         </div>
 
@@ -1644,9 +1652,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         <!-- 4. DESCRIPTION (PRIMARY FIELD WITH URL SAFE LIMIT COUNTER) -->
         <div class="floating-field" id="fieldDescWrap">
-          <textarea id="inputDescription" class="floating-textarea" rows="2" placeholder=" "></textarea>
-          <label for="inputDescription" class="floating-label" id="lblFieldDescription">Описание</label>
-          <span class="floating-line" id="lineDesc"></span>
+          <div class="floating-control">
+            <textarea id="inputDescription" class="floating-textarea" rows="2" placeholder=" "></textarea>
+            <label for="inputDescription" class="floating-label" id="lblFieldDescription">Описание</label>
+            <span class="floating-line" id="lineDesc"></span>
+          </div>
           <div class="field-meta-row">
             <span class="field-error-msg hidden" id="descLimitError"></span>
             <span class="field-counter" id="descCharCount">0 симв. (осталось ~2000)</span>
