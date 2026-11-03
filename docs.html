@@ -195,20 +195,25 @@ textarea::selection {
   color: var(--color-selection-text);
 }
 
-/* Background wavy decor */
-.bg-stripes {
+/* Subtle tactile background noise texture */
+.bg-noise {
   position: fixed;
   inset: 0;
-  pointer-events: none;
-  z-index: -1;
-  opacity: 0.35;
-  overflow: hidden;
-}
-
-.bg-stripes-svg {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.025;
+}
+
+body[data-theme="dark"] .bg-noise {
+  opacity: 0.04;
+}
+
+.bg-noise-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .container {
@@ -770,9 +775,14 @@ body[data-theme="dark"] .toast {
   </style>
 </head>
 <body>
-  <!-- Abstract wavy background decor -->
-  <div class="bg-stripes" aria-hidden="true">
-    <svg id="bgSvg" class="bg-stripes-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" fill="none">
+  <!-- Subtle tactile background noise texture -->
+  <div class="bg-noise" aria-hidden="true">
+    <svg class="bg-noise-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+      <filter id="bgNoiseFilter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch" />
+        <feColorMatrix type="saturate" values="0" />
+      </filter>
+      <rect width="100%" height="100%" filter="url(#bgNoiseFilter)" />
     </svg>
   </div>
 
@@ -1063,63 +1073,6 @@ body[data-theme="dark"] .toast {
 
   <script>
     (function () {
-      // Dynamic random wavy background generation
-      function generateWavyBackground() {
-        const svg = document.getElementById('bgSvg');
-        if (!svg) return;
-
-        function rand(min, max) {
-          return min + Math.random() * (max - min);
-        }
-
-        const paths = [];
-
-        // 1. Horizontal sweeping contour waves (9-12 lines, full canvas width)
-        const hCount = Math.floor(rand(9, 13));
-        const hStep = 960 / (hCount + 1);
-        for (let i = 0; i < hCount; i++) {
-          const yBase = -20 + (i + 1) * hStep + rand(-25, 25);
-          const amp1 = rand(-80, 80);
-          const amp2 = rand(-80, 80);
-          const amp3 = rand(-60, 60);
-          const x0 = rand(-120, -40);
-          const y0 = yBase + rand(-15, 15);
-          const cp1x = rand(200, 400); const cp1y = yBase + amp1;
-          const cp2x = rand(480, 680); const cp2y = yBase + amp2;
-          const midX = rand(680, 780);  const midY = yBase + (amp1 + amp2) * 0.35;
-          const cp3x = rand(800, 1000); const cp3y = yBase + amp3;
-          const cp4x = rand(1100, 1300); const cp4y = yBase - amp1 * 0.6;
-          const endX = rand(1480, 1560); const endY = yBase + rand(-15, 15);
-          const d = `M ${x0.toFixed(1)},${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${midX.toFixed(1)},${midY.toFixed(1)} C ${cp3x.toFixed(1)},${cp3y.toFixed(1)} ${cp4x.toFixed(1)},${cp4y.toFixed(1)} ${endX.toFixed(1)},${endY.toFixed(1)}`;
-          const isDashed = (i === 2 || (i === 7 && Math.random() > 0.4));
-          const dash = isDashed ? ' stroke-dasharray="6 8"' : '';
-          const sw = isDashed ? '1' : '1.1';
-          paths.push(`<path d="${d}" stroke="var(--color-stripe)" stroke-width="${sw}"${dash} vector-effect="non-scaling-stroke" />`);
-        }
-
-        // 2. Sweeping diagonal contour waves traversing through center (4-6 lines)
-        const dCount = Math.floor(rand(4, 7));
-        for (let i = 0; i < dCount; i++) {
-          const spread = (i - (dCount - 1) / 2) * rand(80, 130);
-          const x0 = rand(-80, 200) + spread * 0.7;
-          const y0 = rand(-60, 100) - spread * 0.3;
-          const cp1x = rand(300, 560) + spread * 0.5;
-          const cp1y = rand(180, 380);
-          const cp2x = rand(620, 860) + spread * 0.3;
-          const cp2y = rand(420, 640);
-          const endX = rand(1240, 1560) + spread * 0.4;
-          const endY = rand(720, 960) + spread * 0.2;
-          const d = `M ${x0.toFixed(1)},${y0.toFixed(1)} C ${cp1x.toFixed(1)},${cp1y.toFixed(1)} ${cp2x.toFixed(1)},${cp2y.toFixed(1)} ${endX.toFixed(1)},${endY.toFixed(1)}`;
-          const isDashed = (i === 1 && Math.random() > 0.5);
-          const dash = isDashed ? ' stroke-dasharray="6 8"' : '';
-          const sw = isDashed ? '1' : '1.1';
-          paths.push(`<path d="${d}" stroke="var(--color-stripe)" stroke-width="${sw}"${dash} vector-effect="non-scaling-stroke" />`);
-        }
-
-        svg.innerHTML = paths.join('\n');
-      }
-
-      generateWavyBackground();
 
       // Translations Dictionary
       const I18N = {
