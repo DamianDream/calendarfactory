@@ -549,15 +549,26 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 }
 
 .field-error-msg {
+  display: block;
   font-family: var(--font-body);
   font-size: var(--text-xs);
   color: var(--color-error-text);
   font-weight: 500;
   line-height: 1.35;
+  margin-top: var(--space-2xs);
 }
 
+.field-meta-row .field-error-msg {
+  margin-top: 0;
+}
+
+.floating-field.has-error .floating-input,
 .floating-field.has-error .floating-textarea {
   border-bottom-color: var(--color-error-rule);
+}
+
+.floating-field.has-error .floating-label {
+  color: var(--color-error-text);
 }
 
 .floating-field.has-error .floating-line {
@@ -568,6 +579,22 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 .floating-field.has-error .field-counter {
   color: var(--color-error-text);
   font-weight: 600;
+}
+
+@keyframes fieldShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+.floating-field.shake {
+  animation: fieldShake 320ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floating-field.shake {
+    animation: none;
+  }
 }
 
 .floating-select {
@@ -1528,10 +1555,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
     <div id="formMode" class="surface hidden">
       <form id="generatorForm">
         <!-- 1. EVENT TITLE (FLOATING LABEL, REQUIRED) -->
-        <div class="floating-field">
+        <div class="floating-field" id="fieldTitleWrap">
           <input type="text" id="inputTitle" class="floating-input" placeholder=" " value="" required>
           <label for="inputTitle" class="floating-label" id="lblFieldTitle">Event title</label>
           <span class="floating-line"></span>
+          <span class="field-error-msg hidden" id="titleRequiredError"></span>
         </div>
 
         <!-- 2. DATE, TIME, DURATION ROW -->
@@ -2134,6 +2162,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (btnDirectIcs) {
           btnDirectIcs.setAttribute('title', dict.tooltipDownloadIcs || 'Download .ICS file');
           btnDirectIcs.setAttribute('aria-label', dict.tooltipDownloadIcs || 'Download .ICS file');
+        }
+
+        const elTitleRequiredError = document.getElementById('titleRequiredError');
+        if (elTitleRequiredError && !elTitleRequiredError.classList.contains('hidden')) {
+          elTitleRequiredError.textContent = dict.toastTitleRequired;
         }
 
         // View mode strings
@@ -2944,6 +2977,74 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       const descCharCount = document.getElementById('descCharCount');
       const descLimitError = document.getElementById('descLimitError');
       const fieldDescWrap = document.getElementById('fieldDescWrap');
+      const fieldTitleWrap = document.getElementById('fieldTitleWrap');
+      const titleRequiredError = document.getElementById('titleRequiredError');
+      let fieldTitleShakeTimer = null;
+
+      function clearTitleError() {
+        if (fieldTitleWrap) {
+          fieldTitleWrap.classList.remove('has-error', 'shake');
+        }
+        if (titleRequiredError) {
+          titleRequiredError.classList.add('hidden');
+          titleRequiredError.textContent = '';
+        }
+        if (fieldTitleShakeTimer) {
+          clearTimeout(fieldTitleShakeTimer);
+          fieldTitleShakeTimer = null;
+        }
+      }
+
+      function highlightTitleError() {
+        const dict = I18N[currentLang] || I18N.en;
+        if (fieldTitleWrap) {
+          fieldTitleWrap.classList.add('has-error');
+          fieldTitleWrap.classList.remove('shake');
+          void fieldTitleWrap.offsetWidth;
+          fieldTitleWrap.classList.add('shake');
+          if (fieldTitleShakeTimer) clearTimeout(fieldTitleShakeTimer);
+          fieldTitleShakeTimer = setTimeout(() => {
+            if (fieldTitleWrap) fieldTitleWrap.classList.remove('shake');
+            fieldTitleShakeTimer = null;
+          }, 360);
+        }
+        if (titleRequiredError) {
+          titleRequiredError.textContent = dict.toastTitleRequired;
+          titleRequiredError.classList.remove('hidden');
+        }
+        if (inputTitle) {
+          inputTitle.focus();
+          if (typeof inputTitle.scrollIntoView === 'function') {
+            inputTitle.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+          if (typeof inputTitle.reportValidity === 'function') {
+            try { inputTitle.reportValidity(); } catch (e) {}
+          }
+        }
+        showToast(dict.toastTitleRequired);
+      }
+
+      function validateFormOrHighlight() {
+        const dict = I18N[currentLang] || I18N.en;
+        if (!inputTitle || !inputTitle.value.trim()) {
+          highlightTitleError();
+          return false;
+        }
+        const currentLen = parseInt(outMainUrl.dataset.urlLen || '0', 10);
+        if (currentLen > MAX_SAFE_URL_LENGTH) {
+          showToast(dict.toastUrlExceeded);
+          return false;
+        }
+        return true;
+      }
+
+      if (inputTitle) {
+        inputTitle.addEventListener('input', function () {
+          if (this.value.trim()) {
+            clearTitleError();
+          }
+        });
+      }
 
       const MAX_SAFE_URL_LENGTH = 2000;
 
@@ -3231,18 +3332,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         }
 
         btnDownloadIcsDirect.onclick = function () {
-          const dict = I18N[currentLang] || I18N.en;
-          if (!inputTitle.value.trim()) {
-            inputTitle.focus();
-            if (inputTitle.reportValidity) inputTitle.reportValidity();
-            showToast(dict.toastTitleRequired);
-            return;
-          }
-          const currentLen = parseInt(outMainUrl.dataset.urlLen || '0', 10);
-          if (currentLen > MAX_SAFE_URL_LENGTH) {
-            showToast(dict.toastUrlExceeded);
-            return;
-          }
+          if (!validateFormOrHighlight()) return;
           trackEvent('download_ics', { source: 'form_direct' });
           const ev = getCurrentFormEvent();
           downloadIcsFile(ev);
@@ -3271,18 +3361,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         }
 
         function copyChipLink(getUrlFn, btn, calType) {
+          if (!validateFormOrHighlight()) return;
           const dict = I18N[currentLang] || I18N.en;
-          if (!inputTitle.value.trim()) {
-            inputTitle.focus();
-            if (inputTitle.reportValidity) inputTitle.reportValidity();
-            showToast(dict.toastTitleRequired);
-            return;
-          }
-          const currentLen = parseInt(outMainUrl.dataset.urlLen || '0', 10);
-          if (currentLen > MAX_SAFE_URL_LENGTH) {
-            showToast(dict.toastUrlExceeded);
-            return;
-          }
           const url = getUrlFn();
           trackEvent('copy_direct_calendar', { calendar_type: calType || 'generic' });
           if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -3328,6 +3408,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           var el = document.getElementById(id);
           if (el) el.onclick = function(e) {
             e.preventDefault();
+            if (!validateFormOrHighlight()) return;
             var url = outMainUrl.value;
             if (!url) return;
             shareToNetwork(shareFormMap[id], url, inputTitle.value.trim());
@@ -3335,28 +3416,30 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         });
         var shareFormCopyBtn = document.getElementById('shareFormCopy');
         if (shareFormCopyBtn) shareFormCopyBtn.onclick = function() {
+          if (!validateFormOrHighlight()) return;
           var url = outMainUrl.value;
           if (!url) return;
           var d = I18N[currentLang] || I18N.en;
           trackEvent('share_social', { network: 'copy' });
           if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(url).then(function() { showToast(d.toastCopied); });
+          } else {
+            showToast(d.toastCopied);
           }
         };
 
+        if (btnPreviewMain) {
+          btnPreviewMain.onclick = function (e) {
+            if (!validateFormOrHighlight()) {
+              if (e) e.preventDefault();
+              return false;
+            }
+          };
+        }
+
         btnCopyMain.onclick = function () {
+          if (!validateFormOrHighlight()) return;
           const dict = I18N[currentLang] || I18N.en;
-          if (!inputTitle.value.trim()) {
-            inputTitle.focus();
-            if (inputTitle.reportValidity) inputTitle.reportValidity();
-            showToast(dict.toastTitleRequired);
-            return;
-          }
-          const currentLen = parseInt(outMainUrl.dataset.urlLen || '0', 10);
-          if (currentLen > MAX_SAFE_URL_LENGTH) {
-            showToast(dict.toastUrlExceeded);
-            return;
-          }
           trackEvent('copy_event_link', { source: 'form' });
           outMainUrl.select();
           const labelSpan = document.getElementById('txtBtnCopyMain');
