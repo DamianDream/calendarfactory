@@ -1546,6 +1546,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         <button type="button" class="lang-item active" role="menuitem" data-lang="en">English (EN)</button>
         <button type="button" class="lang-item" role="menuitem" data-lang="ru">Русский (RU)</button>
         <button type="button" class="lang-item" role="menuitem" data-lang="ua">Українська (UA)</button>
+        <button type="button" class="lang-item" role="menuitem" data-lang="pl">Polski (PL)</button>
       </div>
     </div>
 
@@ -2063,6 +2064,63 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           footerDocs: "Довідка та параметри URL",
           shareTitle: "Поділитися:",
           shareMsg: "Запрошення на подію"
+        },
+        pl: {
+          code: 'pl',
+          formTitle: "Generator linków do wydarzeń",
+          fieldTitle: "Nazwa wydarzenia",
+          fieldDate: "Data",
+          fieldTime: "Godzina",
+          fieldDuration: "Czas trwania",
+          dur15: "15 min",
+          dur30: "30 min",
+          dur45: "45 min",
+          dur60: "1 godzina",
+          dur90: "1.5 godziny",
+          dur120: "2 godziny",
+          durAllDay: "Cały dzień",
+          moreParams: "Dodatkowe parametry",
+          fieldBanner: "Link do banera (obrazek)",
+          bannerHint: "Formaty: JPG, PNG, WebP, GIF, SVG. Zalecany rozmiar: 970×250 (do 2 MB).",
+          fieldLoc: "Lokalizacja lub link do spotkania",
+          fieldDesc: "Opis",
+          fieldVars: "Zmienne (np. name=Barry Allen)",
+          fieldTz: "Strefa czasowa (UTC)",
+          fieldColor: "Kolor tła",
+          fieldTheme: "Ciemny motyw",
+          fieldShareUrl: "Link do udostępnienia",
+          copyBtn: "Skopiuj link",
+          copiedBtn: "Skopiowano!",
+          openNewTab: "Otwórz stronę wydarzenia w nowej karcie",
+          directLinksTitle: "Bezpośrednie linki do kalendarza",
+          googleCal: "Google",
+          outlookCal: "Outlook",
+          office365Cal: "Office 365",
+          appleCal: "Apple",
+          icsDirect: "Plik .ICS",
+          viewTzPrefix: "Strefa czasowa:",
+          viewAllDay: "(Cały dzień)",
+          viewAddTitle: "Dodaj do swojego kalendarza",
+          viewGoogleBtn: "Kalendarz Google",
+          viewAppleBtn: "Kalendarz Apple",
+          viewOutlookBtn: "Microsoft Outlook",
+          viewIcsBtn: "Pobierz .ICS (iCal)",
+          viewCopyLink: "Skopiuj link do wydarzenia",
+          viewCreateNew: "Utwórz nowe wydarzenie",
+          toastCopied: "Link skopiowano do schowka",
+          toastTitleRequired: "Nazwa wydarzenia jest wymagana",
+          toastUrlExceeded: "Przekroczono bezpieczną długość linku (2000 znaków)",
+          descLimitError: "Przekroczono limit długości linku kalendarza (maks. 2000 znaków). Skróć opis.",
+          charCountRemaining: "znaki (pozostało ~{n})",
+          charCountOver: "znaki (+{n} ponad limit)",
+          tooltipCopied: "Link skopiowany!",
+          tooltipCopyGoogle: "Skopiuj link do Kalendarza Google",
+          tooltipCopyOutlook: "Skopiuj link do Kalendarza Outlook",
+          tooltipCopyApple: "Skopiuj link do Kalendarza Apple",
+          tooltipDownloadIcs: "Pobierz plik .ICS",
+          footerDocs: "Pomoc i parametry URL",
+          shareTitle: "Udostępnij:",
+          shareMsg: "Zaproszenie na wydarzenie"
         }
       };
 
@@ -2116,10 +2174,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
       function getSavedLang() {
         const cookieVal = getCookie('cf_lang');
-        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua')) return cookieVal;
+        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua' || cookieVal === 'pl')) return cookieVal;
         try {
           const localVal = localStorage.getItem('cf_lang');
-          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua')) return localVal;
+          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua' || localVal === 'pl')) return localVal;
         } catch (e) {}
         return null;
       }
@@ -2139,6 +2197,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         const paramLang = (getVal(['lang', 'l', 'locale']) || '').toLowerCase();
         if (paramLang === 'ru') return 'ru';
         if (paramLang === 'ua' || paramLang === 'uk') return 'ua';
+        if (paramLang === 'pl') return 'pl';
         if (paramLang === 'en') return 'en';
 
         // Check saved preference in cookie / localStorage
@@ -2147,6 +2206,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         // Check browser language
         const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        if (navLang.startsWith('pl')) return 'pl';
         if (navLang.startsWith('uk')) return 'ua';
         if (navLang.startsWith('ru') || navLang.startsWith('be')) return 'ru';
         return 'en';
@@ -2672,7 +2732,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       }
 
       function parseEventParams() {
-        const rawTitle = getVal(['title', 't', 'name', 'summary', 'event', 'subject']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : 'Calendar Event');
+        const rawTitle = getVal(['title', 't', 'name', 'summary', 'event', 'subject']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : currentLang === 'pl' ? 'Wydarzenie w kalendarzu' : 'Calendar Event');
         const rawDesc = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
         const rawLoc = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
         const rawUrl = getVal(['url', 'link', 'u']) || '';
@@ -3044,7 +3104,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         document.getElementById('eventTitle').textContent = ev.title;
 
         // Date & Time formatting according to current language
-        const localeCode = currentLang === 'ua' ? 'uk-UA' : currentLang === 'ru' ? 'ru-RU' : 'en-US';
+        const localeCode = currentLang === 'ua' ? 'uk-UA' : currentLang === 'ru' ? 'ru-RU' : currentLang === 'pl' ? 'pl-PL' : 'en-US';
         const dateOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
         const timeOptions = { hour: '2-digit', minute: '2-digit' };
         let dtText = '';

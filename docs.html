@@ -816,6 +816,7 @@ body[data-theme="dark"] .toast {
         <button type="button" class="lang-item" role="menuitem" data-lang="en">English (EN)</button>
         <button type="button" class="lang-item active" role="menuitem" data-lang="ru">Русский (RU)</button>
         <button type="button" class="lang-item" role="menuitem" data-lang="ua">Українська (UA)</button>
+        <button type="button" class="lang-item" role="menuitem" data-lang="pl">Polski (PL)</button>
       </div>
     </div>
 
@@ -1027,9 +1028,42 @@ body[data-theme="dark"] .toast {
         </div>
       </section>
 
-      <!-- 5. ПРИМЕРЫ СЦЕНАРИЕВ -->
+      <!-- 5. БАННЕРЫ И ХОСТИНГ ИЗОБРАЖЕНИЙ -->
       <section class="section-block">
-        <h2 class="section-title" id="secTitleExamples">5. Примеры использования</h2>
+        <h2 class="section-title" id="secTitleBanner">5. Баннеры и хостинг изображений</h2>
+        <p class="section-p" id="descBannerSec">Вы можете добавить визуальный баннер-обложку к странице события с помощью параметра <code>banner=https://...</code> (или <code>img=</code>, <code>b=</code>). Сервис не хранит ваши файлы: он безопасно отображает изображение по прямой ссылке с адаптивным масштабированием.</p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3 class="feature-title" id="bannerParamsTitle">Рекомендуемые параметры баннера</h3>
+            <p class="feature-desc" id="bannerParamsDesc">
+              <strong>Разрешение и пропорции</strong>: 970×250 px (соотношение ~3.88:1 / ~4:1). На смартфонах баннер аккуратно прижимается к верхнему краю экрана от края до края, на десктопе вписывается в карточку.<br><br>
+              <strong>Поддерживаемые форматы</strong>: JPG, PNG, WebP, SVG, GIF.<br><br>
+              <strong>Вес файла</strong>: рекомендуется до 2 МБ для мгновенной загрузки на мобильных сетях.<br><br>
+              <strong>Прямой URL</strong>: ссылка обязательно должна вести напрямую к файлу изображения (заканчиваться на <code>.jpg</code>, <code>.png</code>, <code>.webp</code> и т.д.).
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <h3 class="feature-title" id="bannerHostingTitle">Бесплатные сервисы для хостинга картинок</h3>
+            <p class="feature-desc" id="bannerHostingDesc">
+              <strong>Postimages (<a href="https://postimages.org/" target="_blank" rel="noopener noreferrer">postimages.org</a>)</strong>: бесплатный, быстрый, без обязательной регистрации. После загрузки выберите «Прямая ссылка» (Direct Link).<br><br>
+              <strong>ImgBB (<a href="https://imgbb.com/" target="_blank" rel="noopener noreferrer">imgbb.com</a>)</strong>: популярный хостинг до 32 МБ на файл с поддержкой прямого URL изображения.<br><br>
+              <strong>Cloudinary (<a href="https://cloudinary.com/" target="_blank" rel="noopener noreferrer">cloudinary.com</a>)</strong>: профессиональный бесплатный тариф разработчика со встроенным CDN и автооптимизацией формата.<br><br>
+              <strong>GitHub / Cloudflare Pages</strong>: загрузите баннер в публичный репозиторий или папку <code>public/</code> вашего сайта и используйте постоянную прямую ссылку.
+            </p>
+          </div>
+        </div>
+
+        <div class="code-box" style="margin-top: var(--space-md);">
+          <code>https://calendarfactory.pages.dev/?title=Конференция&start=2026-11-20T10:00&banner=https://i.postimg.cc/sample/banner.png</code>
+          <button type="button" class="btn-code-copy" data-copy="https://calendarfactory.pages.dev/?title=Конференция&start=2026-11-20T10:00&banner=https://i.postimg.cc/sample/banner.png">Копировать</button>
+        </div>
+      </section>
+
+      <!-- 6. ПРИМЕРЫ СЦЕНАРИЕВ -->
+      <section class="section-block">
+        <h2 class="section-title" id="secTitleExamples">6. Примеры использования</h2>
 
         <div class="feature-card" style="margin-bottom: var(--space-md);">
           <h3 class="feature-title" id="ex1Title">Онлайн-вебинар с Zoom</h3>
@@ -1127,9 +1161,15 @@ body[data-theme="dark"] .toast {
           pDescBanner: "Direct image URL for the event banner or cover 970×250 (JPG, PNG, WebP, GIF, SVG).",
           pDescTheme: "Page appearance theme: light or dark. Default is light.",
           pDescColor: "Custom HEX background color code (with or without #).",
-          pDescLang: "Language for the landing page interface (en, ru, ua).",
+          pDescLang: "Language for the landing page interface (en, ru, ua, pl).",
           pDescVars: "Dynamic variables: {name} in description is replaced by &name=...",
-          secExamples: "5. Real-World Examples",
+          secBanner: "5. Banners & Image Hosting",
+          descBanner: "You can enhance your event landing page with a cover banner using banner=https://... (or img=, b=). CalendarFactory does not host your images; it securely renders them via direct HTTPS links with responsive scaling.",
+          bannerParamsTitle: "Recommended Banner Specs",
+          bannerParamsDesc: "<strong>Resolution & Ratio</strong>: 970×250 px (~3.88:1 / ~4:1 ratio). On mobile, the banner stretches edge-to-edge flush with the top of the display; on desktop, it sits neatly inside the card.<br><br><strong>Supported Formats</strong>: JPG, PNG, WebP, SVG, GIF.<br><br><strong>File Size</strong>: Under 2 MB recommended for instant mobile loading.<br><br><strong>Direct URL</strong>: The link must point directly to the image file (ending in .jpg, .png, .webp, etc.).",
+          bannerHostingTitle: "Free Image Hosting Providers",
+          bannerHostingDesc: "<strong>Postimages (<a href=\"https://postimages.org/\" target=\"_blank\" rel=\"noopener noreferrer\">postimages.org</a>)</strong>: Free, ultra-fast, no registration required. After upload, choose 'Direct Link'.<br><br><strong>ImgBB (<a href=\"https://imgbb.com/\" target=\"_blank\" rel=\"noopener noreferrer\">imgbb.com</a>)</strong>: Popular hosting supporting up to 32 MB per image with direct URLs.<br><br><strong>Cloudinary (<a href=\"https://cloudinary.com/\" target=\"_blank\" rel=\"noopener noreferrer\">cloudinary.com</a>)</strong>: Developer-grade free tier with global CDN and automatic format optimization.<br><br><strong>GitHub / Cloudflare Pages</strong>: Upload to a public repository or site public/ folder and use the raw URL.",
+          secExamples: "6. Real-World Examples",
           ex1T: "Online Webinar with Zoom",
           ex1D: "Event with Zoom meeting URL in location and description details:",
           ex2T: "Personalized Email Invitation",
@@ -1184,9 +1224,15 @@ body[data-theme="dark"] .toast {
           pDescBanner: "Прямая ссылка на баннер или обложку события 970×250 (JPG, PNG, WebP, GIF, SVG).",
           pDescTheme: "Тема оформления страницы события. По умолчанию light.",
           pDescColor: "Пользовательский HEX-код цвета фона страницы (без решётки или с ней).",
-          pDescLang: "Язык интерфейса посадочной страницы события.",
+          pDescLang: "Язык интерфейса посадочной страницы события (ru, en, ua, pl).",
           pDescVars: "Динамические плейсхолдеры: {name} в описании или названии заменяется на значение из &name=...",
-          secExamples: "5. Примеры использования",
+          secBanner: "5. Баннеры и хостинг изображений",
+          descBanner: "Вы можете добавить визуальный баннер-обложку к странице события с помощью параметра banner=https://... (или img=, b=). Сервис не хранит ваши файлы: он безопасно отображает изображение по прямой ссылке с адаптивным масштабированием.",
+          bannerParamsTitle: "Рекомендуемые параметры баннера",
+          bannerParamsDesc: "<strong>Разрешение и пропорции</strong>: 970×250 px (соотношение ~3.88:1 / ~4:1). На смартфонах баннер аккуратно прижимается к верхнему краю экрана от края до края, на десктопе вписывается в карточку.<br><br><strong>Поддерживаемые форматы</strong>: JPG, PNG, WebP, SVG, GIF.<br><br><strong>Вес файла</strong>: рекомендуется до 2 МБ для мгновенной загрузки на мобильных сетях.<br><br><strong>Прямой URL</strong>: ссылка обязательно должна вести напрямую к файлу изображения (заканчиваться на .jpg, .png, .webp и т.д.).",
+          bannerHostingTitle: "Бесплатные сервисы для хостинга картинок",
+          bannerHostingDesc: "<strong>Postimages (<a href=\"https://postimages.org/\" target=\"_blank\" rel=\"noopener noreferrer\">postimages.org</a>)</strong>: бесплатный, быстрый, без обязательной регистрации. После загрузки выберите «Прямая ссылка» (Direct Link).<br><br><strong>ImgBB (<a href=\"https://imgbb.com/\" target=\"_blank\" rel=\"noopener noreferrer\">imgbb.com</a>)</strong>: популярный хостинг до 32 МБ на файл с поддержкой прямого URL изображения.<br><br><strong>Cloudinary (<a href=\"https://cloudinary.com/\" target=\"_blank\" rel=\"noopener noreferrer\">cloudinary.com</a>)</strong>: профессиональный бесплатный тариф разработчика со встроенным CDN и автооптимизацией формата.<br><br><strong>GitHub / Cloudflare Pages</strong>: загрузите баннер в публичный репозиторий или папку public/ вашего сайта и используйте постоянную прямую ссылку.",
+          secExamples: "6. Примеры использования",
           ex1T: "Онлайн-вебинар с Zoom",
           ex1D: "Событие с указанием ссылки на Zoom в месте проведения и описанием:",
           ex2T: "Персонализированная рассылка (Email)",
@@ -1241,9 +1287,15 @@ body[data-theme="dark"] .toast {
           pDescBanner: "Пряме посилання на банер або обкладинку події 970×250 (JPG, PNG, WebP, GIF, SVG).",
           pDescTheme: "Тема оформлення сторінки події. За замовчуванням light.",
           pDescColor: "Користувацький HEX-код кольору фону сторінки (з решіткою або без).",
-          pDescLang: "Мова інтерфейсу посадкової сторінки події.",
+          pDescLang: "Мова інтерфейсу посадкової сторінки події (ua, en, ru, pl).",
           pDescVars: "Динамічні плейсхолдери: {name} в описі або назві замінюється на значення з &name=...",
-          secExamples: "5. Приклади використання",
+          secBanner: "5. Банери та хостинг зображень",
+          descBanner: "Ви можете додати візуальний банер-обкладинку до сторінки події за допомогою параметра banner=https://... (або img=, b=). Сервіс не зберігає ваші файли: він безпечно відображає зображення за прямим посиланням з адаптивним масштабуванням.",
+          bannerParamsTitle: "Рекомендовані параметри банера",
+          bannerParamsDesc: "<strong>Роздільна здатність і пропорції</strong>: 970×250 px (співвідношення ~3.88:1 / ~4:1). На смартфонах банер акуратно притискається до верхнього краю екрана від краю до краю, на десктопі вписується в картку.<br><br><strong>Підтримувані формати</strong>: JPG, PNG, WebP, SVG, GIF.<br><br><strong>Розмір файлу</strong>: рекомендовано до 2 МБ для швидкого завантаження на мобільних пристроях.<br><br><strong>Прямий URL</strong>: посилання обов'язково має вести безпосередньо до файлу зображення (закінчуватися на .jpg, .png, .webp тощо).",
+          bannerHostingTitle: "Безкоштовні сервіси для хостингу картинок",
+          bannerHostingDesc: "<strong>Postimages (<a href=\"https://postimages.org/\" target=\"_blank\" rel=\"noopener noreferrer\">postimages.org</a>)</strong>: безкоштовний, швидкий, без обов'язкової реєстрації. Після завантаження оберіть «Пряме посилання» (Direct Link).<br><br><strong>ImgBB (<a href=\"https://imgbb.com/\" target=\"_blank\" rel=\"noopener noreferrer\">imgbb.com</a>)</strong>: популярний хостинг до 32 МБ на файл із підтримкою прямого URL зображення.<br><br><strong>Cloudinary (<a href=\"https://cloudinary.com/\" target=\"_blank\" rel=\"noopener noreferrer\">cloudinary.com</a>)</strong>: професійний безкоштовний тариф розробника із вбудованим CDN та автооптимізацією формату.<br><br><strong>GitHub / Cloudflare Pages</strong>: завантажте банер у публічний репозиторій або папку public/ вашого сайту та використовуйте постійне пряме посилання.",
+          secExamples: "6. Приклади використання",
           ex1T: "Онлайн-вебінар із Zoom",
           ex1D: "Подія з посиланням на Zoom у місці проведення та планом зустрічі:",
           ex2T: "Персоналізована розсилка (Email)",
@@ -1252,6 +1304,69 @@ body[data-theme="dark"] .toast {
           ex3D: "Генерація посилання в кнопці бота через змінні платформи:",
           copyBtn: "Скопіювати",
           copiedToast: "Скопійовано в буфер"
+        },
+        pl: {
+          code: 'pl',
+          backLink: "Wróć do generatora",
+          title: "Pomoc i parametry URL",
+          lead: "Kompletny przewodnik po CalendarFactory: struktura linków, parametry zapytania i integracja z kalendarzami.",
+          secAbout: "1. O serwisie",
+          descAbout: "CalendarFactory to lekkie, w 100% działające po stronie klienta narzędzie Edge do natychmiastowego generowania bezpośrednich linków do kalendarza. Wszystkie dane wydarzenia są zakodowane w URL. Brak baz danych, ciasteczek śledzących i kont użytkowników.",
+          feat1T: "Bez kont i baz danych",
+          feat1D: "Wszystkie dane wydarzenia znajdują się w linku. Serwis niczego nie zapisuje na serwerach.",
+          feat2T: "Wieloplatformowość",
+          feat2D: "Obsługuje Kalendarz Google, Kalendarz Apple (iOS/macOS), Microsoft Outlook oraz pliki .ICS.",
+          feat3T: "Dla newsletterów i CRM",
+          feat3D: "Idealne do przycisków 'Dodaj do kalendarza' w mailach transakcyjnych, SMS i komunikatorach.",
+          feat4T: "Dynamiczne zmienne",
+          feat4D: "Personalizacja opisów imionami uczestników lub kodami biletów przez parametry linku.",
+          secHow: "2. Jak to działa",
+          step1T: "Interaktywny generator",
+          step1D: "Otwórz stronę główną, wpisz tytuł, datę, godzinę, czas trwania i strefę czasową. Link powstaje natychmiast.",
+          step2T: "Strona wydarzenia (Landing View)",
+          step2D: "Wyślij link uczestnikom. Zobaczą przejrzystą kartę z przyciskami dodania do wybranego kalendarza.",
+          step3T: "Bezpośrednie linki do kalendarzy",
+          step3D: "Pomiń stronę lądowania i umieszczaj bezpośrednie linki do Google, Outlook lub Apple w mailach.",
+          step4T: "Natychmiastowy plik dla Apple (.ics)",
+          step4D: "Dla urządzeń iOS i macOS endpoint /event.ics natywnie otwiera okno zapisu jednym kliknięciem.",
+          secSyntax: "3. Składnia linków",
+          descSyntax: "Możesz generować linki automatycznie w systemie CRM, kodzie lub narzędziach mailingowych:",
+          lblStd: "Standardowy link do strony wydarzenia:",
+          lblCompact: "Kompaktowy link (krótkie parametry):",
+          lblApple: "Bezpośredni link do pliku Apple Calendar (.ICS):",
+          secParams: "4. Wykaz parametrów URL",
+          thParam: "Parametr",
+          thAlias: "Alias",
+          thExample: "Przykład",
+          thDesc: "Opis",
+          pDescTitle: "Wymagany. Nazwa wydarzenia wyświetlana w kalendarzu.",
+          pDescStart: "Data i godzina rozpoczęcia. Obsługuje ISO 8601, format europejski (20.11.2026), znacznik Unix ({date:U}), RFC 2822 lub samą datę.",
+          pDescTime: "Godzina rozpoczęcia przy osobnym przekazywaniu daty i godziny (np. date=2026-11-20&time=14:30).",
+          pDescDur: "Czas trwania w minutach (15, 30, 45, 60, 90, 120) lub allDay. Domyślnie 60 min.",
+          pDescEnd: "Czas zakończenia wydarzenia (alternatywa dla parametru duration).",
+          pDescUtc: "Przesunięcie strefy czasowej względem UTC (np. 3, -5, 2:00) lub nazwa miasta.",
+          pDescDesc: "Tekst opisu wydarzenia. Bezpieczny limit długości całego linku to 2000 znaków.",
+          pDescLoc: "Lokalizacja: adres fizyczny lub link do spotkania (Zoom, Google Meet).",
+          pDescBanner: "Bezpośredni link do banera lub okładki wydarzenia 970×250 (JPG, PNG, WebP, GIF, SVG).",
+          pDescTheme: "Motyw wyglądu strony: light lub dark. Domyślnie light.",
+          pDescColor: "Własny kod koloru tła HEX (z kratką # lub bez).",
+          pDescLang: "Język interfejsu strony wydarzenia (pl, en, ru, ua).",
+          pDescVars: "Dynamiczne zmienne: {name} w opisie jest zastępowane przez wartość z &name=...",
+          secBanner: "5. Banery i hosting obrazów",
+          descBanner: "Możesz wzbogacić stronę wydarzenia o baner-okładkę za pomocą parametru banner=https://... (lub img=, b=). Serwis nie przechowuje Twoich plików: wyświetla je bezpośrednio z bezpiecznego linku HTTPS z automatycznym skalowaniem.",
+          bannerParamsTitle: "Zalecane parametry banera",
+          bannerParamsDesc: "<strong>Rozdzielczość i proporcje</strong>: 970×250 px (proporcje ~3.88:1 / ~4:1). Na smartfonach baner przylega do górnej krawędzi ekranu od brzegu do brzegu, na komputerze estetycznie mieści się w karcie.<br><br><strong>Obsługiwane formaty</strong>: JPG, PNG, WebP, SVG, GIF.<br><br><strong>Rozmiar pliku</strong>: zalecany do 2 MB dla błyskawicznego ładowania na telefonach.<br><br><strong>Bezpośredni URL</strong>: link musi prowadzić bezpośrednio do pliku graficznego (kończyć się na .jpg, .png, .webp itd.).",
+          bannerHostingTitle: "Darmowe serwisy do hostingu zdjęć",
+          bannerHostingDesc: "<strong>Postimages (<a href=\"https://postimages.org/\" target=\"_blank\" rel=\"noopener noreferrer\">postimages.org</a>)</strong>: darmowy, bardzo szybki, bez konieczności rejestracji. Po przesłaniu wybierz 'Bezpośredni link' (Direct Link).<br><br><strong>ImgBB (<a href=\"https://imgbb.com/\" target=\"_blank\" rel=\"noopener noreferrer\">imgbb.com</a>)</strong>: popularny hosting do 32 MB na plik z obsługą bezpośrednich linków URL.<br><br><strong>Cloudinary (<a href=\"https://cloudinary.com/\" target=\"_blank\" rel=\"noopener noreferrer\">cloudinary.com</a>)</strong>: profesjonalny darmowy pakiet dla programistów z globalnym CDN i optymalizacją formatu.<br><br><strong>GitHub / Cloudflare Pages</strong>: wgraj baner do publicznego repozytorium lub folderu public/ swojej strony i użyj trwałego linku raw.",
+          secExamples: "6. Przykłady użycia",
+          ex1T: "Webinar online z Zoom",
+          ex1D: "Wydarzenie z linkiem do Zoom w lokalizacji oraz planem spotkania:",
+          ex2T: "Personalizowany mailing (Email)",
+          ex2D: "Wykorzystanie dynamicznych tagów scalających z systemu mailingowego:",
+          ex3T: "Chatboty (ManyChat / Smart Sender)",
+          ex3D: "Generowanie linku w przycisku bota za pomocą zmiennych platformy:",
+          copyBtn: "Kopiuj",
+          copiedToast: "Skopiowano do schowka"
         }
       };
 
@@ -1284,10 +1399,10 @@ body[data-theme="dark"] .toast {
 
       function getSavedLang() {
         const cookieVal = getCookie('cf_lang');
-        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua')) return cookieVal;
+        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua' || cookieVal === 'pl')) return cookieVal;
         try {
           const localVal = localStorage.getItem('cf_lang');
-          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua')) return localVal;
+          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua' || localVal === 'pl')) return localVal;
         } catch (e) {}
         return null;
       }
@@ -1305,7 +1420,7 @@ body[data-theme="dark"] .toast {
       const queryParams = new URLSearchParams(window.location.search);
       const urlLang = (queryParams.get('lang') || '').toLowerCase();
       let currentLang = 'en';
-      if (['en', 'ru', 'ua'].includes(urlLang)) {
+      if (['en', 'ru', 'ua', 'pl'].includes(urlLang)) {
         currentLang = urlLang;
       } else {
         const savedLang = getSavedLang();
@@ -1313,7 +1428,8 @@ body[data-theme="dark"] .toast {
           currentLang = savedLang;
         } else {
           const navLang = (navigator.language || '').toLowerCase();
-          if (navLang.startsWith('uk')) currentLang = 'ua';
+          if (navLang.startsWith('pl')) currentLang = 'pl';
+          else if (navLang.startsWith('uk')) currentLang = 'ua';
           else if (navLang.startsWith('ru') || navLang.startsWith('be')) currentLang = 'ru';
           else currentLang = 'en';
         }
@@ -1484,7 +1600,8 @@ body[data-theme="dark"] .toast {
         document.getElementById('thExample').textContent = dict.thExample;
         document.getElementById('thDesc').textContent = dict.thDesc;
 
-        document.getElementById('paramDescTitle').innerHTML = `<strong>${dict.code === 'en' ? 'Required.' : 'Обязательный.'}</strong> ${dict.pDescTitle}`;
+        const reqLabel = dict.code === 'en' ? 'Required.' : (dict.code === 'pl' ? 'Wymagany.' : (dict.code === 'ua' ? 'Обов’язковий.' : 'Обязательный.'));
+        document.getElementById('paramDescTitle').innerHTML = `<strong>${reqLabel}</strong> ${dict.pDescTitle}`;
         document.getElementById('paramDescStart').textContent = dict.pDescStart;
         const elParamDescTime = document.getElementById('paramDescTime');
         if (elParamDescTime) elParamDescTime.textContent = dict.pDescTime;
@@ -1500,6 +1617,19 @@ body[data-theme="dark"] .toast {
         document.getElementById('paramDescColor').textContent = dict.pDescColor;
         document.getElementById('paramDescLang').textContent = dict.pDescLang;
         document.getElementById('paramDescVars').textContent = dict.pDescVars;
+
+        const elSecTitleBanner = document.getElementById('secTitleBanner');
+        if (elSecTitleBanner) elSecTitleBanner.textContent = dict.secBanner;
+        const elDescBannerSec = document.getElementById('descBannerSec');
+        if (elDescBannerSec) elDescBannerSec.textContent = dict.descBanner;
+        const elBannerParamsTitle = document.getElementById('bannerParamsTitle');
+        if (elBannerParamsTitle) elBannerParamsTitle.textContent = dict.bannerParamsTitle;
+        const elBannerParamsDesc = document.getElementById('bannerParamsDesc');
+        if (elBannerParamsDesc) elBannerParamsDesc.innerHTML = dict.bannerParamsDesc;
+        const elBannerHostingTitle = document.getElementById('bannerHostingTitle');
+        if (elBannerHostingTitle) elBannerHostingTitle.textContent = dict.bannerHostingTitle;
+        const elBannerHostingDesc = document.getElementById('bannerHostingDesc');
+        if (elBannerHostingDesc) elBannerHostingDesc.innerHTML = dict.bannerHostingDesc;
 
         document.getElementById('secTitleExamples').textContent = dict.secExamples;
         document.getElementById('ex1Title').textContent = dict.ex1T;
