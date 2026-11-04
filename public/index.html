@@ -44,6 +44,7 @@
   --space-lg: 20px;
   --space-xl: 24px;
   --space-2xl: 36px;
+  --space-3xl: 48px;
 
   --text-xs: 0.75rem;
   --text-sm: 0.8125rem;
@@ -293,7 +294,7 @@ body[data-theme="dark"] .bg-noise {
   justify-content: center;
   width: 100%;
   margin-top: var(--space-xs);
-  margin-bottom: var(--space-2xl);
+  margin-bottom: calc(var(--space-2xl) + var(--space-md));
   padding-bottom: var(--space-xs);
   text-align: center;
 }
@@ -301,7 +302,7 @@ body[data-theme="dark"] .bg-noise {
 @media (min-width: 640px) {
   .site-header {
     margin-top: var(--space-sm);
-    margin-bottom: var(--space-3xl);
+    margin-bottom: calc(var(--space-3xl) + var(--space-md));
   }
 }
 
@@ -1560,7 +1561,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         <!-- 1. EVENT TITLE (FLOATING LABEL, REQUIRED) -->
         <div class="floating-field" id="fieldTitleWrap">
           <div class="floating-control">
-            <input type="text" id="inputTitle" class="floating-input" placeholder=" " value="" required>
+            <input type="text" id="inputTitle" class="floating-input" placeholder=" " value="" required tabindex="1">
             <label for="inputTitle" class="floating-label" id="lblFieldTitle">Event title</label>
             <span class="floating-line"></span>
           </div>
@@ -1570,19 +1571,19 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         <!-- 2. DATE, TIME, DURATION ROW -->
         <div class="row-3">
           <div class="floating-field">
-            <input type="date" id="inputDate" class="floating-input">
+            <input type="date" id="inputDate" class="floating-input" tabindex="2">
             <label for="inputDate" class="floating-label floated" id="lblFieldDate">Date</label>
             <span class="floating-line"></span>
           </div>
 
           <div class="floating-field">
-            <input type="time" id="inputTime" class="floating-input" value="10:00">
+            <input type="time" id="inputTime" class="floating-input" value="10:00" tabindex="3">
             <label for="inputTime" class="floating-label floated" id="lblFieldTime">Time</label>
             <span class="floating-line"></span>
           </div>
 
           <div class="floating-field">
-            <select id="inputDuration" class="floating-select" aria-label="Duration">
+            <select id="inputDuration" class="floating-select" aria-label="Duration" tabindex="4">
               <option value="15" id="optDur15">15 min</option>
               <option value="30" id="optDur30">30 min</option>
               <option value="45" id="optDur45">45 min</option>
@@ -1598,7 +1599,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         <!-- 3. MANDATORY TIMEZONE (UTC) WITH DROPDOWN & LATIN SEARCH -->
         <div class="floating-field">
-          <input type="text" id="inputTimezone" class="floating-input" list="tzDatalist" placeholder=" " autocomplete="off">
+          <input type="text" id="inputTimezone" class="floating-input" list="tzDatalist" placeholder=" " autocomplete="off" tabindex="5">
           <label for="inputTimezone" class="floating-label" id="lblFieldTimezone">Timezone (UTC)</label>
           <span class="floating-line"></span>
           <datalist id="tzDatalist">
@@ -1650,7 +1651,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         <!-- 4. DESCRIPTION (PRIMARY FIELD WITH URL SAFE LIMIT COUNTER) -->
         <div class="floating-field" id="fieldDescWrap">
           <div class="floating-control">
-            <textarea id="inputDescription" class="floating-textarea" rows="2" placeholder=" "></textarea>
+            <textarea id="inputDescription" class="floating-textarea" rows="2" placeholder=" " tabindex="6"></textarea>
             <label for="inputDescription" class="floating-label" id="lblFieldDescription">Описание</label>
             <span class="floating-line" id="lineDesc"></span>
           </div>
