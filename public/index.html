@@ -169,6 +169,7 @@
 
   --radius-pill: 9999px;
   --radius-sm: 6px;
+  --radius-md: 12px;
 
   --dur-micro: 140ms;
   --dur-float: 200ms;
@@ -1076,6 +1077,74 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 .share-icon-btn--fb:hover { color: var(--color-social-fb); background: var(--color-social-fb-hover-bg); }
 .share-icon-btn--x:hover  { color: var(--color-social-x); }
 
+/* Event Banner in View Mode */
+.event-banner-wrap {
+  position: relative;
+  width: calc(100% + var(--space-md) * 2);
+  margin-left: calc(var(--space-md) * -1);
+  margin-right: calc(var(--space-md) * -1);
+  margin-top: calc(var(--space-sm) * -1);
+  margin-bottom: var(--space-xl);
+  aspect-ratio: 16 / 9;
+  max-height: 240px;
+  border-radius: 0;
+  border-top: 1px solid var(--color-rule);
+  border-bottom: 1px solid var(--color-rule);
+  overflow: hidden;
+  background-color: var(--color-paper);
+}
+
+.event-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+@media (min-width: 640px) {
+  .event-banner-wrap {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 0;
+    margin-bottom: var(--space-2xl);
+    max-height: 320px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-rule);
+  }
+}
+
+/* Banner Input Preview in Form Mode */
+.banner-input-preview {
+  margin-top: var(--space-xs);
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 180px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-rule);
+  overflow: hidden;
+  background-color: var(--color-paper);
+}
+
+.banner-input-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* Field helper hint */
+.field-hint {
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-muted);
+  line-height: 1.4;
+  margin-top: var(--space-2xs);
+}
+
 /* View Mode Details */
 .view-details-list {
   display: flex;
@@ -1476,6 +1545,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
     <!-- VIEW MODE: MINIMAL EVENT -->
     <div id="viewMode" class="surface hidden">
+      <div id="eventBannerWrap" class="event-banner-wrap hidden">
+        <img id="eventBannerImg" class="event-banner-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'/%3E" alt="" loading="eager">
+      </div>
       <h1 id="eventTitle" class="page-title">Event Title</h1>
 
       <div class="view-details-list">
@@ -1676,6 +1748,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             <span id="txtMoreParams">Дополнительные параметры</span>
           </summary>
           <div class="details-body">
+            <div class="floating-field" id="fieldBannerWrap">
+              <input type="url" id="inputBanner" class="floating-input" placeholder=" " autocomplete="off">
+              <label for="inputBanner" class="floating-label" id="lblFieldBanner">Ссылка на баннер (изображение)</label>
+              <span class="floating-line"></span>
+              <div class="field-hint" id="bannerFormatHint">Форматы: JPG, PNG, WebP, GIF, SVG. Рекомендуемый размер: 1200×630 или 16:9 (до 2 МБ).</div>
+              <div id="bannerInputPreviewWrap" class="banner-input-preview hidden">
+                <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'/%3E" alt="Banner preview" loading="lazy">
+              </div>
+            </div>
             <div class="floating-field">
               <input type="text" id="inputLocation" class="floating-input" placeholder=" ">
               <label for="inputLocation" class="floating-label" id="lblFieldLocation">Location or meeting URL</label>
@@ -1823,6 +1904,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           dur120: "2 hours",
           durAllDay: "All day",
           moreParams: "Additional parameters",
+          fieldBanner: "Banner image URL",
+          bannerHint: "Formats: JPG, PNG, WebP, GIF, SVG. Recommended: 1200×630 or 16:9 (up to 2 MB).",
           fieldLoc: "Location or meeting URL",
           fieldDesc: "Description",
           fieldVars: "Variables (e.g. name=Barry Allen)",
@@ -1878,6 +1961,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           dur120: "2 часа",
           durAllDay: "Весь день",
           moreParams: "Дополнительные параметры",
+          fieldBanner: "Ссылка на баннер (изображение)",
+          bannerHint: "Форматы: JPG, PNG, WebP, GIF, SVG. Рекомендуемый размер: 1200×630 или 16:9 (до 2 МБ).",
           fieldLoc: "Место или ссылка на встречу",
           fieldDesc: "Описание",
           fieldVars: "Переменные (напр. name=Barry Allen)",
@@ -1933,6 +2018,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           dur120: "2 години",
           durAllDay: "Весь день",
           moreParams: "Додаткові параметри",
+          fieldBanner: "Посилання на банер (зображення)",
+          bannerHint: "Формати: JPG, PNG, WebP, GIF, SVG. Рекомендований розмір: 1200×630 або 16:9 (до 2 МБ).",
           fieldLoc: "Місце або посилання на зустріч",
           fieldDesc: "Опис",
           fieldVars: "Змінні (напр. name=Barry Allen)",
@@ -2110,6 +2197,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         const elMoreParams = document.getElementById('txtMoreParams');
         if (elMoreParams) elMoreParams.textContent = dict.moreParams;
+        const elFieldBanner = document.getElementById('lblFieldBanner');
+        if (elFieldBanner) elFieldBanner.textContent = dict.fieldBanner;
+        const elBannerHint = document.getElementById('bannerFormatHint');
+        if (elBannerHint) elBannerHint.textContent = dict.bannerHint;
         const elFieldLoc = document.getElementById('lblFieldLocation');
         if (elFieldLoc) elFieldLoc.textContent = dict.fieldLoc;
         const elFieldDesc = document.getElementById('lblFieldDescription');
@@ -2570,11 +2661,18 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         return null;
       }
 
+      function isValidImageUrl(url) {
+        if (!url || typeof url !== 'string') return false;
+        const trimmed = url.trim();
+        return /^https?:\/\/.+/i.test(trimmed);
+      }
+
       function parseEventParams() {
         const rawTitle = getVal(['title', 't', 'name', 'summary', 'event', 'subject']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : 'Calendar Event');
         const rawDesc = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
         const rawLoc = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
         const rawUrl = getVal(['url', 'link', 'u']) || '';
+        const rawBanner = getVal(['banner', 'img', 'image', 'b', 'pic', 'photo']) || '';
 
         const title = replacePlaceholders(rawTitle, allParams);
         const desc = replacePlaceholders(rawDesc, allParams);
@@ -2634,7 +2732,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
         }
 
-        return { title, desc, loc, url: rawUrl, tz, startDate, endDate, isAllDay };
+        return { title, desc, loc, url: rawUrl, banner: rawBanner, tz, startDate, endDate, isAllDay };
       }
 
       function detectDefaultTimezone() {
@@ -2920,6 +3018,25 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       function renderViewMode() {
         const dict = I18N[currentLang] || I18N.en;
         const ev = parseEventParams();
+
+        const bannerWrap = document.getElementById('eventBannerWrap');
+        const bannerImg = document.getElementById('eventBannerImg');
+        if (bannerWrap && bannerImg) {
+          if (ev.banner && isValidImageUrl(ev.banner)) {
+            bannerImg.onerror = function () {
+              bannerWrap.classList.add('hidden');
+            };
+            bannerImg.onload = function () {
+              bannerWrap.classList.remove('hidden');
+            };
+            bannerImg.src = ev.banner;
+            bannerImg.alt = ev.title || 'Event banner';
+          } else {
+            bannerWrap.classList.add('hidden');
+            bannerImg.src = '';
+          }
+        }
+
         document.getElementById('eventTitle').textContent = ev.title;
 
         // Date & Time formatting according to current language
@@ -3033,11 +3150,31 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       const inputDate = document.getElementById('inputDate');
       const inputTime = document.getElementById('inputTime');
       const inputDuration = document.getElementById('inputDuration');
+      const inputBanner = document.getElementById('inputBanner');
       const inputLocation = document.getElementById('inputLocation');
       const inputDescription = document.getElementById('inputDescription');
       const inputExtraProps = document.getElementById('inputExtraProps');
       const inputTimezone = document.getElementById('inputTimezone');
       const inputColor = document.getElementById('inputColor');
+
+      function updateBannerPreview(url) {
+        const wrap = document.getElementById('bannerInputPreviewWrap');
+        const img = document.getElementById('bannerInputPreviewImg');
+        if (!wrap || !img) return;
+        const clean = (url || '').trim();
+        if (clean && isValidImageUrl(clean)) {
+          img.onerror = function () {
+            wrap.classList.add('hidden');
+          };
+          img.onload = function () {
+            wrap.classList.remove('hidden');
+          };
+          img.src = clean;
+        } else {
+          wrap.classList.add('hidden');
+          img.src = '';
+        }
+      }
 
       const outMainUrl = document.getElementById('outMainUrl');
       const btnCopyMain = document.getElementById('btnCopyMain');
@@ -3125,6 +3262,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         const dateVal = inputDate ? inputDate.value : '';
         const timeVal = inputTime ? inputTime.value || '10:00' : '10:00';
         const durVal = inputDuration ? inputDuration.value : '60';
+        const banner = inputBanner ? inputBanner.value.trim() : '';
         const loc = inputLocation ? inputLocation.value.trim() : '';
         const desc = inputDescription ? inputDescription.value.trim() : '';
         const tz = inputTimezone ? inputTimezone.value.trim() : '';
@@ -3149,7 +3287,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           endDate = new Date(startDate.getTime() + 3600000);
         }
 
-        return { title, desc, loc, url: '', tz, startDate, endDate, isAllDay };
+        return { title, desc, loc, banner, url: '', tz, startDate, endDate, isAllDay };
       }
 
       function setShareUrlActive(active) {
@@ -3174,6 +3312,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         const dateVal = inputDate.value;
         const timeVal = inputTime.value || '10:00';
         const durVal = inputDuration.value;
+        const banner = inputBanner ? inputBanner.value.trim() : '';
         const loc = inputLocation.value.trim();
         const desc = inputDescription.value.trim();
         const extraProps = inputExtraProps.value.trim();
@@ -3183,6 +3322,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         const p = new URLSearchParams();
         if (title) p.set('title', title);
+        if (banner && isValidImageUrl(banner)) p.set('banner', banner);
 
         if (dateVal) {
           if (durVal === 'allDay') {
@@ -3399,9 +3539,21 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           });
         }
 
+        if (inputBanner) {
+          inputBanner.value = getVal(['banner', 'img', 'image', 'b', 'pic', 'photo']) || '';
+          updateBannerPreview(inputBanner.value);
+          if (inputBanner.value) {
+            const details = document.querySelector('.details-clean');
+            if (details) details.open = true;
+          }
+          inputBanner.addEventListener('input', function () {
+            updateBannerPreview(this.value);
+          });
+        }
+
         const allInputs = [
           inputTitle, inputDate, inputTime, inputDuration,
-          inputLocation, inputDescription, inputExtraProps,
+          inputBanner, inputLocation, inputDescription, inputExtraProps,
           inputTimezone, inputColor
         ];
 
