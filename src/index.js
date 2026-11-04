@@ -157,6 +157,131 @@ export default {
     const url = new URL(request.url);
     const pathname = url.pathname;
 
+    // Handle CORS preflight requests
+    if (request.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type',
+          'Access-Control-Max-Age': '86400'
+        }
+      });
+    }
+
+    // Direct image serving from Cloudflare R2: GET /cdn/:key
+    if (pathname.startsWith('/cdn/')) {
+      const key = pathname.substring(5);
+      if (!key) {
+        return new Response('Not found', { status: 404 });
+      }
+      if (!env.BANNERS_BUCKET) {
+        return new Response('R2 storage is not configured', { status: 503 });
+      }
+      const object = await env.BANNERS_BUCKET.get(key);
+      if (!object) {
+        return new Response('Image not found or expired', { status: 404 });
+      }
+      const headers = new Headers();
+      object.writeHttpMetadata(headers);
+      headers.set('etag', object.httpEtag);
+      headers.set('Cache-Control', 'public, max-age=2592000, immutable');
+      headers.set('Access-Control-Allow-Origin', '*');
+      return new Response(object.body, { headers });
+    }
+
+    // Cloudflare R2 temporary image upload: POST /api/upload
+    if (pathname === '/api/upload' && request.method === 'POST') {
+      if (!env.BANNERS_BUCKET) {
+        return new Response(JSON.stringify({
+          error: "Cloudflare R2 storage ('BANNERS_BUCKET') is not configured yet. Configure R2 bucket in wrangler.jsonc or Cloudflare dashboard."
+        }), {
+          status: 503,
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      }
+
+      try {
+        const formData = await request.formData();
+        const file = formData.get('file') || formData.get('banner') || formData.get('image');
+
+        if (!file || typeof file === 'string' || !file.size) {
+          return new Response(JSON.stringify({ error: 'No image file provided' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+          });
+        }
+
+        // Validate max 2 MB
+        const MAX_SIZE = 2 * 1024 * 1024;
+        if (file.size > MAX_SIZE) {
+          return new Response(JSON.stringify({ error: 'File size exceeds 2 MB limit' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+          });
+        }
+
+        // Validate MIME type
+        const allowedMimeTypes = {
+          'image/jpeg': '.jpg',
+          'image/jpg': '.jpg',
+          'image/png': '.png',
+          'image/webp': '.webp',
+          'image/gif': '.gif',
+          'image/svg+xml': '.svg'
+        };
+
+        const ext = allowedMimeTypes[(file.type || '').toLowerCase()];
+        if (!ext) {
+          return new Response(JSON.stringify({ error: 'Unsupported format. Supported: JPG, PNG, WebP, GIF, SVG' }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+          });
+        }
+
+        // Generate clean unique key
+        const randomHex = Math.random().toString(36).substring(2, 10);
+        const key = `banner-${Date.now()}-${randomHex}${ext}`;
+
+        await env.BANNERS_BUCKET.put(key, file.stream(), {
+          httpMetadata: {
+            contentType: file.type,
+            cacheControl: 'public, max-age=2592000, immutable'
+          },
+          customMetadata: {
+            uploadedAt: new Date().toISOString(),
+            originalName: (file.name || 'banner').substring(0, 100),
+            expiresInDays: '30'
+          }
+        });
+
+        const cdnUrl = `${url.origin}/cdn/${key}`;
+        return new Response(JSON.stringify({
+          success: true,
+          url: cdnUrl,
+          key: key,
+          size: file.size,
+          type: file.type,
+          expires_in_days: 30
+        }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*'
+          }
+        });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: 'Upload failed: ' + (err.message || 'Server error') }), {
+          status: 500,
+          headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+        });
+      }
+    }
+
     // Direct Apple Calendar / iCal endpoint: /event.ics or /api/event.ics
     if (pathname === '/event.ics' || pathname === '/api/event.ics' || pathname.endsWith('.ics')) {
       const q = url.searchParams;

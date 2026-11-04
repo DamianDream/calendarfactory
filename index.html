@@ -1103,6 +1103,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   background-color: var(--color-paper);
 }
 
+@media (max-width: 639px) {
+  body.has-view-banner {
+    padding-top: 0;
+  }
+  body.has-view-banner .event-banner-wrap {
+    margin-top: 0;
+  }
+}
+
 .event-banner-img {
   width: 100%;
   height: 100%;
@@ -1123,6 +1132,96 @@ input[list]:focus::-webkit-calendar-picker-indicator {
     border-radius: var(--radius-md);
     border: 1px solid var(--color-rule);
   }
+}
+
+/* Banner Input Controls & Direct R2 Upload */
+.banner-input-flex {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.banner-input-flex .floating-control {
+  flex: 1;
+  min-width: 0;
+}
+
+.btn-banner-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding: calc(var(--space-2xs) + 1px) var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text);
+  background: var(--color-paper-subtle);
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+  user-select: none;
+  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), opacity var(--dur-micro) var(--ease-out);
+}
+
+.btn-banner-upload:hover {
+  background: var(--color-paper);
+  border-color: var(--color-rule-active);
+}
+
+.btn-banner-upload:focus-within {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.btn-banner-upload.is-uploading {
+  opacity: 0.6;
+  pointer-events: none;
+  cursor: wait;
+}
+
+.btn-banner-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-md);
+  line-height: 1;
+  color: var(--color-muted);
+  background: transparent;
+  border: 1px solid var(--color-rule);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+  transition: color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
+}
+
+.btn-banner-clear:hover {
+  color: var(--color-text);
+  border-color: var(--color-rule-active);
+}
+
+.btn-banner-clear:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* Banner Input Preview in Form Mode */
@@ -1763,10 +1862,22 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           </summary>
           <div class="details-body">
             <div class="floating-field" id="fieldBannerWrap">
-              <input type="url" id="inputBanner" class="floating-input" placeholder=" " autocomplete="off">
-              <label for="inputBanner" class="floating-label" id="lblFieldBanner">Ссылка на баннер (изображение)</label>
-              <span class="floating-line"></span>
-              <div class="field-hint" id="bannerFormatHint">Форматы: JPG, PNG, WebP, GIF, SVG. Рекомендуемый размер: 970×250 (до 2 МБ).</div>
+              <div class="banner-input-flex">
+                <div class="floating-control">
+                  <input type="url" id="inputBanner" class="floating-input" placeholder=" " autocomplete="off">
+                  <label for="inputBanner" class="floating-label" id="lblFieldBanner">Ссылка на баннер (изображение)</label>
+                  <span class="floating-line"></span>
+                </div>
+                <label for="fileBannerUpload" class="btn-banner-upload" id="btnUploadBannerLabel" title="Загрузить баннер (до 2 МБ, хранится 30 дней)">
+                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                  </svg>
+                  <span id="txtBtnUploadBanner">Загрузить</span>
+                  <input type="file" id="fileBannerUpload" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" class="sr-only">
+                </label>
+                <button type="button" id="btnClearBanner" class="btn-banner-clear hidden" title="Удалить баннер" aria-label="Удалить баннер">×</button>
+              </div>
+              <div class="field-hint" id="bannerFormatHint">Загрузите файл (хранится 30 дней) или вставьте URL. Рекомендуемый размер: 970×250 (до 2 МБ).</div>
               <div id="bannerInputPreviewWrap" class="banner-input-preview hidden">
                 <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 970 250'/%3E" alt="Banner preview" loading="lazy">
               </div>
@@ -1911,7 +2022,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "All day",
           moreParams: "Additional parameters",
           fieldBanner: "Banner image URL",
-          bannerHint: "Formats: JPG, PNG, WebP, GIF, SVG. Recommended size: 970×250 (up to 2 MB).",
+          bannerHint: "Upload image (stored for 30 days) or paste URL. Recommended: 970×250 (up to 2 MB).",
+          btnUploadBanner: "Upload",
+          btnUploadingBanner: "Uploading…",
+          btnUploadBannerTitle: "Upload banner image (up to 2 MB, stored for 30 days)",
+          btnClearBannerTitle: "Clear banner",
+          toastBannerUploaded: "Banner uploaded (stored for 30 days)",
+          toastBannerTooLarge: "File too large (maximum 2 MB)",
+          toastBannerError: "Failed to upload image",
           fieldLoc: "Location or meeting URL",
           fieldDesc: "Description",
           fieldVars: "Variables (e.g. name=Barry Allen)",
@@ -1968,7 +2086,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Дополнительные параметры",
           fieldBanner: "Ссылка на баннер (изображение)",
-          bannerHint: "Форматы: JPG, PNG, WebP, GIF, SVG. Рекомендуемый размер: 970×250 (до 2 МБ).",
+          bannerHint: "Загрузите файл (хранится 30 дней) или вставьте URL. Рекомендуемый размер: 970×250 (до 2 МБ).",
+          btnUploadBanner: "Загрузить",
+          btnUploadingBanner: "Загрузка…",
+          btnUploadBannerTitle: "Загрузить баннер (до 2 МБ, хранится 30 дней)",
+          btnClearBannerTitle: "Удалить баннер",
+          toastBannerUploaded: "Баннер загружен (хранится 30 дней)",
+          toastBannerTooLarge: "Файл слишком большой (максимум 2 МБ)",
+          toastBannerError: "Не удалось загрузить изображение",
           fieldLoc: "Место или ссылка на встречу",
           fieldDesc: "Описание",
           fieldVars: "Переменные (напр. name=Barry Allen)",
@@ -2025,7 +2150,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Додаткові параметри",
           fieldBanner: "Посилання на банер (зображення)",
-          bannerHint: "Формати: JPG, PNG, WebP, GIF, SVG. Рекомендований розмір: 970×250 (до 2 МБ).",
+          bannerHint: "Завантажте файл (зберігається 30 днів) або вставте URL. Рекомендований розмір: 970×250 (до 2 МБ).",
+          btnUploadBanner: "Завантажити",
+          btnUploadingBanner: "Завантаження…",
+          btnUploadBannerTitle: "Завантажити банер (до 2 МБ, зберігається 30 днів)",
+          btnClearBannerTitle: "Видалити банер",
+          toastBannerUploaded: "Банер завантажено (зберігається 30 днів)",
+          toastBannerTooLarge: "Файл занадто великий (максимум 2 МБ)",
+          toastBannerError: "Не вдалося завантажити зображення",
           fieldLoc: "Місце або посилання на зустріч",
           fieldDesc: "Опис",
           fieldVars: "Змінні (напр. name=Barry Allen)",
@@ -2082,7 +2214,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Cały dzień",
           moreParams: "Dodatkowe parametry",
           fieldBanner: "Link do banera (obrazek)",
-          bannerHint: "Formaty: JPG, PNG, WebP, GIF, SVG. Zalecany rozmiar: 970×250 (do 2 MB).",
+          bannerHint: "Prześlij plik (przechowywany przez 30 dni) lub wklej URL. Zalecany rozmiar: 970×250 (do 2 MB).",
+          btnUploadBanner: "Prześlij",
+          btnUploadingBanner: "Przesyłanie…",
+          btnUploadBannerTitle: "Prześlij baner (do 2 MB, przechowywany przez 30 dni)",
+          btnClearBannerTitle: "Usuń baner",
+          toastBannerUploaded: "Baner przesłany (przechowywany przez 30 dni)",
+          toastBannerTooLarge: "Plik jest zbyt duży (maksymalnie 2 MB)",
+          toastBannerError: "Nie udało się przesłać obrazu",
           fieldLoc: "Lokalizacja lub link do spotkania",
           fieldDesc: "Opis",
           fieldVars: "Zmienne (np. name=Barry Allen)",
@@ -2139,7 +2278,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "ตลอดทั้งวัน",
           moreParams: "พารามิเตอร์เพิ่มเติม",
           fieldBanner: "ลิงก์แบนเนอร์ (รูปภาพ)",
-          bannerHint: "รูปแบบ: JPG, PNG, WebP, GIF, SVG ขนาดที่แนะนำ: 970×250 (ไม่เกิน 2 MB)",
+          bannerHint: "อัปโหลดไฟล์ (เก็บรักษา 30 วัน) หรือวาง URL ขนาดที่แนะนำ: 970×250 (ไม่เกิน 2 MB)",
+          btnUploadBanner: "อัปโหลด",
+          btnUploadingBanner: "กำลังอัปโหลด…",
+          btnUploadBannerTitle: "อัปโหลดแบนเนอร์ (ไม่เกิน 2 MB เก็บรักษา 30 วัน)",
+          btnClearBannerTitle: "ลบแบนเนอร์",
+          toastBannerUploaded: "อัปโหลดแบนเนอร์แล้ว (เก็บรักษา 30 วัน)",
+          toastBannerTooLarge: "ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 2 MB)",
+          toastBannerError: "ไม่สามารถอัปโหลดรูปภาพได้",
           fieldLoc: "สถานที่หรือลิงก์การประชุม",
           fieldDesc: "รายละเอียด",
           fieldVars: "ตัวแปร (เช่น name=สมชาย)",
@@ -2325,6 +2471,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (elFieldBanner) elFieldBanner.textContent = dict.fieldBanner;
         const elBannerHint = document.getElementById('bannerFormatHint');
         if (elBannerHint) elBannerHint.textContent = dict.bannerHint;
+        const elBtnUploadText = document.getElementById('txtBtnUploadBanner');
+        if (elBtnUploadText) elBtnUploadText.textContent = dict.btnUploadBanner || 'Upload';
+        const elBtnUploadLabel = document.getElementById('btnUploadBannerLabel');
+        if (elBtnUploadLabel) elBtnUploadLabel.setAttribute('title', dict.btnUploadBannerTitle || 'Upload banner');
+        const elBtnClearBanner = document.getElementById('btnClearBanner');
+        if (elBtnClearBanner) {
+          elBtnClearBanner.setAttribute('title', dict.btnClearBannerTitle || 'Clear banner');
+          elBtnClearBanner.setAttribute('aria-label', dict.btnClearBannerTitle || 'Clear banner');
+        }
         const elFieldLoc = document.getElementById('lblFieldLocation');
         if (elFieldLoc) elFieldLoc.textContent = dict.fieldLoc;
         const elFieldDesc = document.getElementById('lblFieldDescription');
@@ -3149,14 +3304,17 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           if (ev.banner && isValidImageUrl(ev.banner)) {
             bannerImg.onerror = function () {
               bannerWrap.classList.add('hidden');
+              document.body.classList.remove('has-view-banner');
             };
             bannerImg.onload = function () {
               bannerWrap.classList.remove('hidden');
+              document.body.classList.add('has-view-banner');
             };
             bannerImg.src = ev.banner;
             bannerImg.alt = ev.title || 'Event banner';
           } else {
             bannerWrap.classList.add('hidden');
+            document.body.classList.remove('has-view-banner');
             bannerImg.src = '';
           }
         }
@@ -3284,8 +3442,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       function updateBannerPreview(url) {
         const wrap = document.getElementById('bannerInputPreviewWrap');
         const img = document.getElementById('bannerInputPreviewImg');
-        if (!wrap || !img) return;
+        const btnClear = document.getElementById('btnClearBanner');
         const clean = (url || '').trim();
+        if (btnClear) {
+          if (clean) btnClear.classList.remove('hidden');
+          else btnClear.classList.add('hidden');
+        }
+        if (!wrap || !img) return;
         if (clean && isValidImageUrl(clean)) {
           img.onerror = function () {
             wrap.classList.add('hidden');
@@ -3673,6 +3836,65 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           inputBanner.addEventListener('input', function () {
             updateBannerPreview(this.value);
           });
+
+          const btnClear = document.getElementById('btnClearBanner');
+          if (btnClear) {
+            btnClear.addEventListener('click', function () {
+              inputBanner.value = '';
+              updateBannerPreview('');
+              updateGeneratedLinks();
+            });
+          }
+
+          const fileUpload = document.getElementById('fileBannerUpload');
+          const uploadLabel = document.getElementById('btnUploadBannerLabel');
+          const uploadTxt = document.getElementById('txtBtnUploadBanner');
+          if (fileUpload) {
+            fileUpload.addEventListener('change', async function () {
+              const file = this.files && this.files[0];
+              if (!file) return;
+
+              const dict = I18N[currentLang] || I18N.en;
+
+              // Validate client-side max 2 MB
+              if (file.size > 2 * 1024 * 1024) {
+                showToast(dict.toastBannerTooLarge || 'File too large (max 2 MB)');
+                this.value = '';
+                return;
+              }
+
+              const prevText = uploadTxt ? uploadTxt.textContent : '';
+              if (uploadLabel) uploadLabel.classList.add('is-uploading');
+              if (uploadTxt) uploadTxt.textContent = dict.btnUploadingBanner || 'Uploading…';
+
+              try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const res = await fetch('./api/upload', {
+                  method: 'POST',
+                  body: formData
+                });
+
+                const data = await res.json();
+                if (res.ok && data.url) {
+                  inputBanner.value = data.url;
+                  updateBannerPreview(data.url);
+                  updateGeneratedLinks();
+                  showToast(dict.toastBannerUploaded || 'Banner uploaded (stored for 30 days)');
+                  trackEvent('banner_upload_success', { size: file.size, type: file.type });
+                } else {
+                  showToast(data.error || dict.toastBannerError || 'Upload failed');
+                }
+              } catch (err) {
+                showToast(dict.toastBannerError || 'Upload failed');
+              } finally {
+                if (uploadLabel) uploadLabel.classList.remove('is-uploading');
+                if (uploadTxt) uploadTxt.textContent = dict.btnUploadBanner || prevText;
+                this.value = '';
+              }
+            });
+          }
         }
 
         const allInputs = [
