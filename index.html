@@ -1093,9 +1093,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   margin-left: calc(var(--space-md) * -1);
   margin-right: calc(var(--space-md) * -1);
   margin-top: calc(var(--space-sm) * -1);
-  margin-bottom: var(--space-xl);
-  aspect-ratio: 16 / 9;
-  max-height: 240px;
+  margin-bottom: var(--space-lg);
+  aspect-ratio: 970 / 250;
+  max-height: 120px;
   border-radius: 0;
   border-top: 1px solid var(--color-rule);
   border-bottom: 1px solid var(--color-rule);
@@ -1117,8 +1117,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
     margin-left: 0;
     margin-right: 0;
     margin-top: 0;
-    margin-bottom: var(--space-2xl);
-    max-height: 320px;
+    margin-bottom: var(--space-xl);
+    aspect-ratio: 970 / 250;
+    max-height: 160px;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-rule);
   }
@@ -1128,8 +1129,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 .banner-input-preview {
   margin-top: var(--space-xs);
   width: 100%;
-  aspect-ratio: 16 / 9;
-  max-height: 180px;
+  aspect-ratio: 970 / 250;
+  max-height: 80px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-rule);
   overflow: hidden;
@@ -1555,7 +1556,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
     <!-- VIEW MODE: MINIMAL EVENT -->
     <div id="viewMode" class="surface hidden">
       <div id="eventBannerWrap" class="event-banner-wrap hidden">
-        <img id="eventBannerImg" class="event-banner-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'/%3E" alt="" loading="eager">
+        <img id="eventBannerImg" class="event-banner-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 970 250'/%3E" alt="" loading="eager">
       </div>
       <h1 id="eventTitle" class="page-title">Event Title</h1>
 
@@ -1753,9 +1754,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
               <input type="url" id="inputBanner" class="floating-input" placeholder=" " autocomplete="off">
               <label for="inputBanner" class="floating-label" id="lblFieldBanner">Ссылка на баннер (изображение)</label>
               <span class="floating-line"></span>
-              <div class="field-hint" id="bannerFormatHint">Форматы: JPG, PNG, WebP, GIF, SVG. Рекомендуемый размер: 1200×630 или 16:9 (до 2 МБ).</div>
+              <div class="field-hint" id="bannerFormatHint">Форматы: JPG, PNG, WebP, GIF, SVG. Рекомендуемый размер: 970×250 (до 2 МБ).</div>
               <div id="bannerInputPreviewWrap" class="banner-input-preview hidden">
-                <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'/%3E" alt="Banner preview" loading="lazy">
+                <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 970 250'/%3E" alt="Banner preview" loading="lazy">
               </div>
             </div>
             <div class="floating-field">
@@ -1898,7 +1899,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "All day",
           moreParams: "Additional parameters",
           fieldBanner: "Banner image URL",
-          bannerHint: "Formats: JPG, PNG, WebP, GIF, SVG. Recommended: 1200×630 or 16:9 (up to 2 MB).",
+          bannerHint: "Formats: JPG, PNG, WebP, GIF, SVG. Recommended size: 970×250 (up to 2 MB).",
           fieldLoc: "Location or meeting URL",
           fieldDesc: "Description",
           fieldVars: "Variables (e.g. name=Barry Allen)",
@@ -1955,7 +1956,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Дополнительные параметры",
           fieldBanner: "Ссылка на баннер (изображение)",
-          bannerHint: "Форматы: JPG, PNG, WebP, GIF, SVG. Рекомендуемый размер: 1200×630 или 16:9 (до 2 МБ).",
+          bannerHint: "Форматы: JPG, PNG, WebP, GIF, SVG. Рекомендуемый размер: 970×250 (до 2 МБ).",
           fieldLoc: "Место или ссылка на встречу",
           fieldDesc: "Описание",
           fieldVars: "Переменные (напр. name=Barry Allen)",
@@ -2012,7 +2013,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Додаткові параметри",
           fieldBanner: "Посилання на банер (зображення)",
-          bannerHint: "Формати: JPG, PNG, WebP, GIF, SVG. Рекомендований розмір: 1200×630 або 16:9 (до 2 МБ).",
+          bannerHint: "Формати: JPG, PNG, WebP, GIF, SVG. Рекомендований розмір: 970×250 (до 2 МБ).",
           fieldLoc: "Місце або посилання на зустріч",
           fieldDesc: "Опис",
           fieldVars: "Змінні (напр. name=Barry Allen)",
