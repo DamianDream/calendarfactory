@@ -290,33 +290,31 @@ body[data-theme="dark"] .bg-noise {
 .site-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
+  justify-content: center;
   width: 100%;
-  margin-bottom: var(--space-xl);
-  padding-bottom: var(--space-md);
-  border-bottom: 1px solid var(--color-rule);
+  margin-top: var(--space-xs);
+  margin-bottom: var(--space-2xl);
+  padding-bottom: var(--space-xs);
+  text-align: center;
 }
 
-.header-brand {
+@media (min-width: 640px) {
+  .site-header {
+    margin-top: var(--space-sm);
+    margin-bottom: var(--space-3xl);
+  }
+}
+
+.header-title {
   font-family: var(--font-display);
   font-size: calc(var(--text-md) * 2);
-  line-height: 1.15;
+  line-height: 1.2;
   font-weight: 600;
   color: var(--color-text);
-  text-decoration: none;
   letter-spacing: var(--tracking-display);
-  transition: opacity var(--dur-micro) var(--ease-out);
-}
-
-.header-brand:hover {
-  opacity: 0.7;
-}
-
-.header-brand:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
-  border-radius: var(--radius-sm);
+  margin: 0;
+  text-align: center;
+  user-select: text;
 }
 
 /* Detached Top-Right Floating Controls (Language & Theme Switch) */
@@ -1464,7 +1462,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
   <div class="container">
     <header class="site-header">
-      <a href="./" class="header-brand" id="brandLink"><span id="lblFormTitle">Event Link Generator</span></a>
+      <h1 class="header-title" id="lblFormTitle">Event Link Generator</h1>
     </header>
 
     <!-- VIEW MODE: MINIMAL EVENT -->
@@ -2896,19 +2894,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
         });
       });
-
-      // Brand link resets or reloads with current language & theme
-      const brandLink = document.getElementById('brandLink');
-      if (brandLink) {
-        brandLink.addEventListener('click', function (e) {
-          e.preventDefault();
-          const p = new URLSearchParams();
-          if (currentLang) p.set('lang', currentLang);
-          if (currentTheme === 'dark') p.set('theme', 'dark');
-          const qs = p.toString();
-          window.location.href = `${window.location.pathname}${qs ? '?' + qs : ''}`;
-        });
-      }
 
       function shareToNetwork(network, url, title) {
         var dict = I18N[currentLang] || I18N.en;
