@@ -308,14 +308,22 @@ body[data-theme="dark"] .bg-noise {
 
 .header-title {
   font-family: var(--font-display);
-  font-size: calc(var(--text-md) * 2);
-  line-height: 1.2;
+  font-size: var(--text-xl);
+  line-height: 1.25;
   font-weight: 600;
   color: var(--color-text);
   letter-spacing: var(--tracking-display);
   margin: 0;
   text-align: center;
+  text-wrap: balance;
   user-select: text;
+}
+
+@media (min-width: 640px) {
+  .header-title {
+    font-size: calc(var(--text-md) * 2);
+    line-height: 1.2;
+  }
 }
 
 /* Detached Top-Right Floating Controls (Language & Theme Switch) */
