@@ -217,9 +217,23 @@ export default {
         }
 
         // Validate max 2 MB
-        const MAX_SIZE = 2 * 1024 * 1024;
+        // Edge Rate Limiting: 15 seconds cooldown per IP
+        const clientIp = req.headers.get('cf-connecting-ip') || 'anonymous';
+        const cache = caches.default;
+        const rateLimitReq = new Request(`https://ratelimit.internal/banner-upload/${clientIp}`, { method: 'GET' });
+        try {
+          const rateLimited = await cache.match(rateLimitReq);
+          if (rateLimited) {
+            return new Response(JSON.stringify({ error: 'Rate limit: Please wait 15 seconds before uploading another banner.' }), {
+              status: 429,
+              headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
+            });
+          }
+        } catch (_e) {}
+
+        const MAX_SIZE = 1 * 1024 * 1024;
         if (file.size > MAX_SIZE) {
-          return new Response(JSON.stringify({ error: 'File size exceeds 2 MB limit' }), {
+          return new Response(JSON.stringify({ error: 'File size exceeds 1 MB limit' }), {
             status: 400,
             headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
           });
@@ -258,6 +272,13 @@ export default {
             expiresInDays: '30'
           }
         });
+
+        try {
+          const rateLimitRes = new Response('cooldown', {
+            headers: { 'Cache-Control': 'public, max-age=15' }
+          });
+          cache.put(rateLimitReq, rateLimitRes);
+        } catch (_e) {}
 
         const cdnUrl = `${url.origin}/cdn/${key}`;
         return new Response(JSON.stringify({

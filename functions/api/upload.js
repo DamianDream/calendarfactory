@@ -18,6 +18,27 @@ export async function onRequestPost(context) {
     'Content-Type': 'application/json',
   };
 
+  // Edge Rate Limiting: 15 seconds cooldown per IP address
+  const clientIp = request.headers.get('cf-connecting-ip') || 'anonymous';
+  const cache = caches.default;
+  const rateLimitUrl = `https://ratelimit.internal/banner-upload/${clientIp}`;
+  const rateLimitReq = new Request(rateLimitUrl, { method: 'GET' });
+
+  try {
+    const rateLimited = await cache.match(rateLimitReq);
+    if (rateLimited) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Rate limit: Please wait 15 seconds before uploading another banner.',
+        }),
+        { status: 429, headers: corsHeaders }
+      );
+    }
+  } catch (_e) {
+    // If cache API has any transient hiccup, proceed safely
+  }
+
   if (!env.BANNERS_BUCKET) {
     return new Response(
       JSON.stringify({
@@ -47,10 +68,10 @@ export async function onRequestPost(context) {
       );
     }
 
-    const MAX_SIZE = 2 * 1024 * 1024; // 2 MB
+    const MAX_SIZE = 1 * 1024 * 1024; // 1 MB limit
     if (file.size > MAX_SIZE) {
       return new Response(
-        JSON.stringify({ success: false, error: 'File size exceeds 2 MB limit' }),
+        JSON.stringify({ success: false, error: 'File size exceeds 1 MB limit' }),
         { status: 413, headers: corsHeaders }
       );
     }
@@ -101,6 +122,18 @@ export async function onRequestPost(context) {
         expiresDays: '30',
       },
     });
+
+    // Record rate limit for 15 seconds after successful upload
+    try {
+      const rateLimitRes = new Response('cooldown', {
+        headers: {
+          'Cache-Control': 'public, max-age=15',
+        },
+      });
+      context.waitUntil(cache.put(rateLimitReq, rateLimitRes));
+    } catch (_e) {
+      // non-fatal
+    }
 
     const urlObj = new URL(request.url);
     const publicUrl = `${urlObj.origin}/cdn/${key}`;
