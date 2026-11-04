@@ -817,6 +817,7 @@ body[data-theme="dark"] .toast {
         <button type="button" class="lang-item active" role="menuitem" data-lang="ru">Русский (RU)</button>
         <button type="button" class="lang-item" role="menuitem" data-lang="ua">Українська (UA)</button>
         <button type="button" class="lang-item" role="menuitem" data-lang="pl">Polski (PL)</button>
+        <button type="button" class="lang-item" role="menuitem" data-lang="th">ไทย (TH)</button>
       </div>
     </div>
 
@@ -1161,7 +1162,7 @@ body[data-theme="dark"] .toast {
           pDescBanner: "Direct image URL for the event banner or cover 970×250 (JPG, PNG, WebP, GIF, SVG).",
           pDescTheme: "Page appearance theme: light or dark. Default is light.",
           pDescColor: "Custom HEX background color code (with or without #).",
-          pDescLang: "Language for the landing page interface (en, ru, ua, pl).",
+          pDescLang: "Language for the landing page interface (en, ru, ua, pl, th).",
           pDescVars: "Dynamic variables: {name} in description is replaced by &name=...",
           secBanner: "5. Banners & Image Hosting",
           descBanner: "You can enhance your event landing page with a cover banner using banner=https://... (or img=, b=). CalendarFactory does not host your images; it securely renders them via direct HTTPS links with responsive scaling.",
@@ -1224,7 +1225,7 @@ body[data-theme="dark"] .toast {
           pDescBanner: "Прямая ссылка на баннер или обложку события 970×250 (JPG, PNG, WebP, GIF, SVG).",
           pDescTheme: "Тема оформления страницы события. По умолчанию light.",
           pDescColor: "Пользовательский HEX-код цвета фона страницы (без решётки или с ней).",
-          pDescLang: "Язык интерфейса посадочной страницы события (ru, en, ua, pl).",
+          pDescLang: "Язык интерфейса посадочной страницы события (ru, en, ua, pl, th).",
           pDescVars: "Динамические плейсхолдеры: {name} в описании или названии заменяется на значение из &name=...",
           secBanner: "5. Баннеры и хостинг изображений",
           descBanner: "Вы можете добавить визуальный баннер-обложку к странице события с помощью параметра banner=https://... (или img=, b=). Сервис не хранит ваши файлы: он безопасно отображает изображение по прямой ссылке с адаптивным масштабированием.",
@@ -1287,7 +1288,7 @@ body[data-theme="dark"] .toast {
           pDescBanner: "Пряме посилання на банер або обкладинку події 970×250 (JPG, PNG, WebP, GIF, SVG).",
           pDescTheme: "Тема оформлення сторінки події. За замовчуванням light.",
           pDescColor: "Користувацький HEX-код кольору фону сторінки (з решіткою або без).",
-          pDescLang: "Мова інтерфейсу посадкової сторінки події (ua, en, ru, pl).",
+          pDescLang: "Мова інтерфейсу посадкової сторінки події (ua, en, ru, pl, th).",
           pDescVars: "Динамічні плейсхолдери: {name} в описі або назві замінюється на значення з &name=...",
           secBanner: "5. Банери та хостинг зображень",
           descBanner: "Ви можете додати візуальний банер-обкладинку до сторінки події за допомогою параметра banner=https://... (або img=, b=). Сервіс не зберігає ваші файли: він безпечно відображає зображення за прямим посиланням з адаптивним масштабуванням.",
@@ -1350,7 +1351,7 @@ body[data-theme="dark"] .toast {
           pDescBanner: "Bezpośredni link do banera lub okładki wydarzenia 970×250 (JPG, PNG, WebP, GIF, SVG).",
           pDescTheme: "Motyw wyglądu strony: light lub dark. Domyślnie light.",
           pDescColor: "Własny kod koloru tła HEX (z kratką # lub bez).",
-          pDescLang: "Język interfejsu strony wydarzenia (pl, en, ru, ua).",
+          pDescLang: "Język interfejsu strony wydarzenia (pl, en, ru, ua, th).",
           pDescVars: "Dynamiczne zmienne: {name} w opisie jest zastępowane przez wartość z &name=...",
           secBanner: "5. Banery i hosting obrazów",
           descBanner: "Możesz wzbogacić stronę wydarzenia o baner-okładkę za pomocą parametru banner=https://... (lub img=, b=). Serwis nie przechowuje Twoich plików: wyświetla je bezpośrednio z bezpiecznego linku HTTPS z automatycznym skalowaniem.",
@@ -1367,6 +1368,69 @@ body[data-theme="dark"] .toast {
           ex3D: "Generowanie linku w przycisku bota za pomocą zmiennych platformy:",
           copyBtn: "Kopiuj",
           copiedToast: "Skopiowano do schowka"
+        },
+        th: {
+          code: 'th',
+          backLink: "กลับไปยังตัวสร้างลิงก์",
+          title: "คู่มือและพารามิเตอร์ URL",
+          lead: "คู่มือการใช้งาน CalendarFactory โครงสร้างลิงก์ พารามิเตอร์ URL และการเชื่อมต่อกับปฏิทิน",
+          secAbout: "1. เกี่ยวกับบริการ",
+          descAbout: "CalendarFactory คือเครื่องมือ Edge น้ำหนักเบาที่ทำงานบนฝั่งไคลเอนต์ 100% สำหรับสร้างลิงก์เพิ่มกิจกรรมลงในปฏิทินทันที ข้อมูลทั้งหมดถูกเข้ารหัสไว้ใน URL โดยตรง ไม่มีฐานข้อมูล ไม่มีคุกกี้ติดตาม และไม่ต้องสมัครบัญชี",
+          feat1T: "ไม่ต้องลงทะเบียนหรือใช้ฐานข้อมูล",
+          feat1D: "ข้อมูลกิจกรรมทั้งหมดเก็บอยู่ในลิงก์ บริการนี้ไม่บันทึกข้อมูลใดๆ บนเซิร์ฟเวอร์",
+          feat2T: "รองรับหลายแพลตฟอร์ม",
+          feat2D: "ใช้งานได้กับ Google Calendar, Apple Calendar (iOS/macOS), Microsoft Outlook และไฟล์ .ICS",
+          feat3T: "สำหรับจดหมายข่าวและ CRM",
+          feat3D: "เหมาะสำหรับปุ่ม 'เพิ่มลงในปฏิทิน' ในอีเมลอัตโนมัติ SMS และแชทบอท",
+          feat4T: "ตัวแปรแบบไดนามิก",
+          feat4D: "ปรับแต่งคำอธิบายด้วยชื่อผู้เข้าร่วมหรือรหัสตั๋วผ่านพารามิเตอร์ในลิงก์",
+          secHow: "2. วิธีการทำงาน",
+          step1T: "ตัวสร้างลิงก์แบบโต้ตอบ",
+          step1D: "เปิดหน้าแรก ระบุชื่อ วันที่ เวลา ระยะเวลา และเขตเวลา ลิงก์จะถูกสร้างขึ้นทันที",
+          step2T: "หน้ากิจกรรม (Landing View)",
+          step2D: "ส่งลิงก์ให้ผู้เข้าร่วม ผู้รับจะเห็นการ์ดกิจกรรมที่ชัดเจนพร้อมปุ่มเพิ่มลงในปฏิทินที่ต้องการ",
+          step3T: "ลิงก์ตรงไปยังปฏิทิน",
+          step3D: "ข้ามหน้าเว็บและนำลิงก์ตรงสำหรับ Google, Outlook หรือ Apple ไปใส่ในปุ่มอีเมลได้ทันที",
+          step4T: "ไฟล์สำเร็จรูปสำหรับ Apple (.ics)",
+          step4D: "สำหรับอุปกรณ์ iOS และ macOS ลิงก์ /event.ics จะเปิดหน้าต่างบันทึกกิจกรรมในระบบทันทีด้วยการแตะเพียงครั้งเดียว",
+          secSyntax: "3. ไวยากรณ์ของลิงก์",
+          descSyntax: "คุณสามารถสร้างลิงก์ได้โดยอัตโนมัติใน CRM โค้ดโปรแกรม หรือระบบส่งอีเมล:",
+          lblStd: "ลิงก์มาตรฐานไปยังหน้ากิจกรรม:",
+          lblCompact: "ลิงก์แบบย่อ (พารามิเตอร์แบบสั้น):",
+          lblApple: "ลิงก์ตรงไปยังไฟล์ Apple Calendar (.ICS):",
+          secParams: "4. รายการพารามิเตอร์ URL",
+          thParam: "พารามิเตอร์",
+          thAlias: "ชื่อย่อ",
+          thExample: "ตัวอย่าง",
+          thDesc: "คำอธิบาย",
+          pDescTitle: "จำเป็นต้องระบุ ชื่อกิจกรรมที่จะแสดงในปฏิทิน",
+          pDescStart: "วันที่และเวลาเริ่มต้น รองรับ ISO 8601, รูปแบบยุโรป (20.11.2026), Unix timestamp ({date:U}) หรือเฉพาะวันที่สำหรับกิจกรรมตลอดทั้งวัน",
+          pDescTime: "เวลาเริ่มต้นเมื่อส่งวันที่และเวลาแยกกัน (เช่น date=2026-11-20&time=14:30)",
+          pDescDur: "ระยะเวลาเป็นนาที (15, 30, 45, 60, 90, 120) หรือ allDay ค่าเริ่มต้นคือ 60 นาที",
+          pDescEnd: "เวลาสิ้นสุดกิจกรรม (ทางเลือกแทนพารามิเตอร์ duration)",
+          pDescUtc: "เขตเวลาชดเชยจาก UTC (เช่น 7, +7, 3, -5) หรือชื่อเมือง",
+          pDescDesc: "ข้อความรายละเอียดกิจกรรม ขีดจำกัดความยาวที่ปลอดภัยของลิงก์คือ 2000 อักขระ",
+          pDescLoc: "สถานที่จัดงาน: ที่อยู่หรือลิงก์การประชุมออนไลน์ (Zoom, Google Meet)",
+          pDescBanner: "ลิงก์ตรงไปยังแบนเนอร์หรือรูปภาพปกกิจกรรม 970×250 (JPG, PNG, WebP, GIF, SVG)",
+          pDescTheme: "ธีมการแสดงผล: light หรือ dark ค่าเริ่มต้นคือ light",
+          pDescColor: "รหัสสีพื้นหลังแบบ HEX (มีหรือไม่มีเครื่องหมาย # ก็ได้)",
+          pDescLang: "ภาษาอินเทอร์เฟซของหน้ากิจกรรม (th, en, ru, ua, pl)",
+          pDescVars: "ตัวแปรไดนามิก: {name} ในรายละเอียดจะถูกแทนที่ด้วยค่าจาก &name=...",
+          secBanner: "5. แบนเนอร์และการโฮสต์รูปภาพ",
+          descBanner: "คุณสามารถเพิ่มรูปภาพแบนเนอร์ปกให้กับหน้ากิจกรรมได้ด้วยพารามิเตอร์ banner=https://... (หรือ img=, b=) บริการนี้ไม่ได้จัดเก็บไฟล์ของคุณ: แต่จะแสดงรูปภาพอย่างปลอดภัยผ่านลิงก์ HTTPS โดยตรงพร้อมปรับขนาดให้พอดี",
+          bannerParamsTitle: "ขนาดและคุณสมบัติของแบนเนอร์ที่แนะนำ",
+          bannerParamsDesc: "<strong>ความละเอียดและสัดส่วน</strong>: 970×250 px (สัดส่วน ~3.88:1 / ~4:1) บนสมาร์ทโฟนแบนเนอร์จะแนบชิดขอบบนของจอแบบเต็มความกว้าง บนคอมพิวเตอร์จะพอดีกับการ์ดกิจกรรม<br><br><strong>รูปแบบที่รองรับ</strong>: JPG, PNG, WebP, SVG, GIF<br><br><strong>ขนาดไฟล์</strong>: แนะนำไม่เกิน 2 MB เพื่อการโหลดที่รวดเร็วบนมือถือ<br><br><strong>URL ตรง</strong>: ลิงก์ต้องชี้ไปยังไฟล์รูปภาพโดยตรง (ลงท้ายด้วย .jpg, .png, .webp เป็นต้น)",
+          bannerHostingTitle: "บริการโฮสต์รูปภาพฟรีที่แนะนำ",
+          bannerHostingDesc: "<strong>Postimages (<a href=\"https://postimages.org/\" target=\"_blank\" rel=\"noopener noreferrer\">postimages.org</a>)</strong>: ฟรี รวดเร็ว ไม่ต้องลงทะเบียน หลังอัปโหลดให้เลือก 'ลิงก์ตรง' (Direct Link)<br><br><strong>ImgBB (<a href=\"https://imgbb.com/\" target=\"_blank\" rel=\"noopener noreferrer\">imgbb.com</a>)</strong>: บริการยอดนิยม รองรับขนาดไฟล์สูงสุด 32 MB พร้อมลิงก์ตรงไปยังภาพ<br><br><strong>Cloudinary (<a href=\"https://cloudinary.com/\" target=\"_blank\" rel=\"noopener noreferrer\">cloudinary.com</a>)</strong>: แพ็กเกจฟรีสำหรับนักพัฒนา พร้อม CDN ทั่วโลกและการปรับรูปแบบภาพอัตโนมัติ<br><br><strong>GitHub / Cloudflare Pages</strong>: อัปโหลดรูปภาพลงในที่เก็บสาธารณะหรือโฟลเดอร์ public/ ของเว็บไซต์และใช้ลิงก์ raw ถาวร",
+          secExamples: "6. ตัวอย่างการใช้งาน",
+          ex1T: "การสัมมนาออนไลน์ผ่าน Zoom",
+          ex1D: "กิจกรรมพร้อมลิงก์การประชุม Zoom ในช่องสถานที่และรายละเอียด:",
+          ex2T: "จดหมายข่าวส่วนบุคคล (Email)",
+          ex2D: "การใช้ตัวแปรแบบไดนามิกจากระบบส่งอีเมล:",
+          ex3T: "แชทบอท (ManyChat / Smart Sender)",
+          ex3D: "การสร้างลิงก์ในปุ่มของบอทผ่านตัวแปรของแพลตฟอร์ม:",
+          copyBtn: "คัดลอก",
+          copiedToast: "คัดลอกไปยังคลิปบอร์ดแล้ว"
         }
       };
 
@@ -1399,10 +1463,10 @@ body[data-theme="dark"] .toast {
 
       function getSavedLang() {
         const cookieVal = getCookie('cf_lang');
-        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua' || cookieVal === 'pl')) return cookieVal;
+        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua' || cookieVal === 'pl' || cookieVal === 'th')) return cookieVal;
         try {
           const localVal = localStorage.getItem('cf_lang');
-          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua' || localVal === 'pl')) return localVal;
+          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua' || localVal === 'pl' || localVal === 'th')) return localVal;
         } catch (e) {}
         return null;
       }
@@ -1420,7 +1484,7 @@ body[data-theme="dark"] .toast {
       const queryParams = new URLSearchParams(window.location.search);
       const urlLang = (queryParams.get('lang') || '').toLowerCase();
       let currentLang = 'en';
-      if (['en', 'ru', 'ua', 'pl'].includes(urlLang)) {
+      if (['en', 'ru', 'ua', 'pl', 'th'].includes(urlLang)) {
         currentLang = urlLang;
       } else {
         const savedLang = getSavedLang();
@@ -1428,7 +1492,8 @@ body[data-theme="dark"] .toast {
           currentLang = savedLang;
         } else {
           const navLang = (navigator.language || '').toLowerCase();
-          if (navLang.startsWith('pl')) currentLang = 'pl';
+          if (navLang.startsWith('th')) currentLang = 'th';
+          else if (navLang.startsWith('pl')) currentLang = 'pl';
           else if (navLang.startsWith('uk')) currentLang = 'ua';
           else if (navLang.startsWith('ru') || navLang.startsWith('be')) currentLang = 'ru';
           else currentLang = 'en';
@@ -1600,7 +1665,7 @@ body[data-theme="dark"] .toast {
         document.getElementById('thExample').textContent = dict.thExample;
         document.getElementById('thDesc').textContent = dict.thDesc;
 
-        const reqLabel = dict.code === 'en' ? 'Required.' : (dict.code === 'pl' ? 'Wymagany.' : (dict.code === 'ua' ? 'Обов’язковий.' : 'Обязательный.'));
+        const reqLabel = dict.code === 'en' ? 'Required.' : (dict.code === 'th' ? 'จำเป็น.' : (dict.code === 'pl' ? 'Wymagany.' : (dict.code === 'ua' ? 'Обов’язковий.' : 'Обязательный.')));
         document.getElementById('paramDescTitle').innerHTML = `<strong>${reqLabel}</strong> ${dict.pDescTitle}`;
         document.getElementById('paramDescStart').textContent = dict.pDescStart;
         const elParamDescTime = document.getElementById('paramDescTime');

@@ -1547,6 +1547,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         <button type="button" class="lang-item" role="menuitem" data-lang="ru">Русский (RU)</button>
         <button type="button" class="lang-item" role="menuitem" data-lang="ua">Українська (UA)</button>
         <button type="button" class="lang-item" role="menuitem" data-lang="pl">Polski (PL)</button>
+        <button type="button" class="lang-item" role="menuitem" data-lang="th">ไทย (TH)</button>
       </div>
     </div>
 
@@ -2121,6 +2122,63 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           footerDocs: "Pomoc i parametry URL",
           shareTitle: "Udostępnij:",
           shareMsg: "Zaproszenie na wydarzenie"
+        },
+        th: {
+          code: 'th',
+          formTitle: "ตัวสร้างลิงก์กิจกรรม",
+          fieldTitle: "ชื่อกิจกรรม",
+          fieldDate: "วันที่",
+          fieldTime: "เวลา",
+          fieldDuration: "ระยะเวลา",
+          dur15: "15 นาที",
+          dur30: "30 นาที",
+          dur45: "45 นาที",
+          dur60: "1 ชั่วโมง",
+          dur90: "1.5 ชั่วโมง",
+          dur120: "2 ชั่วโมง",
+          durAllDay: "ตลอดทั้งวัน",
+          moreParams: "พารามิเตอร์เพิ่มเติม",
+          fieldBanner: "ลิงก์แบนเนอร์ (รูปภาพ)",
+          bannerHint: "รูปแบบ: JPG, PNG, WebP, GIF, SVG ขนาดที่แนะนำ: 970×250 (ไม่เกิน 2 MB)",
+          fieldLoc: "สถานที่หรือลิงก์การประชุม",
+          fieldDesc: "รายละเอียด",
+          fieldVars: "ตัวแปร (เช่น name=สมชาย)",
+          fieldTz: "เขตเวลา (UTC)",
+          fieldColor: "สีพื้นหลัง",
+          fieldTheme: "ธีมมืด",
+          fieldShareUrl: "ลิงก์สำหรับแชร์",
+          copyBtn: "คัดลอกลิงก์",
+          copiedBtn: "คัดลอกแล้ว!",
+          openNewTab: "เปิดหน้ากิจกรรมในแท็บใหม่",
+          directLinksTitle: "ลิงก์ตรงไปยังปฏิทิน",
+          googleCal: "Google",
+          outlookCal: "Outlook",
+          office365Cal: "Office 365",
+          appleCal: "Apple",
+          icsDirect: "ไฟล์ .ICS",
+          viewTzPrefix: "เขตเวลา:",
+          viewAllDay: "(ตลอดทั้งวัน)",
+          viewAddTitle: "เพิ่มลงในปฏิทินของคุณ",
+          viewGoogleBtn: "Google ปฏิทิน",
+          viewAppleBtn: "Apple ปฏิทิน",
+          viewOutlookBtn: "Microsoft Outlook",
+          viewIcsBtn: "ดาวน์โหลด .ICS (iCal)",
+          viewCopyLink: "คัดลอกลิงก์กิจกรรม",
+          viewCreateNew: "สร้างกิจกรรมใหม่",
+          toastCopied: "คัดลอกลิงก์ไปยังคลิปบอร์ดแล้ว",
+          toastTitleRequired: "จำเป็นต้องระบุชื่อกิจกรรม",
+          toastUrlExceeded: "ความยาวลิงก์เกินขีดจำกัดที่ปลอดภัย (2000 อักขระ)",
+          descLimitError: "ความยาวลิงก์ปฏิทินเกินกำหนด (สูงสุด 2000 อักขระ) โปรดย่อรายละเอียด",
+          charCountRemaining: "อักขระ (เหลือประมาณ ~{n})",
+          charCountOver: "อักขระ (เกินมา +{n})",
+          tooltipCopied: "คัดลอกลิงก์แล้ว!",
+          tooltipCopyGoogle: "คัดลอกลิงก์ Google ปฏิทิน",
+          tooltipCopyOutlook: "คัดลอกลิงก์ Outlook ปฏิทิน",
+          tooltipCopyApple: "คัดลอกลิงก์ Apple ปฏิทิน",
+          tooltipDownloadIcs: "ดาวน์โหลดไฟล์ .ICS",
+          footerDocs: "คู่มือและพารามิเตอร์ URL",
+          shareTitle: "แชร์:",
+          shareMsg: "คำเชิญเข้าร่วมกิจกรรม"
         }
       };
 
@@ -2174,10 +2232,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
       function getSavedLang() {
         const cookieVal = getCookie('cf_lang');
-        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua' || cookieVal === 'pl')) return cookieVal;
+        if (cookieVal && (cookieVal === 'en' || cookieVal === 'ru' || cookieVal === 'ua' || cookieVal === 'pl' || cookieVal === 'th')) return cookieVal;
         try {
           const localVal = localStorage.getItem('cf_lang');
-          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua' || localVal === 'pl')) return localVal;
+          if (localVal && (localVal === 'en' || localVal === 'ru' || localVal === 'ua' || localVal === 'pl' || localVal === 'th')) return localVal;
         } catch (e) {}
         return null;
       }
@@ -2198,6 +2256,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (paramLang === 'ru') return 'ru';
         if (paramLang === 'ua' || paramLang === 'uk') return 'ua';
         if (paramLang === 'pl') return 'pl';
+        if (paramLang === 'th') return 'th';
         if (paramLang === 'en') return 'en';
 
         // Check saved preference in cookie / localStorage
@@ -2206,6 +2265,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         // Check browser language
         const navLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+        if (navLang.startsWith('th')) return 'th';
         if (navLang.startsWith('pl')) return 'pl';
         if (navLang.startsWith('uk')) return 'ua';
         if (navLang.startsWith('ru') || navLang.startsWith('be')) return 'ru';
@@ -2732,7 +2792,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       }
 
       function parseEventParams() {
-        const rawTitle = getVal(['title', 't', 'name', 'summary', 'event', 'subject']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : currentLang === 'pl' ? 'Wydarzenie w kalendarzu' : 'Calendar Event');
+        const rawTitle = getVal(['title', 't', 'name', 'summary', 'event', 'subject']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : currentLang === 'pl' ? 'Wydarzenie w kalendarzu' : currentLang === 'th' ? 'กิจกรรมในปฏิทิน' : 'Calendar Event');
         const rawDesc = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
         const rawLoc = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
         const rawUrl = getVal(['url', 'link', 'u']) || '';
@@ -3104,7 +3164,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         document.getElementById('eventTitle').textContent = ev.title;
 
         // Date & Time formatting according to current language
-        const localeCode = currentLang === 'ua' ? 'uk-UA' : currentLang === 'ru' ? 'ru-RU' : currentLang === 'pl' ? 'pl-PL' : 'en-US';
+        const localeCode = currentLang === 'ua' ? 'uk-UA' : currentLang === 'ru' ? 'ru-RU' : currentLang === 'pl' ? 'pl-PL' : currentLang === 'th' ? 'th-TH' : 'en-US';
         const dateOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
         const timeOptions = { hour: '2-digit', minute: '2-digit' };
         let dtText = '';
