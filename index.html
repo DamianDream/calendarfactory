@@ -5453,10 +5453,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
         }
 
-        if (inputLocation.value || inputExtraProps.value || customBgColor || (selectBgStyle && selectBgStyle.value !== 'cotton-candy') || (toggleTransparentCard && toggleTransparentCard.checked)) {
-          const details = document.querySelector('.details-clean');
-          if (details) details.open = true;
-        }
+        // Ensure additional parameters block is always collapsed on page load
+        const details = document.querySelector('.details-clean');
+        if (details) details.open = false;
 
         const inputColorPicker = document.getElementById('inputColorPicker');
         const btnThemeToggle = document.getElementById('btnThemeToggle');
