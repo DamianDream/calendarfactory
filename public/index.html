@@ -1795,6 +1795,37 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   color: var(--color-muted);
 }
 
+.view-viewer-tz {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  margin-top: var(--space-xs);
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  background: var(--color-bg-secondary);
+  border: 1px solid var(--color-border);
+  padding: var(--space-2xs) var(--space-xs);
+  border-radius: var(--radius-full);
+  line-height: 1.4;
+  width: fit-content;
+}
+
+.view-viewer-tz svg {
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.view-viewer-tz strong {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+body.is-card-transparent .view-viewer-tz {
+  background: var(--color-surface);
+  backdrop-filter: blur(8px);
+}
+
 .view-item svg {
   width: 16px;
   height: 16px;
@@ -2202,6 +2233,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           <div class="view-datetime-wrap">
             <div id="eventDateTime" class="view-title">Date and Time</div>
             <div id="eventTimezone" class="view-timezone">Timezone</div>
+            <div id="eventViewerTz" class="view-viewer-tz hidden"></div>
           </div>
         </div>
 
@@ -2664,6 +2696,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           appleCal: "Apple",
           icsDirect: ".ICS file",
           viewTzPrefix: "Timezone:",
+          viewViewerLocalTime: "Your local time:",
           viewAllDay: "(All day)",
           viewAddTitle: "Add to your calendar",
           viewGoogleBtn: "Google Calendar",
@@ -2739,6 +2772,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           appleCal: "Apple",
           icsDirect: ".ICS файл",
           viewTzPrefix: "Часовой пояс:",
+          viewViewerLocalTime: "Ваше местное время:",
           viewAllDay: "(Весь день)",
           viewAddTitle: "Добавить в свой календарь",
           viewGoogleBtn: "Google Календарь",
@@ -2814,6 +2848,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           appleCal: "Apple",
           icsDirect: ".ICS файл",
           viewTzPrefix: "Часовий пояс:",
+          viewViewerLocalTime: "Ваш місцевий час:",
           viewAllDay: "(Весь день)",
           viewAddTitle: "Додати у свій календар",
           viewGoogleBtn: "Google Календар",
@@ -2889,6 +2924,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           appleCal: "Apple",
           icsDirect: "Plik .ICS",
           viewTzPrefix: "Strefa czasowa:",
+          viewViewerLocalTime: "Twój czas lokalny:",
           viewAllDay: "(Cały dzień)",
           viewAddTitle: "Dodaj do swojego kalendarza",
           viewGoogleBtn: "Kalendarz Google",
@@ -2964,6 +3000,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           appleCal: "Apple",
           icsDirect: "ไฟล์ .ICS",
           viewTzPrefix: "เขตเวลา:",
+          viewViewerLocalTime: "เวลาท้องถิ่นของคุณ:",
           viewAllDay: "(ตลอดทั้งวัน)",
           viewAddTitle: "เพิ่มลงในปฏิทินของคุณ",
           viewGoogleBtn: "Google ปฏิทิน",
@@ -3983,7 +4020,19 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       function expandUtcParam(rawUtc) {
         if (!rawUtc) return '';
         const trimmed = rawUtc.trim();
-        const num = parseFloat(trimmed);
+        let num = parseFloat(trimmed);
+        if (isNaN(num)) {
+          const m = trimmed.match(/UTC\s*([+-]?\d+(?:\.\d+)?(?::\d+)?)/i);
+          if (m) {
+            if (m[1].includes(':')) {
+              const [h, min] = m[1].split(':');
+              const sign = h.startsWith('-') ? -1 : 1;
+              num = sign * (Math.abs(parseFloat(h)) + (parseFloat(min) || 0) / 60);
+            } else {
+              num = parseFloat(m[1]);
+            }
+          }
+        }
         if (!isNaN(num)) {
           const sign = num >= 0 ? '+' : '-';
           const abs = Math.abs(num);
@@ -4009,6 +4058,78 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           return prefix;
         }
         return ensureLatinTz(trimmed);
+      }
+
+      function isValidIanaZone(zone) {
+        if (!zone || typeof zone !== 'string') return false;
+        try {
+          Intl.DateTimeFormat(undefined, { timeZone: zone });
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function findMatchingDatalistTz(tzStr) {
+        if (!tzStr) return '';
+        const trimmed = tzStr.trim();
+        const datalist = document.getElementById('tzDatalist');
+        if (!datalist || !datalist.options) return trimmed;
+        for (const opt of datalist.options) {
+          if (opt.value.toLowerCase() === trimmed.toLowerCase()) return opt.value;
+        }
+        const city = trimmed.includes('/') ? trimmed.split('/').pop().replace(/_/g, ' ').toLowerCase() : trimmed.toLowerCase();
+        if (city) {
+          for (const opt of datalist.options) {
+            if (opt.value.toLowerCase().includes(city) || opt.textContent.toLowerCase().includes(city)) {
+              return opt.value;
+            }
+          }
+        }
+        return trimmed;
+      }
+
+      function getUtcDateFromWallClock(year, month, day, hours, minutes, timezoneInfo) {
+        const ianaZone = getGoogleCtz(timezoneInfo);
+        if (ianaZone && isValidIanaZone(ianaZone)) {
+          try {
+            const naiveUtc = new Date(Date.UTC(year, month - 1, day, hours, minutes, 0));
+            const dtf = new Intl.DateTimeFormat('en-US', {
+              timeZone: ianaZone,
+              year: 'numeric', month: 'numeric', day: 'numeric',
+              hour: 'numeric', minute: 'numeric', second: 'numeric',
+              hour12: false
+            });
+            const parts = Object.fromEntries(dtf.formatToParts(naiveUtc).map(p => [p.type, p.value]));
+            let inTzHour = parseInt(parts.hour, 10);
+            if (inTzHour === 24) inTzHour = 0;
+            const targetUtc = new Date(Date.UTC(parts.year, parts.month - 1, parts.day, inTzHour, parts.minute, 0));
+            const offsetMs = targetUtc.getTime() - naiveUtc.getTime();
+            return new Date(naiveUtc.getTime() - offsetMs);
+          } catch (e) {}
+        }
+
+        let offsetMinutes = 0;
+        if (typeof timezoneInfo === 'number') {
+          offsetMinutes = timezoneInfo * 60;
+        } else if (typeof timezoneInfo === 'string') {
+          const m = timezoneInfo.match(/UTC\s*([+-]\d+(?::\d+)?)|([+-]\d{2}):(\d{2})|Etc\/GMT([+-]\d+)/i);
+          if (m) {
+            if (m[1]) {
+              const parts = m[1].split(':');
+              const h = parseInt(parts[0], 10);
+              const min = parts[1] ? parseInt(parts[1], 10) : 0;
+              offsetMinutes = (h >= 0 ? 1 : -1) * (Math.abs(h) * 60 + min);
+            } else if (m[2] && m[3]) {
+              const h = parseInt(m[2], 10);
+              const min = parseInt(m[3], 10);
+              offsetMinutes = (h >= 0 ? 1 : -1) * (Math.abs(h) * 60 + min);
+            } else if (m[4]) {
+              offsetMinutes = -parseInt(m[4], 10) * 60;
+            }
+          }
+        }
+        return new Date(Date.UTC(year, month - 1, day, hours, minutes - offsetMinutes, 0));
       }
 
       function replacePlaceholders(text, paramMap) {
@@ -4061,10 +4182,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         // 1. Unix timestamp (seconds: 10 digits, milliseconds: 13 digits)
         if (/^\d{10}$/.test(str)) {
-          return { date: new Date(parseInt(str, 10) * 1000), isAllDay: false, detectedTz: '' };
+          return { date: new Date(parseInt(str, 10) * 1000), isAllDay: false, detectedTz: '', hasExplicitOffset: true, wallClock: null };
         }
         if (/^\d{13}$/.test(str)) {
-          return { date: new Date(parseInt(str, 10)), isAllDay: false, detectedTz: '' };
+          return { date: new Date(parseInt(str, 10)), isAllDay: false, detectedTz: '', hasExplicitOffset: true, wallClock: null };
         }
 
         // 2. Decode "+" between date and time (e.g. from URL decoding "2026-11-20+14:30")
@@ -4100,7 +4221,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (tzMatch || /^[a-z]{3},\s/i.test(str)) {
           const d = new Date(str);
           if (!isNaN(d.getTime())) {
-            return { date: d, isAllDay: false, detectedTz };
+            return { date: d, isAllDay: false, detectedTz, hasExplicitOffset: true, wallClock: null };
           }
         }
 
@@ -4114,9 +4235,21 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             const hh = parseInt(euroMatch[4], 10);
             const mm = parseInt(euroMatch[5], 10);
             const ss = euroMatch[6] ? parseInt(euroMatch[6], 10) : 0;
-            return { date: new Date(year, month - 1, day, hh, mm, ss), isAllDay: false, detectedTz };
+            return {
+              date: new Date(year, month - 1, day, hh, mm, ss),
+              isAllDay: false,
+              detectedTz,
+              hasExplicitOffset: false,
+              wallClock: { year, month, day, hh, mm, ss }
+            };
           }
-          return { date: new Date(year, month - 1, day, 0, 0, 0), isAllDay: true, detectedTz };
+          return {
+            date: new Date(year, month - 1, day, 0, 0, 0),
+            isAllDay: true,
+            detectedTz,
+            hasExplicitOffset: false,
+            wallClock: { year, month, day, hh: 0, mm: 0, ss: 0 }
+          };
         }
 
         // 7. Slash format: DD/MM/YYYY or MM/DD/YYYY or YYYY/MM/DD
@@ -4140,9 +4273,21 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             const hh = parseInt(slashMatch[4], 10);
             const mm = parseInt(slashMatch[5], 10);
             const ss = slashMatch[6] ? parseInt(slashMatch[6], 10) : 0;
-            return { date: new Date(year, month - 1, day, hh, mm, ss), isAllDay: false, detectedTz };
+            return {
+              date: new Date(year, month - 1, day, hh, mm, ss),
+              isAllDay: false,
+              detectedTz,
+              hasExplicitOffset: false,
+              wallClock: { year, month, day, hh, mm, ss }
+            };
           }
-          return { date: new Date(year, month - 1, day, 0, 0, 0), isAllDay: true, detectedTz };
+          return {
+            date: new Date(year, month - 1, day, 0, 0, 0),
+            isAllDay: true,
+            detectedTz,
+            hasExplicitOffset: false,
+            wallClock: { year, month, day, hh: 0, mm: 0, ss: 0 }
+          };
         }
 
         // 8. Standard ISO without timezone offset: YYYY-MM-DD [T/space HH:mm[:ss]]
@@ -4155,15 +4300,27 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             const hh = parseInt(isoMatch[4], 10);
             const mm = parseInt(isoMatch[5], 10);
             const ss = isoMatch[6] ? parseInt(isoMatch[6], 10) : 0;
-            return { date: new Date(year, month - 1, day, hh, mm, ss), isAllDay: false, detectedTz };
+            return {
+              date: new Date(year, month - 1, day, hh, mm, ss),
+              isAllDay: false,
+              detectedTz,
+              hasExplicitOffset: false,
+              wallClock: { year, month, day, hh, mm, ss }
+            };
           }
-          return { date: new Date(year, month - 1, day, 0, 0, 0), isAllDay: true, detectedTz };
+          return {
+            date: new Date(year, month - 1, day, 0, 0, 0),
+            isAllDay: true,
+            detectedTz,
+            hasExplicitOffset: false,
+            wallClock: { year, month, day, hh: 0, mm: 0, ss: 0 }
+          };
         }
 
         // 9. Fallback native Date
         const parsed = new Date(str);
         if (!isNaN(parsed.getTime())) {
-          return { date: parsed, isAllDay: false, detectedTz };
+          return { date: parsed, isAllDay: false, detectedTz, hasExplicitOffset: true, wallClock: null };
         }
 
         return null;
@@ -4215,6 +4372,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
         }
 
+        // Determine effective timezone for wall-clock to UTC calculation
+        const effectiveZone = tz || (typeof Intl !== 'undefined' && Intl.DateTimeFormat().resolvedOptions().timeZone) || 'UTC';
+
+        if (startParsed && !startParsed.hasExplicitOffset && !isAllDay && startParsed.wallClock) {
+          const wc = startParsed.wallClock;
+          startDate = getUtcDateFromWallClock(wc.year, wc.month, wc.day, wc.hh, wc.mm, effectiveZone);
+        }
+
         if (!startDate) {
           startDate = new Date();
           startDate.setMinutes(0, 0, 0);
@@ -4227,7 +4392,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         const endParsed = parseFlexibleDateTime(endRaw, endTimeRaw);
 
         let endDate = endParsed ? endParsed.date : null;
-        if (!endDate && durRaw && durRaw !== 'allDay' && durRaw !== 'allday') {
+        if (endParsed && !endParsed.hasExplicitOffset && !isAllDay && endParsed.wallClock) {
+          const wc = endParsed.wallClock;
+          endDate = getUtcDateFromWallClock(wc.year, wc.month, wc.day, wc.hh, wc.mm, effectiveZone);
+        } else if (!endDate && durRaw && durRaw !== 'allDay' && durRaw !== 'allday') {
           const mins = parseInt(durRaw, 10);
           if (!isNaN(mins) && mins > 0) {
             endDate = new Date(startDate.getTime() + mins * 60000);
@@ -4242,12 +4410,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
         }
 
-        return { title, desc, loc, url: rawUrl, banner: rawBanner, tz, startDate, endDate, isAllDay };
+        return { title, desc, loc, url: rawUrl, banner: rawBanner, tz, startDate, endDate, isAllDay, effectiveZone };
       }
 
       function detectDefaultTimezone() {
         try {
           const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+          const matched = findMatchingDatalistTz(tz);
+          if (matched && matched !== tz) return matched;
           const now = new Date();
           const offsetMin = -now.getTimezoneOffset();
           const sign = offsetMin >= 0 ? '+' : '-';
@@ -4258,14 +4428,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
           const datalist = document.getElementById('tzDatalist');
           if (datalist && datalist.options) {
-            const cityPart = tz ? tz.split('/').pop().replace(/_/g, ' ').toLowerCase() : '';
-            if (cityPart) {
-              for (const opt of datalist.options) {
-                if (opt.value.toLowerCase().includes(cityPart) || opt.textContent.toLowerCase().includes(cityPart)) {
-                  return opt.value;
-                }
-              }
-            }
             for (const opt of datalist.options) {
               if (opt.value.startsWith(offsetPrefix)) {
                 return opt.value;
@@ -4549,31 +4711,68 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         document.getElementById('eventTitle').textContent = ev.title;
 
-        // Date & Time formatting according to current language
+        // Date & Time formatting according to current language and event timezone
         const localeCode = currentLang === 'ua' ? 'uk-UA' : currentLang === 'ru' ? 'ru-RU' : currentLang === 'pl' ? 'pl-PL' : currentLang === 'th' ? 'th-TH' : 'en-US';
-        const dateOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' };
-        const timeOptions = { hour: '2-digit', minute: '2-digit' };
-        let dtText = '';
+        const eventIana = getGoogleCtz(ev.tz);
+        const eventTzValid = eventIana && isValidIanaZone(eventIana);
+        const tzOptions = eventTzValid ? { timeZone: eventIana } : {};
 
+        const dateOptions = { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric', ...tzOptions };
+        const timeOptions = { hour: '2-digit', minute: '2-digit', ...tzOptions };
+
+        let dateStr = '', startStr = '', endStr = '';
         if (ev.isAllDay) {
-          const dateStr = ev.startDate.toLocaleDateString(localeCode, dateOptions);
+          dateStr = ev.startDate.toLocaleDateString(localeCode, dateOptions);
           document.getElementById('eventDateTime').innerHTML = `<span class="event-date-part">${dateStr}</span><span class="event-time-part">${dict.viewAllDay}</span>`;
         } else {
-          const dateStr = ev.startDate.toLocaleDateString(localeCode, dateOptions);
-          const startStr = ev.startDate.toLocaleTimeString(localeCode, timeOptions);
-          const endStr = ev.endDate.toLocaleTimeString(localeCode, timeOptions);
+          dateStr = ev.startDate.toLocaleDateString(localeCode, dateOptions);
+          startStr = ev.startDate.toLocaleTimeString(localeCode, timeOptions);
+          endStr = ev.endDate.toLocaleTimeString(localeCode, timeOptions);
           document.getElementById('eventDateTime').innerHTML = `<span class="event-date-part">${dateStr}</span><span class="event-time-part">${startStr} - ${endStr}</span>`;
         }
 
         const tzEl = document.getElementById('eventTimezone');
-        if (ev.tz) {
-          tzEl.textContent = `${dict.viewTzPrefix} ${ensureLatinTz(ev.tz)}`;
+        const displayTz = findMatchingDatalistTz(ev.tz) || (ev.tz ? ensureLatinTz(ev.tz) : '');
+        if (displayTz) {
+          tzEl.textContent = `${dict.viewTzPrefix} ${displayTz}`;
         } else {
           try {
             const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            tzEl.textContent = detectedTz ? `${dict.viewTzPrefix} ${ensureLatinTz(detectedTz)}` : '';
+            tzEl.textContent = detectedTz ? `${dict.viewTzPrefix} ${findMatchingDatalistTz(detectedTz)}` : '';
           } catch (e) {
             tzEl.textContent = '';
+          }
+        }
+
+        // Secondary viewer local time badge if viewer is in a different timezone
+        const viewerEl = document.getElementById('eventViewerTz');
+        if (viewerEl) {
+          let viewerTz = '';
+          try {
+            viewerTz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+          } catch (e) {}
+
+          let hasDifferentTime = false;
+          let vStart = '', vEnd = '', vDate = '', eDate = '', cityLabel = '';
+
+          if (!ev.isAllDay && viewerTz && eventTzValid) {
+            const viewerDateOptions = { weekday: 'short', month: 'short', day: 'numeric', timeZone: viewerTz };
+            const viewerTimeOptions = { hour: '2-digit', minute: '2-digit', timeZone: viewerTz };
+            vStart = ev.startDate.toLocaleTimeString(localeCode, viewerTimeOptions);
+            vEnd = ev.endDate.toLocaleTimeString(localeCode, viewerTimeOptions);
+            vDate = ev.startDate.toLocaleDateString(localeCode, viewerDateOptions);
+            eDate = ev.startDate.toLocaleDateString(localeCode, tzOptions);
+            hasDifferentTime = (vStart !== startStr) || (vDate !== dateStr);
+            cityLabel = viewerTz.split('/').pop().replace(/_/g, ' ');
+          }
+
+          if (hasDifferentTime) {
+            const dateDiffNote = (vDate !== eDate) ? `${vDate}, ` : '';
+            viewerEl.innerHTML = `<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>${dict.viewViewerLocalTime || 'Ваше местное время:'} <strong>${dateDiffNote}${vStart} – ${vEnd}</strong> (${cityLabel})</span>`;
+            viewerEl.classList.remove('hidden');
+          } else {
+            viewerEl.classList.add('hidden');
+            viewerEl.textContent = '';
           }
         }
 
@@ -5141,7 +5340,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             endDate = new Date(y, m - 1, d + 1, 0, 0, 0);
           } else {
             const [hh, mm] = timeVal.split(':').map(x => parseInt(x, 10));
-            startDate = new Date(y, m - 1, d, hh, mm, 0);
+            startDate = getUtcDateFromWallClock(y, m, d, hh, mm, tz);
             const durMins = parseInt(durVal, 10) || 60;
             endDate = new Date(startDate.getTime() + durMins * 60000);
           }
@@ -5201,7 +5400,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (loc) p.set('loc', loc);
         if (desc) p.set('desc', desc);
         if (tz) {
-          p.set('tz', ensureLatinTz(tz));
+          const iana = getGoogleCtz(tz);
+          p.set('tz', (iana && !iana.startsWith('Etc/')) ? iana : ensureLatinTz(tz));
         }
         if (effectiveTheme === 'dark') {
           p.set('theme', 'dark');
@@ -5407,7 +5607,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         const explicitTz = getVal(['timezone', 'tz', 'zone']);
         if (explicitTz) {
-          inputTimezone.value = ensureLatinTz(explicitTz);
+          inputTimezone.value = findMatchingDatalistTz(ensureLatinTz(explicitTz));
         } else {
           const rawUtc = getVal(['utc', 'u']);
           if (rawUtc) {
@@ -5451,6 +5651,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             toggleTransparentCard.checked = !!formDraft.cardTransparent;
             document.body.classList.toggle('is-card-transparent', toggleTransparentCard.checked);
           }
+        }
+
+        // Automatic timezone detection if not set from URL or draft
+        if (!inputTimezone.value) {
+          inputTimezone.value = detectDefaultTimezone();
         }
 
         // Ensure additional parameters block is always collapsed on page load

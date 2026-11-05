@@ -41,9 +41,11 @@ Parameters are passed in query string (`?key=value`) separated by `&`.
 | **`time`** | `tm`, `t_time`, `hour`, `event_time` | No | `14:30`, `14:30:00`, `2:30 PM` | Start time when passing date and time in separate query parameters (`?date=2026-11-20&time=14:30`). |
 | **`duration`** | `dur`, `len` | No | Number or `allDay` | Duration in minutes (`15`, `30`, `45`, `60`, `90`, `120`) or `allDay`. Default: `60`. |
 | **`end`** | `e`, `dtend`, `finish` | No | Date/time format | Explicit event end time (alternative to `duration`). |
-| **`utc`** | `u`, `tz`, `timezone`, `zone` | No | Number (`3`, `+2`, `-5`) or city | UTC timezone offset (`Europe/Kyiv`, `UTC+03:00`, `London`). Timezone offsets passed inside the start string (`+02:00`, `Z`) are auto-detected. |
+| **`tz`** | `timezone`, `zone`, `utc`, `u` | No | IANA Zone (`Europe/Kyiv`, `America/New_York`) or numeric offset (`2`, `+3`, `-5`) | Event timezone. Passing canonical IANA zones automatically accounts for seasonal **Daylight Saving Time (DST)** changes on the event's date. Legacy simple offsets like `utc=2` or `u=3` remain 100% backward-compatible. |
 | **`desc`** | `d`, `details`, `text`, `body`, `notes` | No | Text | Event agenda or description. Supports line breaks `\n`. |
 | **`loc`** | `l`, `location`, `place`, `venue` | No | Text or URL | Meeting place: Zoom/Meet link or physical address. |
+| **`bg`** | `style`, `gradient` | No | `cotton-candy`, `sunset`, `ocean`, `aurora`, `midnight`, `none` | Background 3D WebGL micro-shader gradient style. Default: `cotton-candy`. |
+| **`card`** | `transparent` | No | `transparent`, `clear` | Set to `transparent` to remove card background and let the dynamic fluid gradient shine through. |
 | **`allDay`** | `allday` | No | `1` or `true` | All-day event flag. |
 | **`theme`** | `m`, `mode` | No | `dark` \| `light` | Visual card theme (`dark` for dark mode). |
 | **`c`** | `color`, `bg` | No | HEX color code | Custom page background color (`0f172a`, `ffffff`). |
@@ -76,6 +78,27 @@ CalendarFactory natively recognizes formats produced by SaaS tools, CRMs, and bo
    - `Fri, 12 Apr 2026 12:01:05 +0200`
 6. **All-day event:**
    - Pass date only: `?start=2026-11-20` or parameter `&duration=allDay`.
+
+---
+
+## 🌍 Timezone Auto-Detection, IANA & Daylight Saving Time (DST)
+
+Scheduling events across different countries is prone to timezone shifts, especially when countries switch between standard winter time and daylight saving summer time:
+
+1. **Automatic Local Timezone Detection:**
+   - When loading the generator at [calendarfactory.pages.dev](https://calendarfactory.pages.dev), the user's local timezone is automatically detected via the browser's native `Intl` API and pre-selected in the form without sending any network requests.
+2. **True Wall-Clock to UTC Calculation (0 Dependencies):**
+   - CalendarFactory converts the event's local wall-clock date and time into exact UTC timestamps using native browser `Intl.DateTimeFormat(..., { timeZone })`.
+   - If an event is scheduled for `tz=Europe/Kyiv` at `14:30`:
+     - In **Winter (UTC+2)**: calculated as `12:30:00Z`.
+     - In **Summer (UTC+3)**: automatically calculated as `11:30:00Z`.
+   - All calendar links (Google Calendar `dates=...Z`, Outlook `startdt=...Z`, Apple iCal `DTSTART:...Z`) receive the exact calculated UTC instant.
+3. **Full Backward Compatibility (`utc=2` / `u=3`):**
+   - Bots and CRMs can continue passing simple numeric offsets like `utc=2`, `u=3`, `utc=+3`, or `utc=-5`. They are fully supported.
+4. **Cross-Timezone Attendee Helper Badge:**
+   - When an attendee opens an event landing page from a different timezone (e.g. event is at 14:30 in New York, attendee is in London or Kyiv), CalendarFactory displays a secondary localized helper badge with the attendee's local time:
+     `🕒 Your local time: 09:30 PM – 10:30 PM (Kiev)`.
+   - If the viewer is in the same timezone or offset, the badge stays hidden to keep the card minimal.
 
 ---
 
