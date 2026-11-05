@@ -328,6 +328,28 @@ export default {
 
     // Proxy image upload to ImgBB via Cloudflare Worker
     if (pathname === '/api/upload') {
+      if (request.method === 'GET') {
+        const apiKey = env && env.IMGBB_API_KEY;
+        if (!apiKey) {
+          return new Response(JSON.stringify({
+            error: 'IMGBB_API_KEY is not configured in Cloudflare Settings -> Variables and secrets'
+          }), {
+            status: 500,
+            headers: {
+              'Content-Type': 'application/json; charset=utf-8',
+              'Access-Control-Allow-Origin': '*',
+            },
+          });
+        }
+        return new Response(JSON.stringify({ key: apiKey }), {
+          status: 200,
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Access-Control-Allow-Origin': '*',
+            'Cache-Control': 'no-store',
+          },
+        });
+      }
       if (request.method !== 'POST') {
         return new Response(JSON.stringify({ error: 'Method not allowed' }), {
           status: 405,
