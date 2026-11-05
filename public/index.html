@@ -425,6 +425,12 @@ body.has-shader-bg .container {
   box-shadow: var(--shadow-card-glass);
 }
 
+body.is-card-transparent .container {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+
 @media (max-width: 480px) {
   body.has-shader-bg .container {
     padding: var(--space-md);
@@ -2499,6 +2505,17 @@ input[list]:focus::-webkit-calendar-picker-indicator {
               <label for="selectBgStyle" class="floating-label floated" id="lblFieldBgStyle">Стиль фона</label>
               <span class="floating-line"></span>
             </div>
+
+            <div class="toggle-control-single" id="wrapToggleTransparentCard">
+              <label for="toggleTransparentCard" class="toggle-control-label" id="lblFieldTransparentCard" style="cursor: pointer;">Отключить фон карточки (прозрачный)</label>
+              <label class="ss-liquid-switch" title="Отключить фон карточки" aria-label="Отключить фон карточки">
+                <input type="checkbox" id="toggleTransparentCard" aria-label="Отключить фон карточки" />
+                <svg viewBox="0 0 38 24" class="switch-svg" filter="url(#ss-goo)">
+                  <circle class="default" cx="12" cy="12" r="8"></circle>
+                  <circle class="dot" cx="26" cy="12" r="8"></circle>
+                </svg>
+              </label>
+            </div>
           </div>
         </details>
       </form>
@@ -2633,6 +2650,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldTz: "Timezone (UTC)",
           fieldColor: "Background color",
           fieldBgStyle: "Background style",
+          fieldTransparentCard: "Transparent card background",
           optBgCottonCandy: "Cotton Candy (ShaderGradient)",
           optBgSunset: "Sunset Glow",
           optBgOcean: "Ocean Breeze",
@@ -2707,6 +2725,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldTz: "Часовой пояс (UTC)",
           fieldColor: "Цвет фона",
           fieldBgStyle: "Стиль фона",
+          fieldTransparentCard: "Отключить фон карточки (прозрачный)",
           optBgCottonCandy: "Cotton Candy (ShaderGradient)",
           optBgSunset: "Sunset Glow (Закат)",
           optBgOcean: "Ocean Breeze (Океан)",
@@ -2781,6 +2800,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldTz: "Часовий пояс (UTC)",
           fieldColor: "Колір фону",
           fieldBgStyle: "Стиль фону",
+          fieldTransparentCard: "Вимкнути фон картки (прозорий)",
           optBgCottonCandy: "Cotton Candy (ShaderGradient)",
           optBgSunset: "Sunset Glow (Захід)",
           optBgOcean: "Ocean Breeze (Океан)",
@@ -2855,6 +2875,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldTz: "Strefa czasowa (UTC)",
           fieldColor: "Kolor tła",
           fieldBgStyle: "Styl tła",
+          fieldTransparentCard: "Przezroczyste tło karty",
           optBgCottonCandy: "Cotton Candy (ShaderGradient)",
           optBgSunset: "Sunset Glow (Zachód słońca)",
           optBgOcean: "Ocean Breeze (Bryza)",
@@ -2929,6 +2950,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldTz: "เขตเวลา (UTC)",
           fieldColor: "สีพื้นหลัง",
           fieldBgStyle: "สไตล์พื้นหลัง",
+          fieldTransparentCard: "ปิดพื้นหลังการ์ด (โปร่งใส)",
           optBgCottonCandy: "Cotton Candy (ShaderGradient)",
           optBgSunset: "Sunset Glow (พระอาทิตย์ตก)",
           optBgOcean: "Ocean Breeze (สายลมทะเล)",
@@ -3350,14 +3372,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         document.addEventListener('visibilitychange', () => {
           if (document.hidden) {
             stop();
-          } else if (currentBgStyle !== 'none' && !customBgColor) {
+          } else if (currentBgStyle !== 'none') {
             start();
           }
         });
 
         shaderInstance = {
           update: function(styleKey, theme) {
-            if (styleKey === 'none' || customBgColor) {
+            if (styleKey === 'none') {
               stop();
               document.body.classList.remove('has-shader-bg');
               return;
@@ -3406,6 +3428,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         const inExtra = document.getElementById('inputExtraProps');
         const inColor = document.getElementById('inputColor');
         const inBg = document.getElementById('selectBgStyle');
+        const inCard = document.getElementById('toggleTransparentCard');
 
         const draft = {
           title: inTitle ? inTitle.value : '',
@@ -3419,10 +3442,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           extra: inExtra ? inExtra.value : '',
           color: inColor ? inColor.value : '',
           bg: inBg ? inBg.value : 'cotton-candy',
+          cardTransparent: inCard ? inCard.checked : false,
           ts: Date.now()
         };
 
-        const hasContent = Boolean(draft.title || draft.desc || draft.loc || draft.banner || draft.extra || (draft.color && draft.color !== '#ffffff'));
+        const hasContent = Boolean(draft.title || draft.desc || draft.loc || draft.banner || draft.extra || draft.cardTransparent || (draft.bg && draft.bg !== 'cotton-candy') || (draft.color && draft.color !== '#ffffff'));
         if (!hasContent) {
           try {
             document.cookie = `${DRAFT_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
@@ -3595,6 +3619,17 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (optBgMidnight) optBgMidnight.textContent = dict.optBgMidnight;
         const optBgNone = document.getElementById('optBgNone');
         if (optBgNone) optBgNone.textContent = dict.optBgNone;
+        const elFieldTransparentCard = document.getElementById('lblFieldTransparentCard');
+        if (elFieldTransparentCard) elFieldTransparentCard.textContent = dict.fieldTransparentCard;
+        const elToggleCard = document.getElementById('toggleTransparentCard');
+        if (elToggleCard) {
+          elToggleCard.setAttribute('aria-label', dict.fieldTransparentCard);
+          const elCardSwitchLabel = elToggleCard.closest('.ss-liquid-switch');
+          if (elCardSwitchLabel) {
+            elCardSwitchLabel.setAttribute('title', dict.fieldTransparentCard);
+            elCardSwitchLabel.setAttribute('aria-label', dict.fieldTransparentCard);
+          }
+        }
         const elFieldTheme = document.getElementById('lblFieldTheme');
         if (elFieldTheme) elFieldTheme.textContent = dict.fieldTheme;
         const elToggleTheme = document.getElementById('toggleTheme');
@@ -3774,7 +3809,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         const toggle = document.getElementById('toggleTheme');
         if (toggle) toggle.checked = (effectiveTheme === 'dark');
 
-        if (!customBgColor) {
+        if (!customBgColor || (currentBgStyle && currentBgStyle !== 'none')) {
           const defaultBg = (currentTheme === 'dark') ? '#1f1f21' : '#ffffff';
           document.documentElement.style.removeProperty('--color-paper');
           document.body.style.backgroundColor = '';
@@ -3828,13 +3863,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         }
       }
 
-      // Initial custom color from URL
-      const rawColor = getVal(['c', 'color', 'bg']);
+      // Initial custom color from URL (legacy or specific hex)
+      const rawColor = getVal(['c', 'color']);
       if (rawColor) {
         const clean = rawColor.trim().replace(/^#/, '').toLowerCase();
+        const isPreset = BG_PRESETS[clean] || clean === 'none';
         const isDefaultLight = (currentTheme === 'light' && (clean === 'ffffff' || clean === 'fff'));
         const isDefaultDark = (currentTheme === 'dark' && (clean === '1f1f21'));
-        if (!isDefaultLight && !isDefaultDark) {
+        if (!isPreset && !isDefaultLight && !isDefaultDark) {
           applyBackgroundColor(rawColor);
         }
       }
@@ -4608,7 +4644,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           const p = new URLSearchParams();
           if (currentLang) p.set('lang', currentLang);
           if (currentTheme === 'dark') p.set('theme', 'dark');
-          if (currentBgStyle && currentBgStyle !== 'cotton-candy') p.set('bg', currentBgStyle);
+          if (currentBgStyle) p.set('bg', currentBgStyle);
+          if (document.body.classList.contains('is-card-transparent')) p.set('card', 'transparent');
           if (customBgColor) {
             const clean = customBgColor.replace(/^#/, '').toLowerCase();
             const isDefaultLight = (currentTheme === 'light' && (clean === 'ffffff' || clean === 'fff'));
@@ -5187,9 +5224,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         const selectBgStyle = document.getElementById('selectBgStyle');
         if (selectBgStyle) {
           const bgVal = selectBgStyle.value;
-          if (bgVal && bgVal !== 'cotton-candy') {
+          if (bgVal) {
             p.set('bg', bgVal);
           }
+        }
+
+        const toggleTransparentCard = document.getElementById('toggleTransparentCard');
+        if (toggleTransparentCard && toggleTransparentCard.checked) {
+          p.set('card', 'transparent');
         }
 
         // Include chosen language in shareable URL
@@ -5292,6 +5334,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         let viewBg = viewBgParam || 'cotton-candy';
         if (!BG_PRESETS[viewBg] && viewBg !== 'none') viewBg = 'cotton-candy';
         applyBgShader(viewBg);
+
+        const rawCard = (getVal(['card', 'card_bg', 'transparent']) || '').toLowerCase();
+        const isCardTransparent = rawCard === 'transparent' || rawCard === 'clear' || rawCard === '0' || rawCard === 'none' || allParams['transparent'] !== undefined;
+        if (isCardTransparent) {
+          document.body.classList.add('is-card-transparent');
+        }
+
         renderViewMode();
       } else {
         document.getElementById('formMode').classList.remove('hidden');
@@ -5299,6 +5348,22 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (siteHeader) siteHeader.classList.remove('hidden');
         if (topCornerControls) topCornerControls.classList.remove('hidden');
         if (footerLinks) footerLinks.classList.remove('hidden');
+
+        const rawCard = (getVal(['card', 'card_bg', 'transparent']) || '').toLowerCase();
+        const isCardTransparentUrl = rawCard === 'transparent' || rawCard === 'clear' || rawCard === '0' || rawCard === 'none' || allParams['transparent'] !== undefined;
+        const toggleTransparentCard = document.getElementById('toggleTransparentCard');
+        if (isCardTransparentUrl) {
+          document.body.classList.add('is-card-transparent');
+          if (toggleTransparentCard) toggleTransparentCard.checked = true;
+        }
+
+        if (toggleTransparentCard) {
+          toggleTransparentCard.addEventListener('change', function () {
+            document.body.classList.toggle('is-card-transparent', this.checked);
+            updateGeneratedLinks();
+            queueSaveDraft();
+          });
+        }
 
         const urlBg = (getVal(['bg', 'style', 'gradient']) || '').toLowerCase();
         const savedBg = getSavedBgStyle();
@@ -5387,9 +5452,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             selectBgStyle.value = formDraft.bg;
             applyBgShader(formDraft.bg);
           }
+          if (formDraft.cardTransparent !== undefined && toggleTransparentCard && !rawCard) {
+            toggleTransparentCard.checked = !!formDraft.cardTransparent;
+            document.body.classList.toggle('is-card-transparent', toggleTransparentCard.checked);
+          }
         }
 
-        if (inputLocation.value || inputExtraProps.value || customBgColor || (selectBgStyle && selectBgStyle.value !== 'cotton-candy')) {
+        if (inputLocation.value || inputExtraProps.value || customBgColor || (selectBgStyle && selectBgStyle.value !== 'cotton-candy') || (toggleTransparentCard && toggleTransparentCard.checked)) {
           const details = document.querySelector('.details-clean');
           if (details) details.open = true;
         }
