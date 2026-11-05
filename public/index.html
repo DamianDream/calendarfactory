@@ -105,11 +105,31 @@
         });
         var appleLink = document.querySelector("link[rel='apple-touch-icon']");
         if (appleLink) appleLink.href = pngUrl;
+
+        var topIcon = document.getElementById('topCalendarIcon');
+        if (topIcon) {
+          topIcon.src = pngUrl;
+        }
+        var topBadge = document.getElementById('topCalendarBadge');
+        if (topBadge) {
+          var dateTitle = now.toLocaleDateString(targetLang === 'ua' ? 'uk-UA' : (targetLang === 'ru' ? 'ru-RU' : (targetLang === 'pl' ? 'pl-PL' : 'en-US')), {
+            weekday: 'short',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+          });
+          topBadge.setAttribute('title', dateTitle);
+        }
       } catch (err) {
         // Fallback: static icons preserved
       }
     }
     updateDynamicCalendarFavicon();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', function() {
+        updateDynamicCalendarFavicon();
+      });
+    }
   </script>
 
   <!-- Google tag (gtag.js) -->
@@ -441,6 +461,30 @@ body[data-theme="dark"] .bg-noise {
     top: var(--space-lg);
     right: var(--space-lg);
   }
+}
+
+.top-date-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  user-select: none;
+}
+
+.top-date-icon {
+  width: 24px;
+  height: 24px;
+  display: block;
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-pill);
+  transition: transform var(--dur-micro) var(--ease-out);
+}
+
+.top-date-badge:hover .top-date-icon {
+  transform: scale(1.06);
 }
 
 /* Planet Language Dropdown */
@@ -1729,6 +1773,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
   <!-- Detached Top-Right Floating Controls (Language & Theme Switch) -->
   <div class="top-corner-controls" aria-label="Settings">
+    <div class="top-date-badge" id="topCalendarBadge" title="Today" aria-label="Today">
+      <img id="topCalendarIcon" class="top-date-icon" src="favicon.svg" alt="Calendar" width="24" height="24">
+    </div>
+
     <div class="lang-dropdown" id="langDropdown">
       <button type="button" class="lang-trigger" id="langTrigger" aria-label="Language selection" aria-expanded="false" aria-haspopup="true">
         <svg class="planet-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
