@@ -4139,7 +4139,7 @@ body.is-card-transparent .view-viewer-tz {
           if (val === undefined || val === null) continue;
           const escapedKey = rawKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
           const pattern = new RegExp(`\\{\\{${escapedKey}\\}\\}|\\{${escapedKey}\\}|%${escapedKey}%|\\[${escapedKey}\\]|\\$\\{${escapedKey}\\}`, 'gi');
-          result = result.replace(pattern, val);
+          result = result.replace(pattern, () => val);
         }
         return result;
       }
@@ -4335,8 +4335,8 @@ body.is-card-transparent .view-viewer-tz {
       function parseEventParams() {
         const rawTitle = getVal(['title', 't', 'name', 'summary', 'event', 'subject']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : currentLang === 'pl' ? 'Wydarzenie w kalendarzu' : currentLang === 'th' ? 'กิจกรรมในปฏิทิน' : 'Calendar Event');
         const rawDesc = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
-        const rawLoc = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
-        const rawUrl = getVal(['url', 'link', 'u']) || '';
+        const rawLoc = getVal(['location', 'loc', 'address', 'place', 'venue']) || '';
+        const rawUrl = getVal(['url', 'link']) || '';
         const rawBanner = getVal(['banner', 'img', 'image', 'b', 'pic', 'photo']) || '';
 
         const title = replacePlaceholders(rawTitle, allParams);
@@ -4781,7 +4781,12 @@ body.is-card-transparent .view-viewer-tz {
           const locEl = document.getElementById('eventLoc');
           locRow.classList.remove('hidden');
           if (/^https?:\/\//i.test(ev.loc)) {
-            locEl.innerHTML = `<a href="${ev.loc}" target="_blank" rel="noopener noreferrer">${ev.loc}</a>`;
+            const locLink = document.createElement('a');
+            locLink.href = ev.loc;
+            locLink.target = '_blank';
+            locLink.rel = 'noopener noreferrer';
+            locLink.textContent = ev.loc;
+            locEl.replaceChildren(locLink);
           } else {
             locEl.textContent = ev.loc;
           }
@@ -5618,7 +5623,7 @@ body.is-card-transparent .view-viewer-tz {
         }
 
         inputDescription.value = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
-        inputLocation.value = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
+        inputLocation.value = getVal(['location', 'loc', 'address', 'place', 'venue']) || '';
         inputExtraProps.value = getVal(['vars', 'extra']) || '';
 
         // Restore draft from cookie / localStorage (stored up to 1 day)

@@ -8,7 +8,8 @@
     "build": "echo 'Static assets ready'",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "pages:deploy": "wrangler pages deploy public"
+    "pages:deploy": "wrangler pages deploy public",
+    "test": "node test/event-ics.test.mjs"
   },
   "keywords": [
     "calendar",
