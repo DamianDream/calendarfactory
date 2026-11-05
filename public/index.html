@@ -280,6 +280,17 @@
 
   --shadow-pill: 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-toast: 0 8px 24px rgba(0, 0, 0, 0.16);
+
+  --radius-xl: 20px;
+  --color-card-glass-light: rgba(255, 255, 255, 0.88);
+  --color-card-glass-dark: rgba(24, 24, 27, 0.84);
+  --color-card-glass: var(--color-card-glass-light);
+
+  --color-card-border-light: rgba(255, 255, 255, 0.65);
+  --color-card-border-dark: rgba(255, 255, 255, 0.09);
+  --color-card-border: var(--color-card-border-light);
+
+  --shadow-card-glass: 0 16px 40px -12px rgba(0, 0, 0, 0.08);
 }
 
 /* Dark mode: light text (#FFF), light buttons (#FFF bg with #1F1F21 text), dark page (#1F1F21) */
@@ -317,6 +328,8 @@ body[data-theme="dark"] {
   --color-social-x: var(--color-social-x-dark);
   --color-error-text: var(--color-error-text-dark);
   --color-error-rule: var(--color-error-rule-dark);
+  --color-card-glass: var(--color-card-glass-dark);
+  --color-card-border: var(--color-card-border-dark);
 }
 
 *, *::before, *::after {
@@ -368,6 +381,55 @@ input:disabled, textarea:disabled, select:disabled, button:disabled {
   width: 100%;
   max-width: 440px;
   margin-inline: auto;
+}
+
+/* Dynamic WebGL Shader Canvas & Fluid Background */
+.shader-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-float) var(--ease-out);
+}
+
+body.has-shader-bg .shader-canvas {
+  opacity: 1;
+}
+
+body.has-shader-bg {
+  background-color: var(--color-paper-light);
+  background-image:
+    radial-gradient(at 0% 0%, var(--shader-c1, var(--color-paper-subtle-light)) 0px, transparent 60%),
+    radial-gradient(at 100% 0%, var(--shader-c3, var(--color-paper-subtle-light)) 0px, transparent 60%),
+    radial-gradient(at 50% 100%, var(--shader-c2, var(--color-paper-subtle-light)) 0px, transparent 70%);
+  background-attachment: fixed;
+  background-size: 100% 100%;
+}
+
+body[data-theme="dark"].has-shader-bg {
+  color: var(--color-text-light);
+  background-color: var(--color-paper-dark);
+  background-image:
+    radial-gradient(at 0% 0%, var(--shader-c1, var(--color-paper-subtle-dark)) 0px, transparent 60%),
+    radial-gradient(at 100% 0%, var(--shader-c3, var(--color-paper-subtle-dark)) 0px, transparent 60%),
+    radial-gradient(at 50% 100%, var(--shader-c2, var(--color-paper-subtle-dark)) 0px, transparent 70%);
+}
+
+body.has-shader-bg .container {
+  background: var(--color-paper);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-card-glass);
+}
+
+@media (max-width: 480px) {
+  body.has-shader-bg .container {
+    padding: var(--space-md);
+    border-radius: var(--radius-md);
+  }
 }
 
 /* Subtle tactile background noise texture */
@@ -2064,6 +2126,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   </style>
 </head>
 <body>
+  <!-- Dynamic WebGL Shader Canvas -->
+  <canvas id="shaderCanvas" class="shader-canvas" aria-hidden="true"></canvas>
+
   <!-- Subtle tactile background noise texture -->
   <div class="bg-noise" aria-hidden="true">
     <svg class="bg-noise-svg" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
@@ -2421,6 +2486,19 @@ input[list]:focus::-webkit-calendar-picker-indicator {
                 <span class="floating-line"></span>
               </div>
             </div>
+
+            <div class="floating-field">
+              <select id="selectBgStyle" class="floating-select" aria-label="Background style" tabindex="10">
+                <option value="cotton-candy" id="optBgCottonCandy" selected>Cotton Candy (ShaderGradient)</option>
+                <option value="sunset" id="optBgSunset">Sunset Glow</option>
+                <option value="ocean" id="optBgOcean">Ocean Breeze</option>
+                <option value="aurora" id="optBgAurora">Purple Aurora</option>
+                <option value="midnight" id="optBgMidnight">Midnight Cosmic</option>
+                <option value="none" id="optBgNone">Без градиента (Чистый фон)</option>
+              </select>
+              <label for="selectBgStyle" class="floating-label floated" id="lblFieldBgStyle">Стиль фона</label>
+              <span class="floating-line"></span>
+            </div>
           </div>
         </details>
       </form>
@@ -2554,6 +2632,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldVars: "Variables (e.g. name=Barry Allen)",
           fieldTz: "Timezone (UTC)",
           fieldColor: "Background color",
+          fieldBgStyle: "Background style",
+          optBgCottonCandy: "Cotton Candy (ShaderGradient)",
+          optBgSunset: "Sunset Glow",
+          optBgOcean: "Ocean Breeze",
+          optBgAurora: "Purple Aurora",
+          optBgMidnight: "Midnight Cosmic",
+          optBgNone: "No gradient (Clean paper)",
           fieldTheme: "Dark mode",
           fieldShareUrl: "Shareable Event URL",
           copyBtn: "Copy Event Link",
@@ -2621,6 +2706,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldVars: "Переменные (напр. name=Barry Allen)",
           fieldTz: "Часовой пояс (UTC)",
           fieldColor: "Цвет фона",
+          fieldBgStyle: "Стиль фона",
+          optBgCottonCandy: "Cotton Candy (ShaderGradient)",
+          optBgSunset: "Sunset Glow (Закат)",
+          optBgOcean: "Ocean Breeze (Океан)",
+          optBgAurora: "Purple Aurora (Сияние)",
+          optBgMidnight: "Midnight Cosmic (Космос)",
+          optBgNone: "Без градиента (Чистый фон)",
           fieldTheme: "Тёмная тема",
           fieldShareUrl: "Ссылка для отправки",
           copyBtn: "Скопировать ссылку",
@@ -2688,6 +2780,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldVars: "Змінні (напр. name=Barry Allen)",
           fieldTz: "Часовий пояс (UTC)",
           fieldColor: "Колір фону",
+          fieldBgStyle: "Стиль фону",
+          optBgCottonCandy: "Cotton Candy (ShaderGradient)",
+          optBgSunset: "Sunset Glow (Захід)",
+          optBgOcean: "Ocean Breeze (Океан)",
+          optBgAurora: "Purple Aurora (Сяйво)",
+          optBgMidnight: "Midnight Cosmic (Космос)",
+          optBgNone: "Без градієнта (Чистий фон)",
           fieldTheme: "Темна тема",
           fieldShareUrl: "Посилання для надсилання",
           copyBtn: "Скопіювати посилання",
@@ -2755,6 +2854,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldVars: "Zmienne (np. name=Barry Allen)",
           fieldTz: "Strefa czasowa (UTC)",
           fieldColor: "Kolor tła",
+          fieldBgStyle: "Styl tła",
+          optBgCottonCandy: "Cotton Candy (ShaderGradient)",
+          optBgSunset: "Sunset Glow (Zachód słońca)",
+          optBgOcean: "Ocean Breeze (Bryza)",
+          optBgAurora: "Purple Aurora (Zorza)",
+          optBgMidnight: "Midnight Cosmic (Kosmiczny)",
+          optBgNone: "Bez gradientu (Czyste tło)",
           fieldTheme: "Ciemny motyw",
           fieldShareUrl: "Link do udostępnienia",
           copyBtn: "Skopiuj link",
@@ -2822,6 +2928,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           fieldVars: "ตัวแปร (เช่น name=สมชาย)",
           fieldTz: "เขตเวลา (UTC)",
           fieldColor: "สีพื้นหลัง",
+          fieldBgStyle: "สไตล์พื้นหลัง",
+          optBgCottonCandy: "Cotton Candy (ShaderGradient)",
+          optBgSunset: "Sunset Glow (พระอาทิตย์ตก)",
+          optBgOcean: "Ocean Breeze (สายลมทะเล)",
+          optBgAurora: "Purple Aurora (แสงเหนือ)",
+          optBgMidnight: "Midnight Cosmic (อวกาศ)",
+          optBgNone: "ไม่มีการไล่ระดับสี (พื้นหลังสะอาด)",
           fieldTheme: "ธีมมืด",
           fieldShareUrl: "ลิงก์สำหรับแชร์",
           copyBtn: "คัดลอกลิงก์",
@@ -2874,6 +2987,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         allParams[k] = v;
       }
 
+      function isEventViewMode() {
+        return ['title', 't', 'name', 'summary', 'event', 'subject', 'start', 's', 'date', 'd', 'dt', 'dtstart', 'datetime'].some(k => allParams[k] !== undefined);
+      }
+
       function getVal(keys) {
         for (const key of keys) {
           if (allParams[key] !== undefined && allParams[key].trim() !== '') {
@@ -2902,7 +3019,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         }
       }
 
-      function setCookie(name, value, days = 365) {
+      function setCookie(name, value, days = 180) {
         try {
           const maxAge = days * 24 * 60 * 60;
           document.cookie = `${name}=${encodeURIComponent(value)}; path=/; max-age=${maxAge}; SameSite=Lax`;
@@ -2928,6 +3045,415 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           if (localVal === 'dark' || localVal === 'light') return localVal;
         } catch (e) {}
         return null;
+      }
+
+      // Presets for dynamic fluid shader gradients (matching ShaderGradient.co Cotton Candy profile)
+      const BG_PRESETS = {
+        'cotton-candy': {
+          name: 'Cotton Candy',
+          speed: 0.35,
+          light: {
+            c1: [0.922, 0.929, 1.0],   // #ebedff
+            c2: [0.953, 0.949, 0.973], // #f3f2f8
+            c3: [0.859, 0.973, 1.0]    // #dbf8ff
+          },
+          dark: {
+            c1: [0.098, 0.114, 0.224], // #191d39
+            c2: [0.137, 0.129, 0.212], // #232136
+            c3: [0.078, 0.165, 0.231]  // #142a3b
+          },
+          hex: {
+            light: ['#ebedff', '#f3f2f8', '#dbf8ff'],
+            dark: ['#191d39', '#232136', '#142a3b']
+          }
+        },
+        'sunset': {
+          name: 'Sunset Glow',
+          speed: 0.35,
+          light: {
+            c1: [1.0, 0.824, 0.776],   // #ffd3c6
+            c2: [1.0, 0.910, 0.820],   // #ffe8d1
+            c3: [1.0, 0.757, 0.816]    // #ffc1d0
+          },
+          dark: {
+            c1: [0.243, 0.118, 0.118], // #3e1e1e
+            c2: [0.259, 0.149, 0.098], // #422619
+            c3: [0.220, 0.098, 0.176]  // #38192d
+          },
+          hex: {
+            light: ['#ffd3c6', '#ffe8d1', '#ffc1d0'],
+            dark: ['#3e1e1e', '#422619', '#38192d']
+          }
+        },
+        'ocean': {
+          name: 'Ocean Breeze',
+          speed: 0.35,
+          light: {
+            c1: [0.820, 0.941, 1.0],   // #d1f0ff
+            c2: [0.890, 0.953, 0.980], // #e3f3fa
+            c3: [0.773, 0.969, 0.922]  // #c5f7eb
+          },
+          dark: {
+            c1: [0.059, 0.165, 0.235], // #0f2a3c
+            c2: [0.078, 0.145, 0.227], // #14253a
+            c3: [0.051, 0.180, 0.173]  // #0d2e2c
+          },
+          hex: {
+            light: ['#d1f0ff', '#e3f3fa', '#c5f7eb'],
+            dark: ['#0f2a3c', '#14253a', '#0d2e2c']
+          }
+        },
+        'aurora': {
+          name: 'Purple Aurora',
+          speed: 0.35,
+          light: {
+            c1: [0.918, 0.867, 1.0],   // #eae0ff
+            c2: [0.976, 0.894, 0.949], // #f9e4f2
+            c3: [0.871, 0.910, 1.0]    // #dee8ff
+          },
+          dark: {
+            c1: [0.180, 0.106, 0.259], // #2e1b42
+            c2: [0.216, 0.098, 0.188], // #371930
+            c3: [0.114, 0.145, 0.267]  // #1d2544
+          },
+          hex: {
+            light: ['#eae0ff', '#f9e4f2', '#dee8ff'],
+            dark: ['#2e1b42', '#371930', '#1d2544']
+          }
+        },
+        'midnight': {
+          name: 'Midnight Cosmic',
+          speed: 0.25,
+          light: {
+            c1: [0.898, 0.906, 0.922], // #e5e7eb
+            c2: [0.941, 0.945, 0.957], // #f0f1f4
+            c3: [0.855, 0.878, 0.922]  // #dae0eb
+          },
+          dark: {
+            c1: [0.051, 0.067, 0.090], // #0d1117
+            c2: [0.086, 0.106, 0.133], // #161b22
+            c3: [0.129, 0.149, 0.176]  // #21262d
+          },
+          hex: {
+            light: ['#e5e7eb', '#f0f1f4', '#dae0eb'],
+            dark: ['#0d1117', '#161b22', '#21262d']
+          }
+        }
+      };
+
+      let currentBgStyle = 'cotton-candy';
+      let shaderInstance = null;
+
+      function getSavedBgStyle() {
+        const cookieVal = getCookie('cf_bg_style');
+        if (cookieVal && (BG_PRESETS[cookieVal] || cookieVal === 'none')) return cookieVal;
+        try {
+          const localVal = localStorage.getItem('cf_bg_style');
+          if (localVal && (BG_PRESETS[localVal] || localVal === 'none')) return localVal;
+        } catch (e) {}
+        return null;
+      }
+
+      function initShaderBackground() {
+        const canvas = document.getElementById('shaderCanvas');
+        if (!canvas) return;
+
+        let gl = null;
+        try {
+          gl = canvas.getContext('webgl', { alpha: false, depth: false, antialias: false, powerPreference: 'low-power' })
+            || canvas.getContext('experimental-webgl');
+        } catch (e) {
+          gl = null;
+        }
+
+        const vsSource = `
+          attribute vec2 a_pos;
+          varying vec2 v_uv;
+          void main() {
+            v_uv = a_pos * 0.5 + 0.5;
+            gl_Position = vec4(a_pos, 0.0, 1.0);
+          }
+        `;
+
+        const fsSource = `
+          precision highp float;
+          varying vec2 v_uv;
+          uniform vec2 u_resolution;
+          uniform float u_time;
+          uniform vec3 u_color1;
+          uniform vec3 u_color2;
+          uniform vec3 u_color3;
+          uniform float u_speed;
+
+          vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+          vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+          vec3 permute(vec3 x) { return mod289(((x * 34.0) + 1.0) * x); }
+
+          float snoise(vec2 v) {
+            const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+            vec2 i = floor(v + dot(v, C.yy));
+            vec2 x0 = v - i + dot(i, C.xx);
+            vec2 i1;
+            i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+            vec4 x12 = x0.xyxy + C.xxzz;
+            x12.xy -= i1;
+            i = mod289(i);
+            vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+            vec3 m = max(0.5 - vec3(dot(x0, x0), dot(x12.xy, x12.xy), dot(x12.zw, x12.zw)), 0.0);
+            m = m * m;
+            m = m * m;
+            vec3 x = 2.0 * fract(p * C.www) - 1.0;
+            vec3 h = abs(x) - 0.5;
+            vec3 ox = floor(x + 0.5);
+            vec3 a0 = x - ox;
+            m *= 1.79284291400159 - 0.85373472095314 * (a0 * a0 + h * h);
+            vec3 g;
+            g.x = a0.x * x0.x + h.x * x0.y;
+            g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+            return 130.0 * dot(m, g);
+          }
+
+          void main() {
+            vec2 st = gl_FragCoord.xy / u_resolution.xy;
+            float aspect = u_resolution.x / u_resolution.y;
+            st.x *= aspect;
+
+            float t = u_time * u_speed * 0.15;
+
+            vec2 q = vec2(
+              snoise(st * 1.8 + vec2(0.0, t * 0.5)),
+              snoise(st * 1.8 + vec2(5.2, t * 0.4))
+            );
+
+            vec2 r = vec2(
+              snoise(st * 2.2 + 2.5 * q + vec2(1.7, 9.2) + t * 0.25),
+              snoise(st * 2.2 + 2.5 * q + vec2(8.3, 2.8) + t * 0.3)
+            );
+
+            float f = 0.5 + 0.5 * snoise(st * 1.5 + 2.5 * r);
+
+            vec3 col = mix(u_color1, u_color2, clamp(f * 1.4, 0.0, 1.0));
+            col = mix(col, u_color3, clamp(length(q) * 0.85, 0.0, 1.0));
+
+            gl_FragColor = vec4(col, 1.0);
+          }
+        `;
+
+        function createShader(type, src) {
+          if (!gl) return null;
+          const s = gl.createShader(type);
+          gl.shaderSource(s, src);
+          gl.compileShader(s);
+          if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
+            gl.deleteShader(s);
+            return null;
+          }
+          return s;
+        }
+
+        let program = null;
+        let uRes = null, uTime = null, uC1 = null, uC2 = null, uC3 = null, uSpeed = null;
+
+        if (gl) {
+          const vs = createShader(gl.VERTEX_SHADER, vsSource);
+          const fs = createShader(gl.FRAGMENT_SHADER, fsSource);
+          if (vs && fs) {
+            program = gl.createProgram();
+            gl.attachShader(program, vs);
+            gl.attachShader(program, fs);
+            gl.linkProgram(program);
+            if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+              program = null;
+            } else {
+              gl.useProgram(program);
+              const posBuf = gl.createBuffer();
+              gl.bindBuffer(gl.ARRAY_BUFFER, posBuf);
+              gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+              const aPos = gl.getAttribLocation(program, 'a_pos');
+              gl.enableVertexAttribArray(aPos);
+              gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
+
+              uRes = gl.getUniformLocation(program, 'u_resolution');
+              uTime = gl.getUniformLocation(program, 'u_time');
+              uC1 = gl.getUniformLocation(program, 'u_color1');
+              uC2 = gl.getUniformLocation(program, 'u_color2');
+              uC3 = gl.getUniformLocation(program, 'u_color3');
+              uSpeed = gl.getUniformLocation(program, 'u_speed');
+            }
+          }
+        }
+
+        let animationFrameId = null;
+        let startTime = performance.now();
+        let isRunning = false;
+        let currentC1 = [0.92, 0.93, 1.0];
+        let currentC2 = [0.95, 0.95, 0.97];
+        let currentC3 = [0.86, 0.97, 1.0];
+
+        function resize() {
+          const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
+          const w = Math.round(window.innerWidth * dpr);
+          const h = Math.round(window.innerHeight * dpr);
+          if (canvas.width !== w || canvas.height !== h) {
+            canvas.width = w;
+            canvas.height = h;
+            if (gl) gl.viewport(0, 0, w, h);
+          }
+        }
+
+        function render(now) {
+          if (!isRunning) return;
+          const elapsed = (now - startTime) * 0.001;
+
+          if (gl && program) {
+            gl.useProgram(program);
+            gl.uniform2f(uRes, canvas.width, canvas.height);
+            gl.uniform1f(uTime, elapsed);
+            gl.uniform3fv(uC1, currentC1);
+            gl.uniform3fv(uC2, currentC2);
+            gl.uniform3fv(uC3, currentC3);
+            gl.uniform1f(uSpeed, (BG_PRESETS[currentBgStyle]?.speed) || 0.35);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+          }
+
+          const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (!prefersReduced && isRunning) {
+            animationFrameId = requestAnimationFrame(render);
+          }
+        }
+
+        function start() {
+          if (isRunning) return;
+          isRunning = true;
+          resize();
+          startTime = performance.now();
+          render(startTime);
+        }
+
+        function stop() {
+          isRunning = false;
+          if (animationFrameId) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+        }
+
+        window.addEventListener('resize', () => {
+          if (isRunning) {
+            resize();
+            if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+              render(performance.now());
+            }
+          }
+        });
+
+        document.addEventListener('visibilitychange', () => {
+          if (document.hidden) {
+            stop();
+          } else if (currentBgStyle !== 'none' && !customBgColor) {
+            start();
+          }
+        });
+
+        shaderInstance = {
+          update: function(styleKey, theme) {
+            if (styleKey === 'none' || customBgColor) {
+              stop();
+              document.body.classList.remove('has-shader-bg');
+              return;
+            }
+
+            const preset = BG_PRESETS[styleKey] || BG_PRESETS['cotton-candy'];
+            const mode = (theme === 'dark') ? 'dark' : 'light';
+            currentC1 = preset[mode].c1;
+            currentC2 = preset[mode].c2;
+            currentC3 = preset[mode].c3;
+
+            // Set CSS custom properties on documentElement for radial fallback
+            const hexes = preset.hex[mode];
+            document.documentElement.style.setProperty('--shader-c1', hexes[0]);
+            document.documentElement.style.setProperty('--shader-c2', hexes[1]);
+            document.documentElement.style.setProperty('--shader-c3', hexes[2]);
+
+            document.body.classList.add('has-shader-bg');
+            start();
+          }
+        };
+
+        shaderInstance.update(currentBgStyle, currentTheme);
+      }
+
+      function applyBgShader(styleKey) {
+        currentBgStyle = (styleKey && (BG_PRESETS[styleKey] || styleKey === 'none')) ? styleKey : 'cotton-candy';
+        setCookie('cf_bg_style', currentBgStyle, 180); // Stored >= 3 months
+        if (shaderInstance) {
+          shaderInstance.update(currentBgStyle, currentTheme);
+        }
+      }
+
+      // Temporary form draft storage in cookies & localStorage (TTL 1 day = 24 hours)
+      const DRAFT_COOKIE_NAME = 'cf_form_draft_v1';
+      function saveFormDraft() {
+        if (isEventViewMode()) return;
+        const inTitle = document.getElementById('inputTitle');
+        const inDate = document.getElementById('inputDate');
+        const inTime = document.getElementById('inputTime');
+        const inDur = document.getElementById('inputDuration');
+        const inTz = document.getElementById('inputTimezone');
+        const inDesc = document.getElementById('inputDescription');
+        const inLoc = document.getElementById('inputLocation');
+        const inBanner = document.getElementById('inputBanner');
+        const inExtra = document.getElementById('inputExtraProps');
+        const inColor = document.getElementById('inputColor');
+        const inBg = document.getElementById('selectBgStyle');
+
+        const draft = {
+          title: inTitle ? inTitle.value : '',
+          date: inDate ? inDate.value : '',
+          time: inTime ? inTime.value : '',
+          dur: inDur ? inDur.value : '60',
+          tz: inTz ? inTz.value : '',
+          desc: inDesc ? inDesc.value : '',
+          loc: inLoc ? inLoc.value : '',
+          banner: inBanner ? inBanner.value : '',
+          extra: inExtra ? inExtra.value : '',
+          color: inColor ? inColor.value : '',
+          bg: inBg ? inBg.value : 'cotton-candy',
+          ts: Date.now()
+        };
+
+        const hasContent = Boolean(draft.title || draft.desc || draft.loc || draft.banner || draft.extra || (draft.color && draft.color !== '#ffffff'));
+        if (!hasContent) {
+          try {
+            document.cookie = `${DRAFT_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
+            localStorage.removeItem(DRAFT_COOKIE_NAME);
+          } catch (e) {}
+          return;
+        }
+        try {
+          const json = JSON.stringify(draft);
+          // 1 day = 86400 seconds
+          document.cookie = `${DRAFT_COOKIE_NAME}=${encodeURIComponent(json)}; path=/; max-age=86400; SameSite=Lax`;
+          localStorage.setItem(DRAFT_COOKIE_NAME, json);
+        } catch (e) {}
+      }
+
+      function loadFormDraft() {
+        if (isEventViewMode()) return null;
+        try {
+          const raw = getCookie(DRAFT_COOKIE_NAME) || localStorage.getItem(DRAFT_COOKIE_NAME);
+          if (!raw) return null;
+          const d = JSON.parse(raw);
+          if (!d || typeof d !== 'object') return null;
+          if (d.ts && (Date.now() - d.ts > 24 * 60 * 60 * 1000)) {
+            document.cookie = `${DRAFT_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
+            localStorage.removeItem(DRAFT_COOKIE_NAME);
+            return null;
+          }
+          return d;
+        } catch (e) {
+          return null;
+        }
       }
 
       // Detect language from URL param (lang= or l=), saved cookie, or browser navigator
@@ -3055,6 +3581,20 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (elFieldTz) elFieldTz.textContent = dict.fieldTz;
         const elFieldColor = document.getElementById('lblFieldColor');
         if (elFieldColor) elFieldColor.textContent = dict.fieldColor;
+        const elFieldBgStyle = document.getElementById('lblFieldBgStyle');
+        if (elFieldBgStyle) elFieldBgStyle.textContent = dict.fieldBgStyle;
+        const optBgCottonCandy = document.getElementById('optBgCottonCandy');
+        if (optBgCottonCandy) optBgCottonCandy.textContent = dict.optBgCottonCandy;
+        const optBgSunset = document.getElementById('optBgSunset');
+        if (optBgSunset) optBgSunset.textContent = dict.optBgSunset;
+        const optBgOcean = document.getElementById('optBgOcean');
+        if (optBgOcean) optBgOcean.textContent = dict.optBgOcean;
+        const optBgAurora = document.getElementById('optBgAurora');
+        if (optBgAurora) optBgAurora.textContent = dict.optBgAurora;
+        const optBgMidnight = document.getElementById('optBgMidnight');
+        if (optBgMidnight) optBgMidnight.textContent = dict.optBgMidnight;
+        const optBgNone = document.getElementById('optBgNone');
+        if (optBgNone) optBgNone.textContent = dict.optBgNone;
         const elFieldTheme = document.getElementById('lblFieldTheme');
         if (elFieldTheme) elFieldTheme.textContent = dict.fieldTheme;
         const elToggleTheme = document.getElementById('toggleTheme');
@@ -3253,10 +3793,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           const metaTheme = document.querySelector('meta[name="theme-color"]');
           if (metaTheme) metaTheme.setAttribute('content', parsed);
         }
+
+        if (shaderInstance) {
+          shaderInstance.update(currentBgStyle, currentTheme);
+        }
       }
 
       function applyTheme(themeMode) {
         currentTheme = (themeMode === 'dark') ? 'dark' : 'light';
+        setCookie('cf_theme', currentTheme, 180); // Stored >= 3 months
         updateThemeAndContrast();
       }
 
@@ -3880,10 +4425,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       }
 
       // Check whether URL has event parameters
-      const hasCoreParams = [
-        'title', 't', 'name', 'summary', 'event', 'subject',
-        'start', 's', 'date', 'd', 'dt', 'dtstart', 'datetime'
-      ].some(k => allParams[k] !== undefined);
+      const hasCoreParams = isEventViewMode();
 
       // Initialize translations
       applyTranslations(currentLang);
@@ -4059,9 +4601,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         };
 
         document.getElementById('btnEditLink').onclick = function () {
+          try {
+            document.cookie = `${DRAFT_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
+            localStorage.removeItem(DRAFT_COOKIE_NAME);
+          } catch (e) {}
           const p = new URLSearchParams();
           if (currentLang) p.set('lang', currentLang);
           if (currentTheme === 'dark') p.set('theme', 'dark');
+          if (currentBgStyle && currentBgStyle !== 'cotton-candy') p.set('bg', currentBgStyle);
           if (customBgColor) {
             const clean = customBgColor.replace(/^#/, '').toLowerCase();
             const isDefaultLight = (currentTheme === 'light' && (clean === 'ffffff' || clean === 'fff'));
@@ -4637,6 +5184,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
         }
 
+        const selectBgStyle = document.getElementById('selectBgStyle');
+        if (selectBgStyle) {
+          const bgVal = selectBgStyle.value;
+          if (bgVal && bgVal !== 'cotton-candy') {
+            p.set('bg', bgVal);
+          }
+        }
+
         // Include chosen language in shareable URL
         p.set('lang', currentLang);
 
@@ -4725,12 +5280,18 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       const topCornerControls = document.querySelector('.top-corner-controls');
       const footerLinks = document.querySelector('.footer-links');
 
+      initShaderBackground();
+
       if (hasCoreParams) {
         document.getElementById('viewMode').classList.remove('hidden');
         document.getElementById('formMode').classList.add('hidden');
         if (siteHeader) siteHeader.classList.add('hidden');
         if (topCornerControls) topCornerControls.classList.add('hidden');
         if (footerLinks) footerLinks.classList.add('hidden');
+        const viewBgParam = (getVal(['bg', 'style', 'gradient']) || '').toLowerCase();
+        let viewBg = viewBgParam || 'cotton-candy';
+        if (!BG_PRESETS[viewBg] && viewBg !== 'none') viewBg = 'cotton-candy';
+        applyBgShader(viewBg);
         renderViewMode();
       } else {
         document.getElementById('formMode').classList.remove('hidden');
@@ -4738,6 +5299,23 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (siteHeader) siteHeader.classList.remove('hidden');
         if (topCornerControls) topCornerControls.classList.remove('hidden');
         if (footerLinks) footerLinks.classList.remove('hidden');
+
+        const urlBg = (getVal(['bg', 'style', 'gradient']) || '').toLowerCase();
+        const savedBg = getSavedBgStyle();
+        let activeBg = urlBg || savedBg || 'cotton-candy';
+        if (!BG_PRESETS[activeBg] && activeBg !== 'none') activeBg = 'cotton-candy';
+        currentBgStyle = activeBg;
+        applyBgShader(currentBgStyle);
+
+        const selectBgStyle = document.getElementById('selectBgStyle');
+        if (selectBgStyle) {
+          selectBgStyle.value = currentBgStyle;
+          selectBgStyle.addEventListener('change', function () {
+            applyBgShader(this.value);
+            updateGeneratedLinks();
+            queueSaveDraft();
+          });
+        }
 
         // Form fields default empty, except Duration (60 mins = 1 hour) and Time (10:00)
         inputTitle.value = getVal(['title', 't']) || '';
@@ -4782,7 +5360,36 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         inputDescription.value = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
         inputLocation.value = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
         inputExtraProps.value = getVal(['vars', 'extra']) || '';
-        if (inputLocation.value || inputExtraProps.value || customBgColor) {
+
+        // Restore draft from cookie / localStorage (stored up to 1 day)
+        const formDraft = loadFormDraft();
+        if (formDraft) {
+          if (formDraft.title && !inputTitle.value) inputTitle.value = formDraft.title;
+          if (formDraft.date && !startVal) {
+            inputDate.value = formDraft.date;
+            pickerSelectedDate = formDraft.date;
+          }
+          if (formDraft.time && !startVal) inputTime.value = formDraft.time;
+          if (formDraft.dur && !getVal(['duration', 'dur'])) inputDuration.value = formDraft.dur;
+          if (formDraft.tz && !explicitTz && !getVal(['utc', 'u'])) inputTimezone.value = formDraft.tz;
+          if (formDraft.desc && !inputDescription.value) inputDescription.value = formDraft.desc;
+          if (formDraft.loc && !inputLocation.value) inputLocation.value = formDraft.loc;
+          if (formDraft.extra && !inputExtraProps.value) inputExtraProps.value = formDraft.extra;
+          if (formDraft.banner && inputBanner && !inputBanner.value) {
+            inputBanner.value = formDraft.banner;
+            updateBannerPreview(formDraft.banner);
+          }
+          if (formDraft.color && inputColor && !customBgColor) {
+            inputColor.value = formDraft.color;
+            applyBackgroundColor(formDraft.color);
+          }
+          if (formDraft.bg && selectBgStyle && !urlBg) {
+            selectBgStyle.value = formDraft.bg;
+            applyBgShader(formDraft.bg);
+          }
+        }
+
+        if (inputLocation.value || inputExtraProps.value || customBgColor || (selectBgStyle && selectBgStyle.value !== 'cotton-candy')) {
           const details = document.querySelector('.details-clean');
           if (details) details.open = true;
         }
@@ -5170,6 +5777,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
               const isDefaultDark = (effectiveTheme === 'dark' && (clean === '1f1f21'));
               if (!isDefaultLight && !isDefaultDark) p.set('c', clean);
             }
+            saveFormDraft();
             const qs = p.toString();
             window.location.href = `docs.html${qs ? '?' + qs : ''}`;
           });
@@ -5180,6 +5788,19 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           linkFooterRepo.addEventListener('click', function () {
             trackEvent('click_github_repo', { source: 'footer' });
           });
+        }
+
+        // Live draft autosave on form input & change
+        let draftSaveTimer = null;
+        function queueSaveDraft() {
+          clearTimeout(draftSaveTimer);
+          draftSaveTimer = setTimeout(saveFormDraft, 250);
+        }
+
+        const generatorForm = document.getElementById('generatorForm');
+        if (generatorForm) {
+          generatorForm.addEventListener('input', queueSaveDraft);
+          generatorForm.addEventListener('change', queueSaveDraft);
         }
 
         updateGeneratedLinks();
