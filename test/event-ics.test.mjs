@@ -28,5 +28,12 @@ check('explicit-offset', dtstart(await ics('title=t&start=2026-07-20T14:00:00%2B
 const body = await ics('title=t&start=2026-07-20T14:00&tz=Europe/Kyiv&loc=A,B;C');
 check('loc-escaped', (body.match(/LOCATION:[^\r\n]*/)||[])[0], 'LOCATION:A\\,B\\;C');
 
+// CRLF/property injection: bare CR + newline must not create new ICS lines
+{
+  const body = await ics('title=' + encodeURIComponent('A\r\nSUMMARY:evil') + '&start=2026-07-20T14:00&tz=Europe/Kyiv');
+  const summaryLines = (body.match(/^SUMMARY:/gm) || []).length;
+  check('no-crlf-injection', summaryLines, 1);
+}
+
 console.log(fails ? `\n${fails} FAILED` : '\nALL PASS');
 process.exit(fails?1:0);

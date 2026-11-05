@@ -15,7 +15,7 @@ function formatDayCompact(d) {
 
 function escapeIcs(str) {
   if (!str) return '';
-  return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+  return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n|\r|\n/g, '\\n').replace(/[\x00-\x08\x0B-\x1F\x7F]/g, '');
 }
 
 function foldIcsLine(line) {
