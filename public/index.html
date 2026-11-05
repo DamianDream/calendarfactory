@@ -1861,33 +1861,35 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           </div>
         </div>
 
-        <!-- 5. PROGRESSIVE DISCLOSURE FOR EXTRA SETTINGS -->
+        <!-- 5. EVENT BANNER & COVER IMAGE (FEATURED MEDIA FIELD) -->
+        <div class="floating-field" id="fieldBannerWrap">
+          <div class="floating-control">
+            <input type="url" id="inputBanner" class="floating-input" placeholder=" " autocomplete="off" tabindex="7">
+            <label for="inputBanner" class="floating-label" id="lblFieldBanner">Ссылка на баннер (изображение)</label>
+            <span class="floating-line"></span>
+          </div>
+          <div class="banner-actions-row">
+            <label for="fileBannerUpload" class="chip chip-upload" id="btnUploadBannerLabel" title="Загрузить баннер или обложку 1:1 (до 800px, 2 МБ, ImgBB)">
+              <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              <span id="txtBtnUploadBanner">Загрузить баннер</span>
+              <input type="file" id="fileBannerUpload" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" class="sr-only">
+            </label>
+          </div>
+          <div class="field-hint" id="bannerFormatHint">Хранение через ImgBB (до 30 дней). Поддерживает баннеры (~4:1, 970×250 px) и квадратные обложки (1:1, до 800×800 px для мобильных). До 2 МБ (JPG, PNG, WebP, GIF, SVG).</div>
+          <div id="bannerInputPreviewWrap" class="banner-input-preview hidden">
+            <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 970 250'/%3E" alt="Banner preview" loading="lazy">
+          </div>
+        </div>
+
+        <!-- 6. PROGRESSIVE DISCLOSURE FOR EXTRA SETTINGS -->
         <details class="details-clean">
           <summary class="summary-clean" id="summaryMoreParams">
             <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
             <span id="txtMoreParams">Дополнительные параметры</span>
           </summary>
           <div class="details-body">
-            <div class="floating-field" id="fieldBannerWrap">
-              <div class="floating-control">
-                <input type="url" id="inputBanner" class="floating-input" placeholder=" " autocomplete="off">
-                <label for="inputBanner" class="floating-label" id="lblFieldBanner">Ссылка на баннер (изображение)</label>
-                <span class="floating-line"></span>
-              </div>
-              <div class="banner-actions-row">
-                <label for="fileBannerUpload" class="chip chip-upload" id="btnUploadBannerLabel" title="Загрузить баннер или обложку 1:1 (до 800px, 2 МБ, ImgBB)">
-                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
-                  </svg>
-                  <span id="txtBtnUploadBanner">Загрузить баннер</span>
-                  <input type="file" id="fileBannerUpload" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" class="sr-only">
-                </label>
-              </div>
-              <div class="field-hint" id="bannerFormatHint">Хранение через ImgBB (до 30 дней). Поддерживает баннеры (~4:1, 970×250 px) и квадратные обложки (1:1, до 800×800 px для мобильных). До 2 МБ (JPG, PNG, WebP, GIF, SVG).</div>
-              <div id="bannerInputPreviewWrap" class="banner-input-preview hidden">
-                <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 970 250'/%3E" alt="Banner preview" loading="lazy">
-              </div>
-            </div>
             <div class="floating-field">
               <input type="text" id="inputLocation" class="floating-input" placeholder=" ">
               <label for="inputLocation" class="floating-label" id="lblFieldLocation">Location or meeting URL</label>
@@ -3864,6 +3866,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
         }
 
+        inputDescription.value = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
+        inputLocation.value = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
+        inputExtraProps.value = getVal(['vars', 'extra']) || '';
+        if (inputLocation.value || inputExtraProps.value || customBgColor) {
+          const details = document.querySelector('.details-clean');
+          if (details) details.open = true;
+        }
+
         const inputColorPicker = document.getElementById('inputColorPicker');
         const btnThemeToggle = document.getElementById('btnThemeToggle');
 
@@ -3919,10 +3929,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (inputBanner) {
           inputBanner.value = getVal(['banner', 'img', 'image', 'b', 'pic', 'photo']) || '';
           updateBannerPreview(inputBanner.value);
-          if (inputBanner.value) {
-            const details = document.querySelector('.details-clean');
-            if (details) details.open = true;
-          }
           inputBanner.addEventListener('input', function () {
             updateBannerPreview(this.value);
           });
