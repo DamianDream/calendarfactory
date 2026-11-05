@@ -3024,6 +3024,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         th: ['จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.', 'อา.']
       };
 
+      let pickerYear = new Date().getFullYear();
+      let pickerMonth = new Date().getMonth();
+      let pickerSelectedDate = '';
+
       const CAL_MONTHS = {
         en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
         ua: ['Січень', 'Лютий', 'Березень', 'Квітень', 'Травень', 'Червень', 'Липень', 'Серпень', 'Вересень', 'Жовтень', 'Листопад', 'Грудень'],
@@ -3066,7 +3070,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           const wArr = CAL_WEEKDAYS[langKey];
           calWeekdaysEl.innerHTML = wArr.map(w => `<span>${w}</span>`).join('');
         }
-        if (typeof renderCalendarGrid === 'function') {
+        if (typeof renderCalendarGrid === 'function' && document.getElementById('calDaysGrid')) {
           renderCalendarGrid();
         }
 
@@ -4159,10 +4163,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       const inputColor = document.getElementById('inputColor');
 
       // Calendar & Time Picker Popup Controller
-      let pickerYear = new Date().getFullYear();
-      let pickerMonth = new Date().getMonth();
-      let pickerSelectedDate = '';
-
       function syncTimePickerUI(timeStr) {
         const cleanTime = (timeStr || '10:00').slice(0, 5);
         const customInput = document.getElementById('calTimeCustomInput');
