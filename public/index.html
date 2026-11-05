@@ -472,6 +472,14 @@ body[data-theme="dark"] .bg-noise {
   flex-shrink: 0;
   border-radius: var(--radius-sm);
   user-select: none;
+  cursor: pointer;
+  position: relative;
+  z-index: 90;
+}
+
+.top-date-badge:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
 }
 
 .top-date-icon {
@@ -480,11 +488,20 @@ body[data-theme="dark"] .bg-noise {
   display: block;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-pill);
-  transition: transform var(--dur-micro) var(--ease-out);
+  transform-origin: top right;
+  transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
 }
 
-.top-date-badge:hover .top-date-icon {
-  transform: scale(1.06);
+.top-date-badge:hover,
+.top-date-badge.is-expanded {
+  z-index: 110;
+}
+
+.top-date-badge:hover .top-date-icon,
+.top-date-badge.is-expanded .top-date-icon {
+  transform: scale(3.2);
+  box-shadow: var(--shadow-toast);
+  border-radius: var(--radius-md);
 }
 
 /* Planet Language Dropdown */
@@ -1073,14 +1090,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 .time-wheel-popup {
   position: absolute;
   top: calc(100% + var(--space-2xs));
-  left: 50%;
-  transform: translateX(-50%);
-  width: 210px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: 190px;
   background: var(--color-paper);
   border: 1px solid var(--color-rule);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-toast);
-  padding: var(--space-sm) var(--space-md);
+  padding: var(--space-2xs) var(--space-xs);
   z-index: 95;
   animation: calPopIn var(--dur-micro) var(--ease-out);
 }
@@ -1088,50 +1106,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 @media (max-width: 480px) {
   .time-wheel-popup {
     left: 0;
-    transform: none;
+    right: 0;
+    margin: 0 auto;
     width: 100%;
-    max-width: 210px;
+    max-width: 190px;
   }
-}
-
-.time-wheel-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: var(--space-xs);
-  border-bottom: 1px solid var(--color-rule);
-  margin-bottom: var(--space-2xs);
-}
-
-.time-wheel-title {
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--color-muted);
-}
-
-.time-wheel-done-btn {
-  height: 26px;
-  padding: 0 var(--space-sm);
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--color-rule);
-  background: var(--color-paper-subtle);
-  color: var(--color-text);
-  font-family: var(--font-body);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out);
-}
-
-.time-wheel-done-btn:hover {
-  background: var(--color-paper);
-  border-color: var(--color-rule-active);
-}
-
-.time-wheel-done-btn:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
 }
 
 .time-wheel-body {
@@ -2159,7 +2138,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
   <!-- Detached Top-Right Floating Controls (Language & Theme Switch) -->
   <div class="top-corner-controls" aria-label="Settings">
-    <div class="top-date-badge" id="topCalendarBadge" title="Today" aria-label="Today">
+    <div class="top-date-badge" id="topCalendarBadge" role="button" tabindex="0" title="Today (click or hover to magnify)" aria-label="Today">
       <img id="topCalendarIcon" class="top-date-icon" src="favicon.svg" alt="Calendar" width="24" height="24">
     </div>
 
@@ -2351,10 +2330,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
             <!-- TIME WHEEL POPUP (IPHONE ALARM STYLE, ANCHORED UNDER TIME FIELD) -->
             <div class="time-wheel-popup hidden" id="timePopup" role="dialog" aria-modal="true" aria-label="Choose time">
-              <div class="time-wheel-header">
-                <span class="time-wheel-title" id="lblTimeWheelTitle">Time</span>
-                <button type="button" class="time-wheel-done-btn" id="timeWheelDoneBtn">Done</button>
-              </div>
               <div class="time-wheel-body">
                 <div class="time-wheel-lens"></div>
                 <div class="time-wheel-col" id="timeWheelHours" tabindex="0" role="listbox" aria-label="Hours"></div>
@@ -3073,13 +3048,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
         });
 
-        // Calendar & Time Picker popup strings
+        // Calendar popup strings
         const elCalToday = document.getElementById('calTodayBtn');
         if (elCalToday) elCalToday.textContent = dict.calToday || 'Today';
-        const elTimeWheelTitle = document.getElementById('lblTimeWheelTitle');
-        if (elTimeWheelTitle) elTimeWheelTitle.textContent = dict.calTime || 'Time';
-        const elTimeWheelDone = document.getElementById('timeWheelDoneBtn');
-        if (elTimeWheelDone) elTimeWheelDone.textContent = dict.calDone || 'Done';
 
         const calWeekdaysEl = document.getElementById('calWeekdays');
         if (calWeekdaysEl && CAL_WEEKDAYS[langKey]) {
@@ -4470,11 +4441,17 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         }
       }
 
-      const timeWheelDoneBtn = document.getElementById('timeWheelDoneBtn');
-      if (timeWheelDoneBtn) {
-        timeWheelDoneBtn.addEventListener('click', function(e) {
+      const topCalendarBadge = document.getElementById('topCalendarBadge');
+      if (topCalendarBadge) {
+        topCalendarBadge.addEventListener('click', function(e) {
           e.stopPropagation();
-          closeTimePicker();
+          this.classList.toggle('is-expanded');
+        });
+        topCalendarBadge.addEventListener('keydown', function(e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.classList.toggle('is-expanded');
+          }
         });
       }
 
@@ -4485,6 +4462,22 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           closeTimePicker();
         });
       }
+
+      document.addEventListener('click', function(e) {
+        const timePopup = document.getElementById('timePopup');
+        const inputTime = document.getElementById('inputTime');
+        const btnTime = document.getElementById('btnTimeTrigger');
+        if (timePopup && !timePopup.classList.contains('hidden')) {
+          if (!timePopup.contains(e.target) && e.target !== inputTime && !btnTime?.contains(e.target)) {
+            closeTimePicker();
+          }
+        }
+        if (topCalendarBadge && topCalendarBadge.classList.contains('is-expanded')) {
+          if (!topCalendarBadge.contains(e.target)) {
+            topCalendarBadge.classList.remove('is-expanded');
+          }
+        }
+      });
 
       const btnDateTrigger = document.getElementById('btnDateTrigger');
       const btnTimeTrigger = document.getElementById('btnTimeTrigger');
@@ -4519,6 +4512,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (e.key === 'Escape') {
           closeCalendarPopup();
           closeTimePicker();
+          if (topCalendarBadge) topCalendarBadge.classList.remove('is-expanded');
         }
       });
 
@@ -4830,8 +4824,12 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             inputDate.value = dateOnly;
           }
         } else {
-          inputDate.value = '';
+          const today = new Date();
+          const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+          inputDate.value = todayStr;
         }
+        inputDate.setAttribute('value', inputDate.value);
+        pickerSelectedDate = inputDate.value;
 
         if (startVal && startVal.includes('T')) {
           const timeOnly = startVal.split('T')[1]?.slice(0, 5);
