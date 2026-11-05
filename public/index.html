@@ -1223,6 +1223,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 }
 
 /* View Mode Details */
+#viewMode .page-title {
+  margin-bottom: var(--space-md);
+}
+
 .view-details-list {
   display: flex;
   flex-direction: column;
@@ -1236,6 +1240,38 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   display: flex;
   align-items: flex-start;
   gap: var(--space-xs);
+  font-size: var(--text-sm);
+  color: var(--color-muted);
+}
+
+.view-item--datetime {
+  gap: 0;
+}
+
+.view-datetime-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xs);
+  width: 100%;
+}
+
+.event-date-part {
+  display: inline-block;
+  margin-right: var(--space-md);
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.event-time-part {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.view-timezone {
+  font-family: var(--font-body);
   font-size: var(--text-sm);
   color: var(--color-muted);
 }
@@ -1640,13 +1676,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       <h1 id="eventTitle" class="page-title">Event Title</h1>
 
       <div class="view-details-list">
-        <div class="view-item">
-          <svg aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-          </svg>
-          <div>
+        <div class="view-item view-item--datetime">
+          <div class="view-datetime-wrap">
             <div id="eventDateTime" class="view-title">Date and Time</div>
-            <div id="eventTimezone">Timezone</div>
+            <div id="eventTimezone" class="view-timezone">Timezone</div>
           </div>
         </div>
 
@@ -1764,48 +1797,54 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           <label for="inputTimezone" class="floating-label" id="lblFieldTimezone">Timezone (UTC)</label>
           <span class="floating-line"></span>
           <datalist id="tzDatalist">
-            <option value="UTC-12:00 - Baker Island">Baker Island, Howland Island (UTC-12)</option>
-            <option value="UTC-11:00 - Pago Pago">Pago Pago, Niue, Midway (UTC-11)</option>
-            <option value="UTC-10:00 - Honolulu">Honolulu, Papeete, Hawaii (UTC-10)</option>
-            <option value="UTC-09:30 - Marquesas">Taiohae, Marquesas Islands (UTC-9:30)</option>
-            <option value="UTC-09:00 - Anchorage">Anchorage, Juneau, Alaska (UTC-9)</option>
-            <option value="UTC-08:00 - Los Angeles">Los Angeles, San Francisco, Vancouver, Seattle (UTC-8)</option>
-            <option value="UTC-07:00 - Denver">Denver, Phoenix, Calgary, Salt Lake City (UTC-7)</option>
-            <option value="UTC-06:00 - Chicago">Chicago, Dallas, Houston, Mexico City, Winnipeg (UTC-6)</option>
-            <option value="UTC-05:00 - New York">New York, Miami, Toronto, Washington, Bogota (UTC-5)</option>
-            <option value="UTC-04:00 - Santiago">Santiago, Halifax, Caracas, Santo Domingo, Manaus (UTC-4)</option>
-            <option value="UTC-03:30 - St. Johns">St. Johns, Newfoundland (UTC-3:30)</option>
-            <option value="UTC-03:00 - Sao Paulo">Sao Paulo, Buenos Aires, Montevideo, Rio de Janeiro (UTC-3)</option>
-            <option value="UTC-02:00 - South Georgia">South Georgia, Fernando de Noronha (UTC-2)</option>
-            <option value="UTC-01:00 - Azores">Praia, Cape Verde, Azores (UTC-1)</option>
-            <option value="UTC+00:00 - London">London, Dublin, Lisbon, Casablanca, Accra, Reykjavik, UTC, GMT (UTC+0)</option>
-            <option value="UTC+01:00 - Berlin">Berlin, Paris, Rome, Madrid, Warsaw, Amsterdam, Vienna, Brussels (UTC+1)</option>
-            <option value="UTC+02:00 - Kaliningrad">Kaliningrad, Kyiv, Athens, Helsinki, Bucharest, Cairo, Jerusalem, Riga (UTC+2)</option>
-            <option value="UTC+02:00 - Kyiv">Kyiv, Athens, Helsinki, Bucharest, Sofia, Cairo, Jerusalem, Riga (UTC+2)</option>
-            <option value="UTC+03:00 - Moscow">Moscow, Saint Petersburg, Istanbul, Minsk, Riyadh, Doha, Nairobi (MSK / UTC+3)</option>
-            <option value="UTC+03:30 - Tehran">Tehran (UTC+3:30)</option>
-            <option value="UTC+04:00 - Samara">Samara, Saratov, Izhevsk, Ulyanovsk, Dubai, Baku, Tbilisi, Yerevan (UTC+4)</option>
-            <option value="UTC+04:00 - Dubai">Dubai, Abu Dhabi, Baku, Tbilisi, Yerevan, Muscat (UTC+4)</option>
-            <option value="UTC+04:30 - Kabul">Kabul (UTC+4:30)</option>
-            <option value="UTC+05:00 - Yekaterinburg">Yekaterinburg, Chelyabinsk, Ufa, Perm, Tyumen, Tashkent, Karachi (UTC+5)</option>
-            <option value="UTC+05:30 - Delhi">Delhi, Mumbai, Bengaluru, Kolkata, Colombo (UTC+5:30)</option>
-            <option value="UTC+05:45 - Kathmandu">Kathmandu (UTC+5:45)</option>
-            <option value="UTC+06:00 - Omsk">Omsk, Almaty, Astana, Dhaka, Bishkek (UTC+6)</option>
-            <option value="UTC+06:30 - Yangon">Yangon, Cocos (UTC+6:30)</option>
-            <option value="UTC+07:00 - Novosibirsk">Novosibirsk, Krasnoyarsk, Tomsk, Kemerovo, Barnaul, Bangkok, Jakarta (UTC+7)</option>
-            <option value="UTC+07:00 - Krasnoyarsk">Krasnoyarsk, Novosibirsk, Tomsk, Bangkok, Hanoi (UTC+7)</option>
-            <option value="UTC+08:00 - Irkutsk">Irkutsk, Ulan-Ude, Singapore, Hong Kong, Beijing, Shanghai, Perth (UTC+8)</option>
-            <option value="UTC+08:45 - Eucla">Eucla (UTC+8:45)</option>
-            <option value="UTC+09:00 - Yakutsk">Yakutsk, Chita, Blagoveshchensk, Tokyo, Seoul (UTC+9)</option>
-            <option value="UTC+09:00 - Tokyo">Tokyo, Seoul, Osaka, Sapporo (UTC+9)</option>
-            <option value="UTC+09:30 - Adelaide">Adelaide, Darwin (UTC+9:30)</option>
-            <option value="UTC+10:00 - Vladivostok">Vladivostok, Khabarovsk, Sydney, Melbourne, Brisbane (UTC+10)</option>
-            <option value="UTC+10:30 - Lord Howe">Lord Howe Island (UTC+10:30)</option>
-            <option value="UTC+11:00 - Magadan">Magadan, Sakhalin, Yuzhno-Sakhalinsk, Noumea, Solomon Islands (UTC+11)</option>
-            <option value="UTC+12:00 - Kamchatka">Kamchatka, Petropavlovsk-Kamchatsky, Anadyr, Auckland, Fiji (UTC+12)</option>
-            <option value="UTC+12:45 - Chatham">Chatham Islands (UTC+12:45)</option>
-            <option value="UTC+13:00 - Samoa">Apia, Samoa, Nukualofa, Tonga (UTC+13)</option>
-            <option value="UTC+14:00 - Kiritimati">Kiritimati, Line Islands (UTC+14)</option>
+            <option value="UTC-12:00 - Baker Island">Бейкер, Baker Island, Howland Island (UTC-12)</option>
+            <option value="UTC-11:00 - Pago Pago">Паго-Паго, Pago Pago, Niue, Midway (UTC-11)</option>
+            <option value="UTC-10:00 - Honolulu">Гонолулу, Гавайи, Honolulu, Hawaii (UTC-10)</option>
+            <option value="UTC-09:30 - Marquesas">Маркизские острова, Marquesas Islands (UTC-9:30)</option>
+            <option value="UTC-09:00 - Anchorage">Анкоридж, Аляска, Anchorage, Juneau, Alaska (UTC-9)</option>
+            <option value="UTC-08:00 - Los Angeles">Лос-Анджелес, Сан-Франциско, Сиэтл, Los Angeles, San Francisco, Vancouver, Seattle (UTC-8)</option>
+            <option value="UTC-07:00 - Denver">Денвер, Финикс, Denver, Phoenix, Calgary, Salt Lake City (UTC-7)</option>
+            <option value="UTC-06:00 - Chicago">Чикаго, Даллас, Хьюстон, Мехико, Chicago, Dallas, Houston, Mexico City, Winnipeg (UTC-6)</option>
+            <option value="UTC-05:00 - New York">Нью-Йорк, Майами, Торонто, Вашингтон, New York, Miami, Toronto, Washington, Bogota (UTC-5)</option>
+            <option value="UTC-04:00 - Santiago">Сантьяго, Каракас, Галифакс, Santiago, Halifax, Caracas, Santo Domingo (UTC-4)</option>
+            <option value="UTC-03:30 - St. Johns">Сент-Джонс, Ньюфаундленд, St. Johns (UTC-3:30)</option>
+            <option value="UTC-03:00 - Sao Paulo">Сан-Паулу, Буэнос-Айрес, Рио-де-Жанейро, Sao Paulo, Buenos Aires, Montevideo (UTC-3)</option>
+            <option value="UTC-02:00 - South Georgia">Южная Георгия, South Georgia, Fernando de Noronha (UTC-2)</option>
+            <option value="UTC-01:00 - Azores">Азорские острова, Кабо-Верде, Praia, Cape Verde, Azores (UTC-1)</option>
+            <option value="UTC+00:00 - London">Лондон, Дублин, Лиссабон, Касабланка, London, Dublin, Lisbon, Casablanca, UTC, GMT (UTC+0)</option>
+            <option value="UTC+01:00 - Warsaw">Варшава, Польша, Warszawa, Poland (UTC+1)</option>
+            <option value="UTC+01:00 - Berlin">Берлин, Париж, Рим, Мадрид, Вена, Прага, Амстердам, Berlin, Paris, Rome, Madrid, Vienna, Prague, Amsterdam, Brussels (UTC+1)</option>
+            <option value="UTC+02:00 - Kaliningrad">Калининград, Россия, Kaliningrad, Russia (UTC+2)</option>
+            <option value="UTC+02:00 - Warsaw">Варшава, Польша, Warszawa, Poland (UTC+2)</option>
+            <option value="UTC+02:00 - Kyiv">Киев, Київ, Украина, Україна, Kyiv, Kiev, Ukraine (UTC+2)</option>
+            <option value="UTC+02:00 - Athens">Афины, Хельсинки, Бухарест, Иерусалим, Каир, Рига, Вильнюс, Таллин, Athens, Helsinki, Bucharest, Jerusalem, Cairo, Riga, Vilnius, Tallinn (UTC+2)</option>
+            <option value="UTC+03:00 - Moscow">Москва, Санкт-Петербург, Питер, Россия, Moscow, Saint Petersburg, Russia (MSK / UTC+3)</option>
+            <option value="UTC+03:00 - Kyiv">Киев, Київ, Украина, Україна, Kyiv, Kiev, Ukraine (UTC+3)</option>
+            <option value="UTC+03:00 - Minsk">Минск, Беларусь, Minsk, Belarus (UTC+3)</option>
+            <option value="UTC+03:00 - Istanbul">Стамбул, Эр-Рияд, Доха, Найроби, Istanbul, Riyadh, Doha, Nairobi (UTC+3)</option>
+            <option value="UTC+03:30 - Tehran">Тегеран, Иран, Tehran (UTC+3:30)</option>
+            <option value="UTC+04:00 - Samara">Самара, Саратов, Ижевск, Ульяновск, Тольятти, Samara (UTC+4)</option>
+            <option value="UTC+04:00 - Dubai">Дубай, Абу-Даби, Баку, Тбилиси, Ереван, Dubai, Abu Dhabi, Baku, Tbilisi, Yerevan, Muscat (UTC+4)</option>
+            <option value="UTC+04:30 - Kabul">Кабул, Афганистан, Kabul (UTC+4:30)</option>
+            <option value="UTC+05:00 - Yekaterinburg">Екатеринбург, Челябинск, Уфа, Пермь, Тюмень, Ташкент, Yekaterinburg, Tashkent, Karachi (UTC+5)</option>
+            <option value="UTC+05:30 - Delhi">Дели, Мумбаи, Коломбо, Delhi, Mumbai, Bengaluru, Kolkata, Colombo (UTC+5:30)</option>
+            <option value="UTC+05:45 - Kathmandu">Катманду, Непал, Kathmandu (UTC+5:45)</option>
+            <option value="UTC+06:00 - Omsk">Омск, Алматы, Астана, Бишкек, Дакка, Omsk, Almaty, Astana, Bishkek, Dhaka (UTC+6)</option>
+            <option value="UTC+06:30 - Yangon">Янгон, Мьянма, Yangon, Cocos (UTC+6:30)</option>
+            <option value="UTC+07:00 - Novosibirsk">Новосибирск, Томск, Кемерово, Барнаул, Бангкок, Джакарта, Novosibirsk, Tomsk, Bangkok, Jakarta (UTC+7)</option>
+            <option value="UTC+07:00 - Krasnoyarsk">Красноярск, Норильск, Абакан, Krasnoyarsk (UTC+7)</option>
+            <option value="UTC+08:00 - Irkutsk">Иркутск, Улан-Удэ, Пекин, Сингапур, Гонконг, Irkutsk, Beijing, Shanghai, Singapore, Hong Kong, Perth (UTC+8)</option>
+            <option value="UTC+08:45 - Eucla">Юкла, Eucla (UTC+8:45)</option>
+            <option value="UTC+09:00 - Yakutsk">Якутск, Чита, Благовещенск, Yakutsk, Chita, Blagoveshchensk (UTC+9)</option>
+            <option value="UTC+09:00 - Tokyo">Токио, Сеул, Осака, Tokyo, Seoul, Osaka (UTC+9)</option>
+            <option value="UTC+09:30 - Adelaide">Аделаида, Дарвин, Adelaide, Darwin (UTC+9:30)</option>
+            <option value="UTC+10:00 - Vladivostok">Владивосток, Хабаровск, Сидней, Мельбурн, Vladivostok, Khabarovsk, Sydney, Melbourne (UTC+10)</option>
+            <option value="UTC+10:30 - Lord Howe">Лорд-Хау, Lord Howe Island (UTC+10:30)</option>
+            <option value="UTC+11:00 - Magadan">Магадан, Сахалин, Южно-Сахалинск, Magadan, Sakhalin, Yuzhno-Sakhalinsk (UTC+11)</option>
+            <option value="UTC+12:00 - Kamchatka">Камчатка, Петропавловск-Камчатский, Анадырь, Окленд, Фиджи, Kamchatka, Petropavlovsk-Kamchatsky, Anadyr, Auckland, Fiji (UTC+12)</option>
+            <option value="UTC+12:45 - Chatham">Чатем, Chatham Islands (UTC+12:45)</option>
+            <option value="UTC+13:00 - Samoa">Самоа, Апиа, Нукуалофа, Тонга, Apia, Samoa, Tonga (UTC+13)</option>
+            <option value="UTC+14:00 - Kiritimati">Киритимати, Лайн, Kiritimati, Line Islands (UTC+14)</option>
           </datalist>
         </div>
 
@@ -2691,7 +2730,87 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         }
       }
 
-      // Timezone URL helpers: convert to "utc=2" or expand "2" to "UTC+02:00 - Kaliningrad"
+      // Timezone Cyrillic to Latin mapping & search dictionary
+      const CYRILLIC_TO_LATIN_TZ = {
+        'киев': 'UTC+02:00 - Kyiv',
+        'київ': 'UTC+02:00 - Kyiv',
+        'москва': 'UTC+03:00 - Moscow',
+        'калининград': 'UTC+02:00 - Kaliningrad',
+        'варшава': 'UTC+02:00 - Warsaw',
+        'санкт-петербург': 'UTC+03:00 - Saint Petersburg',
+        'петербург': 'UTC+03:00 - Saint Petersburg',
+        'питер': 'UTC+03:00 - Saint Petersburg',
+        'минск': 'UTC+03:00 - Minsk',
+        'лондон': 'UTC+00:00 - London',
+        'берлин': 'UTC+01:00 - Berlin',
+        'париж': 'UTC+01:00 - Paris',
+        'рим': 'UTC+01:00 - Rome',
+        'мадрид': 'UTC+01:00 - Madrid',
+        'афины': 'UTC+02:00 - Athens',
+        'хельсинки': 'UTC+02:00 - Athens',
+        'иерусалим': 'UTC+02:00 - Athens',
+        'стамбул': 'UTC+03:00 - Istanbul',
+        'дубай': 'UTC+04:00 - Dubai',
+        'самара': 'UTC+04:00 - Samara',
+        'екатеринбург': 'UTC+05:00 - Yekaterinburg',
+        'омск': 'UTC+06:00 - Omsk',
+        'алматы': 'UTC+06:00 - Omsk',
+        'астана': 'UTC+06:00 - Omsk',
+        'ташкент': 'UTC+05:00 - Yekaterinburg',
+        'новосибирск': 'UTC+07:00 - Novosibirsk',
+        'красноярск': 'UTC+07:00 - Krasnoyarsk',
+        'иркутск': 'UTC+08:00 - Irkutsk',
+        'якутск': 'UTC+09:00 - Yakutsk',
+        'токио': 'UTC+09:00 - Tokyo',
+        'владивосток': 'UTC+10:00 - Vladivostok',
+        'магадан': 'UTC+11:00 - Magadan',
+        'камчатка': 'UTC+12:00 - Kamchatka',
+        'нью-йорк': 'UTC-05:00 - New York',
+        'лос-анджелес': 'UTC-08:00 - Los Angeles',
+        'чикаго': 'UTC-06:00 - Chicago'
+      };
+
+      function ensureLatinTz(tzStr) {
+        if (!tzStr) return '';
+        const trimmed = tzStr.trim();
+        const lower = trimmed.toLowerCase();
+        for (const [cyr, lat] of Object.entries(CYRILLIC_TO_LATIN_TZ)) {
+          if (lower === cyr || lower.includes(cyr)) {
+            return lat;
+          }
+        }
+        if (/[а-яёіїє]/i.test(trimmed)) {
+          const cyrMap = {
+            'а':'a','б':'b','в':'v','г':'g','ґ':'g','д':'d','е':'e','ё':'yo','є':'ye','ж':'zh',
+            'з':'z','и':'y','і':'i','ї':'yi','й':'y','к':'k','л':'l','м':'m','н':'n','о':'o',
+            'п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh',
+            'щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
+          };
+          return trimmed.replace(/[а-яёіїє]/gi, ch => {
+            const isUp = ch === ch.toUpperCase();
+            const mapped = cyrMap[ch.toLowerCase()] || ch;
+            return isUp ? (mapped.charAt(0).toUpperCase() + mapped.slice(1)) : mapped;
+          });
+        }
+        return trimmed;
+      }
+
+      function matchTzFromCyrillic(query) {
+        if (!query) return '';
+        const q = query.trim().toLowerCase();
+        if (CYRILLIC_TO_LATIN_TZ[q]) return CYRILLIC_TO_LATIN_TZ[q];
+        const datalist = document.getElementById('tzDatalist');
+        if (datalist && datalist.options) {
+          for (const opt of datalist.options) {
+            if (opt.textContent.toLowerCase().includes(q)) {
+              return opt.value;
+            }
+          }
+        }
+        return ensureLatinTz(query);
+      }
+
+      // Timezone URL helpers: convert to "utc=2" or expand "2" to "UTC+02:00 - Kyiv"
       function formatUtcParam(tzStr) {
         if (!tzStr) return '';
         const trimmed = tzStr.trim();
@@ -2733,6 +2852,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           const prefix = `UTC${sign}${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
           const datalist = document.getElementById('tzDatalist');
           if (datalist && datalist.options) {
+            const preferredCity = (currentLang === 'ua') ? 'kyiv' : (currentLang === 'pl') ? 'warsaw' : (currentLang === 'ru') ? (hrs === 3 ? 'moscow' : 'kaliningrad') : '';
+            if (preferredCity) {
+              for (const opt of datalist.options) {
+                if (opt.value.startsWith(prefix) && opt.value.toLowerCase().includes(preferredCity)) {
+                  return opt.value;
+                }
+              }
+            }
             for (const opt of datalist.options) {
               if (opt.value.startsWith(prefix)) {
                 return opt.value;
@@ -2741,7 +2868,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           }
           return prefix;
         }
-        return trimmed;
+        return ensureLatinTz(trimmed);
       }
 
       function replacePlaceholders(text, paramMap) {
@@ -2934,14 +3061,16 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           isAllDay = true;
         }
 
-        // Timezone resolution (explicit utc/tz, or detected from offset like +02:00 / Z)
+        // Timezone resolution (explicit tz, or utc, or detected from offset like +02:00 / Z)
         let tz = '';
-        const rawUtc = getVal(['utc', 'u']);
-        if (rawUtc !== null && rawUtc !== '') {
-          tz = expandUtcParam(rawUtc);
+        const explicitTz = getVal(['timezone', 'tz', 'zone']);
+        if (explicitTz) {
+          tz = ensureLatinTz(explicitTz);
         } else {
-          tz = getVal(['timezone', 'tz', 'zone']) || '';
-          if (!tz && startParsed && startParsed.detectedTz) {
+          const rawUtc = getVal(['utc', 'u']);
+          if (rawUtc !== null && rawUtc !== '') {
+            tz = expandUtcParam(rawUtc);
+          } else if (startParsed && startParsed.detectedTz) {
             tz = expandUtcParam(startParsed.detectedTz);
           }
         }
@@ -3290,22 +3419,22 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         let dtText = '';
 
         if (ev.isAllDay) {
-          dtText = `${ev.startDate.toLocaleDateString(localeCode, dateOptions)} ${dict.viewAllDay}`;
+          const dateStr = ev.startDate.toLocaleDateString(localeCode, dateOptions);
+          document.getElementById('eventDateTime').innerHTML = `<span class="event-date-part">${dateStr}</span><span class="event-time-part">${dict.viewAllDay}</span>`;
         } else {
           const dateStr = ev.startDate.toLocaleDateString(localeCode, dateOptions);
           const startStr = ev.startDate.toLocaleTimeString(localeCode, timeOptions);
           const endStr = ev.endDate.toLocaleTimeString(localeCode, timeOptions);
-          dtText = `${dateStr} · ${startStr} – ${endStr}`;
+          document.getElementById('eventDateTime').innerHTML = `<span class="event-date-part">${dateStr}</span><span class="event-time-part">${startStr} - ${endStr}</span>`;
         }
-        document.getElementById('eventDateTime').textContent = dtText;
 
         const tzEl = document.getElementById('eventTimezone');
         if (ev.tz) {
-          tzEl.textContent = `${dict.viewTzPrefix} ${ev.tz}`;
+          tzEl.textContent = `${dict.viewTzPrefix} ${ensureLatinTz(ev.tz)}`;
         } else {
           try {
             const detectedTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-            tzEl.textContent = detectedTz ? `${dict.viewTzPrefix} ${detectedTz}` : '';
+            tzEl.textContent = detectedTz ? `${dict.viewTzPrefix} ${ensureLatinTz(detectedTz)}` : '';
           } catch (e) {
             tzEl.textContent = '';
           }
@@ -3581,8 +3710,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         if (loc) p.set('loc', loc);
         if (desc) p.set('desc', desc);
-        const shortUtc = formatUtcParam(tz);
-        if (shortUtc) p.set('utc', shortUtc);
+        if (tz) {
+          p.set('tz', ensureLatinTz(tz));
+        }
         if (effectiveTheme === 'dark') {
           p.set('theme', 'dark');
         }
@@ -3722,13 +3852,16 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
         inputDuration.value = getVal(['duration', 'dur']) || '60';
 
-        const rawUtc = getVal(['utc', 'u']);
-        if (rawUtc) {
-          inputTimezone.value = expandUtcParam(rawUtc);
-        } else if (getVal(['timezone', 'tz'])) {
-          inputTimezone.value = getVal(['timezone', 'tz']);
+        const explicitTz = getVal(['timezone', 'tz', 'zone']);
+        if (explicitTz) {
+          inputTimezone.value = ensureLatinTz(explicitTz);
         } else {
-          inputTimezone.value = '';
+          const rawUtc = getVal(['utc', 'u']);
+          if (rawUtc) {
+            inputTimezone.value = expandUtcParam(rawUtc);
+          } else {
+            inputTimezone.value = '';
+          }
         }
 
         const inputColorPicker = document.getElementById('inputColorPicker');
@@ -3972,6 +4105,16 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         });
 
         if (inputTimezone) {
+          inputTimezone.addEventListener('change', function () {
+            const val = this.value.trim();
+            if (val && /[а-яёіїє]/i.test(val)) {
+              const matched = matchTzFromCyrillic(val);
+              if (matched) {
+                this.value = matched;
+                updateGeneratedLinks();
+              }
+            }
+          });
           inputTimezone.addEventListener('click', function () {
             try {
               if (typeof this.showPicker === 'function') {
