@@ -1134,7 +1134,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   }
 }
 
-/* Banner Input Controls & Direct R2 Upload */
+/* Banner Input Controls & Litterbox Upload */
 .banner-actions-row {
   display: flex;
   align-items: center;
@@ -1159,18 +1159,10 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   cursor: wait;
 }
 
-.chip-upload.is-cooldown {
-  opacity: 0.65;
-  pointer-events: none;
+.chip-upload.is-disabled {
+  opacity: 0.44;
   cursor: not-allowed;
-}
-
-.chip-clear {
-  color: var(--color-muted);
-}
-
-.chip-clear:hover {
-  color: var(--color-text);
+  pointer-events: none;
 }
 
 .sr-only {
@@ -1829,21 +1821,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
                 <span class="floating-line"></span>
               </div>
               <div class="banner-actions-row">
-                <label for="fileBannerUpload" class="chip chip-upload" id="btnUploadBannerLabel" title="Загрузить баннер (до 1 МБ, хранится 30 дней)">
+                <label for="fileBannerUpload" class="chip chip-upload" id="btnUploadBannerLabel" title="Загрузить баннер (до 1 МБ, Litterbox)">
                   <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                   </svg>
                   <span id="txtBtnUploadBanner">Загрузить баннер</span>
                   <input type="file" id="fileBannerUpload" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" class="sr-only">
                 </label>
-                <button type="button" id="btnClearBanner" class="chip chip-clear hidden" title="Удалить баннер" aria-label="Удалить баннер">
-                  <svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                  </svg>
-                  <span id="txtBtnClearBanner">Очистить</span>
-                </button>
               </div>
-              <div class="field-hint" id="bannerFormatHint">Картинка хранится максимум 30 дней. Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).</div>
+              <div class="field-hint" id="bannerFormatHint">Картинка временно хранится на сервисе Litterbox (до 3 дней). Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).</div>
               <div id="bannerInputPreviewWrap" class="banner-input-preview hidden">
                 <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 970 250'/%3E" alt="Banner preview" loading="lazy">
               </div>
@@ -1988,15 +1974,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "All day",
           moreParams: "Additional parameters",
           fieldBanner: "Banner image URL",
-          bannerHint: "Image is stored for up to 30 days. Recommended size: 970×250 px, up to 1 MB (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Image is temporarily stored on Litterbox (up to 3 days). Recommended size: 970×250 px, up to 1 MB (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Upload banner",
           btnUploadingBanner: "Uploading…",
-          btnUploadBannerTitle: "Upload banner image (up to 1 MB, stored for 30 days)",
-          btnClearBanner: "Clear",
-          btnClearBannerTitle: "Remove banner",
-          toastBannerUploaded: "Banner uploaded (stored for 30 days)",
+          btnUploadBannerTitle: "Upload banner image (up to 1 MB, Litterbox)",
+          toastBannerUploaded: "Banner uploaded (Litterbox)",
           toastBannerTooLarge: "File too large (maximum 1 MB)",
-          toastBannerWait: "Please wait 15 seconds before uploading again",
+          toastBannerWait: "Please wait 10 seconds before uploading again",
           toastBannerError: "Failed to upload image",
           fieldLoc: "Location or meeting URL",
           fieldDesc: "Description",
@@ -2054,15 +2038,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Дополнительные параметры",
           fieldBanner: "Ссылка на баннер (изображение)",
-          bannerHint: "Картинка хранится максимум 30 дней. Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Картинка временно хранится на сервисе Litterbox (до 3 дней). Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Загрузить баннер",
           btnUploadingBanner: "Загрузка…",
-          btnUploadBannerTitle: "Загрузить баннер (до 1 МБ, хранится 30 дней)",
-          btnClearBanner: "Очистить",
-          btnClearBannerTitle: "Удалить баннер",
-          toastBannerUploaded: "Баннер успешно загружен (хранится 30 дней)",
+          btnUploadBannerTitle: "Загрузить баннер (до 1 МБ, Litterbox)",
+          toastBannerUploaded: "Баннер успешно загружен (Litterbox)",
           toastBannerTooLarge: "Файл слишком большой (максимум 1 МБ)",
-          toastBannerWait: "Подождите 15 секунд перед следующей загрузкой",
+          toastBannerWait: "Подождите 10 секунд перед следующей загрузкой",
           toastBannerError: "Не удалось загрузить изображение",
           fieldLoc: "Место или ссылка на встречу",
           fieldDesc: "Описание",
@@ -2120,15 +2102,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Додаткові параметри",
           fieldBanner: "Посилання на банер (зображення)",
-          bannerHint: "Зображення зберігається максимум 30 днів. Рекомендований розмір: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Зображення тимчасово зберігається на сервісі Litterbox (до 3 днів). Рекомендований розмір: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Завантажити банер",
           btnUploadingBanner: "Завантаження…",
-          btnUploadBannerTitle: "Завантажити банер (до 1 МБ, зберігається 30 днів)",
-          btnClearBanner: "Очистити",
-          btnClearBannerTitle: "Видалити банер",
-          toastBannerUploaded: "Банер успішно завантажено (зберігається 30 днів)",
+          btnUploadBannerTitle: "Завантажити банер (до 1 МБ, Litterbox)",
+          toastBannerUploaded: "Банер успішно завантажено (Litterbox)",
           toastBannerTooLarge: "Файл занадто великий (максимум 1 МБ)",
-          toastBannerWait: "Зачекайте 15 секунд перед наступним завантаженням",
+          toastBannerWait: "Зачекайте 10 секунд перед наступним завантаженням",
           toastBannerError: "Не вдалося завантажити зображення",
           fieldLoc: "Місце або посилання на зустріч",
           fieldDesc: "Опис",
@@ -2186,15 +2166,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Cały dzień",
           moreParams: "Dodatkowe parametry",
           fieldBanner: "Link do banera (obrazek)",
-          bannerHint: "Obraz jest przechowywany maksymalnie przez 30 dni. Zalecany rozmiar: 970×250 px, do 1 MB (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Obraz jest tymczasowo przechowywany w serwisie Litterbox (do 3 dni). Zalecany rozmiar: 970×250 px, do 1 MB (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Prześlij baner",
           btnUploadingBanner: "Przesyłanie…",
-          btnUploadBannerTitle: "Prześlij baner (do 1 MB, przechowywany przez 30 dni)",
-          btnClearBanner: "Wyczyść",
-          btnClearBannerTitle: "Usuń baner",
-          toastBannerUploaded: "Baner został przesłany (przechowywany przez 30 dni)",
+          btnUploadBannerTitle: "Prześlij baner (do 1 MB, Litterbox)",
+          toastBannerUploaded: "Baner został przesłany (Litterbox)",
           toastBannerTooLarge: "Plik jest zbyt duży (maksymalnie 1 MB)",
-          toastBannerWait: "Odczekaj 15 sekund przed kolejnym przesłaniem",
+          toastBannerWait: "Odczekaj 10 sekund przed kolejnym przesłaniem",
           toastBannerError: "Nie udało się przesłać obrazu",
           fieldLoc: "Lokalizacja lub link do spotkania",
           fieldDesc: "Opis",
@@ -2252,15 +2230,13 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "ตลอดทั้งวัน",
           moreParams: "พารามิเตอร์เพิ่มเติม",
           fieldBanner: "ลิงก์แบนเนอร์ (รูปภาพ)",
-          bannerHint: "รูปภาพจะถูกจัดเก็บไว้สูงสุด 30 วัน ขนาดที่แนะนำ: 970×250 px ไม่เกิน 1 MB (JPG, PNG, WebP, GIF, SVG)",
+          bannerHint: "รูปภาพจะถูกจัดเก็บชั่วคราวบน Litterbox (สูงสุด 3 วัน) ขนาดที่แนะนำ: 970×250 px ไม่เกิน 1 MB (JPG, PNG, WebP, GIF, SVG)",
           btnUploadBanner: "อัปโหลดแบนเนอร์",
           btnUploadingBanner: "กำลังอัปโหลด…",
-          btnUploadBannerTitle: "อัปโหลดรูปภาพแบนเนอร์ (ไม่เกิน 1 MB จัดเก็บ 30 วัน)",
-          btnClearBanner: "ล้างข้อมูล",
-          btnClearBannerTitle: "ลบแบนเนอร์",
-          toastBannerUploaded: "อัปโหลดแบนเนอร์เรียบร้อยแล้ว (จัดเก็บ 30 วัน)",
+          btnUploadBannerTitle: "อัปโหลดรูปภาพแบนเนอร์ (ไม่เกิน 1 MB Litterbox)",
+          toastBannerUploaded: "อัปโหลดแบนเนอร์เรียบร้อยแล้ว (Litterbox)",
           toastBannerTooLarge: "ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 1 MB)",
-          toastBannerWait: "โปรดรอ 15 วินาทีก่อนทำการอัปโหลดครั้งต่อไป",
+          toastBannerWait: "โปรดรอ 10 วินาทีก่อนทำการอัปโหลดครั้งต่อไป",
           toastBannerError: "ไม่สามารถอัปโหลดรูปภาพได้",
           fieldLoc: "สถานที่หรือลิงก์การประชุม",
           fieldDesc: "รายละเอียด",
@@ -2451,13 +2427,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (elBtnUploadText) elBtnUploadText.textContent = dict.btnUploadBanner || 'Upload';
         const elBtnUploadLabel = document.getElementById('btnUploadBannerLabel');
         if (elBtnUploadLabel) elBtnUploadLabel.setAttribute('title', dict.btnUploadBannerTitle || 'Upload banner');
-        const elBtnClearBanner = document.getElementById('btnClearBanner');
-        if (elBtnClearBanner) {
-          elBtnClearBanner.setAttribute('title', dict.btnClearBannerTitle || 'Clear banner');
-          elBtnClearBanner.setAttribute('aria-label', dict.btnClearBannerTitle || 'Clear banner');
-        }
-        const elTxtBtnClear = document.getElementById('txtBtnClearBanner');
-        if (elTxtBtnClear) elTxtBtnClear.textContent = dict.btnClearBanner || 'Clear';
         const elFieldLoc = document.getElementById('lblFieldLocation');
         if (elFieldLoc) elFieldLoc.textContent = dict.fieldLoc;
         const elFieldDesc = document.getElementById('lblFieldDescription');
@@ -3420,12 +3389,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
       function updateBannerPreview(url) {
         const wrap = document.getElementById('bannerInputPreviewWrap');
         const img = document.getElementById('bannerInputPreviewImg');
-        const btnClear = document.getElementById('btnClearBanner');
         const clean = (url || '').trim();
-        if (btnClear) {
-          if (clean) btnClear.classList.remove('hidden');
-          else btnClear.classList.add('hidden');
-        }
         if (!wrap || !img) return;
         if (clean && isValidImageUrl(clean)) {
           img.onerror = function () {
@@ -3815,57 +3779,28 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             updateBannerPreview(this.value);
           });
 
-          const btnClear = document.getElementById('btnClearBanner');
-          if (btnClear) {
-            btnClear.addEventListener('click', function () {
-              inputBanner.value = '';
-              updateBannerPreview('');
-              updateGeneratedLinks();
-            });
-          }
-
           const fileUpload = document.getElementById('fileBannerUpload');
           const uploadLabel = document.getElementById('btnUploadBannerLabel');
           const uploadTxt = document.getElementById('txtBtnUploadBanner');
-          let uploadCooldownTimer = null;
+          let uploadDisabledTimer = null;
           let isUploading = false;
 
-          function startUploadCooldown(seconds) {
-            if (uploadCooldownTimer) clearInterval(uploadCooldownTimer);
-            let remaining = seconds;
-            if (uploadLabel) uploadLabel.classList.add('is-cooldown');
-            if (fileUpload) fileUpload.disabled = true;
-
-            const updateText = () => {
-              const dict = I18N[currentLang] || I18N.en;
-              const baseText = dict.btnUploadBanner || 'Upload banner';
-              if (uploadTxt) {
-                uploadTxt.textContent = `${baseText} (${remaining}s)`;
-              }
-            };
-            updateText();
-
-            uploadCooldownTimer = setInterval(() => {
-              remaining -= 1;
-              if (remaining <= 0) {
-                clearInterval(uploadCooldownTimer);
-                uploadCooldownTimer = null;
-                if (uploadLabel) uploadLabel.classList.remove('is-cooldown');
-                if (fileUpload) fileUpload.disabled = false;
-                const dict = I18N[currentLang] || I18N.en;
-                if (uploadTxt) uploadTxt.textContent = dict.btnUploadBanner || 'Upload banner';
-              } else {
-                updateText();
-              }
-            }, 1000);
+          function setUploadDisabled(disabled) {
+            if (disabled) {
+              if (uploadLabel) uploadLabel.classList.add('is-disabled');
+              if (fileUpload) fileUpload.disabled = true;
+            } else {
+              if (uploadLabel) uploadLabel.classList.remove('is-disabled');
+              if (fileUpload) fileUpload.disabled = false;
+            }
           }
 
           if (uploadLabel) {
             uploadLabel.addEventListener('click', function (e) {
-              if (uploadCooldownTimer || isUploading) {
+              if (isUploading || uploadDisabledTimer) {
                 e.preventDefault();
                 const dict = I18N[currentLang] || I18N.en;
-                showToast(dict.toastBannerWait || 'Please wait a few seconds before uploading again');
+                showToast(dict.toastBannerWait || 'Please wait 10 seconds before uploading again');
               }
             });
           }
@@ -3884,8 +3819,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
                 return;
               }
 
-              if (uploadCooldownTimer || isUploading) {
-                showToast(dict.toastBannerWait || 'Please wait a few seconds before uploading again');
+              if (uploadDisabledTimer || isUploading) {
+                showToast(dict.toastBannerWait || 'Please wait 10 seconds before uploading again');
                 this.value = '';
                 return;
               }
@@ -3897,35 +3832,39 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
               try {
                 const formData = new FormData();
-                formData.append('file', file);
+                formData.append('reqtype', 'fileupload');
+                formData.append('time', '72h');
+                formData.append('fileToUpload', file);
 
-                const res = await fetch('./api/upload', {
+                const res = await fetch('https://litterbox.catbox.moe/resources/internals/api.php', {
                   method: 'POST',
                   body: formData
                 });
 
-                const data = await res.json();
-                if (res.ok && data.url) {
-                  inputBanner.value = data.url;
-                  updateBannerPreview(data.url);
+                const urlText = (await res.text()).trim();
+                if (res.ok && /^https?:\/\//i.test(urlText)) {
+                  inputBanner.value = urlText;
+                  updateBannerPreview(urlText);
                   updateGeneratedLinks();
-                  showToast(dict.toastBannerUploaded || 'Banner uploaded (stored for 30 days)');
-                  trackEvent('banner_upload_success', { size: file.size, type: file.type });
-                  startUploadCooldown(15);
-                } else if (res.status === 429) {
-                  showToast(dict.toastBannerWait || data.error || 'Rate limit: Please wait 15 seconds');
-                  startUploadCooldown(15);
+                  showToast(dict.toastBannerUploaded || 'Banner uploaded');
+                  trackEvent('banner_upload_success', { service: 'litterbox', size: file.size });
+
+                  // Disable button for exactly 10 seconds (no countdown)
+                  setUploadDisabled(true);
+                  if (uploadDisabledTimer) clearTimeout(uploadDisabledTimer);
+                  uploadDisabledTimer = setTimeout(() => {
+                    setUploadDisabled(false);
+                    uploadDisabledTimer = null;
+                  }, 10000);
                 } else {
-                  showToast(data.error || dict.toastBannerError || 'Upload failed');
+                  showToast(dict.toastBannerError || 'Upload failed');
                 }
               } catch (err) {
                 showToast(dict.toastBannerError || 'Upload failed');
               } finally {
                 isUploading = false;
                 if (uploadLabel) uploadLabel.classList.remove('is-uploading');
-                if (!uploadCooldownTimer && uploadTxt) {
-                  uploadTxt.textContent = dict.btnUploadBanner || prevText;
-                }
+                if (uploadTxt) uploadTxt.textContent = dict.btnUploadBanner || prevText;
                 this.value = '';
               }
             });
