@@ -13,6 +13,104 @@
   <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
   <link rel="manifest" href="site.webmanifest">
+  <script>
+    function updateDynamicCalendarFavicon(lang) {
+      try {
+        var now = new Date();
+        var day = String(now.getDate());
+        var monthIdx = now.getMonth();
+        var navLang = (lang || (navigator.language || navigator.userLanguage || '')).toLowerCase();
+        var targetLang = 'en';
+        if (navLang.startsWith('uk') || navLang === 'ua') targetLang = 'ua';
+        else if (navLang.startsWith('ru') || navLang.startsWith('be') || navLang === 'ru') targetLang = 'ru';
+        else if (navLang.startsWith('pl')) targetLang = 'pl';
+
+        var MONTH_NAMES = {
+          en: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+          ua: ['СІЧ', 'ЛЮТ', 'БЕР', 'КВІ', 'ТРА', 'ЧЕР', 'ЛИП', 'СЕР', 'ВЕР', 'ЖОВ', 'ЛИС', 'ГРУ'],
+          ru: ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'],
+          pl: ['STY', 'LUT', 'MAR', 'KWI', 'MAJ', 'CZE', 'LIP', 'SIE', 'WRZ', 'PAŹ', 'LIS', 'GRU']
+        };
+
+        var monthArr = MONTH_NAMES[targetLang] || MONTH_NAMES.en;
+        var monthStr = monthArr[monthIdx] || MONTH_NAMES.en[monthIdx];
+
+        var canvas = document.createElement('canvas');
+        canvas.width = 64;
+        canvas.height = 64;
+        var ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        var r = 14;
+        var pad = 1.5;
+        var w = 64 - pad * 2;
+        var h = 64 - pad * 2;
+        var x = pad;
+        var y = pad;
+
+        function drawCardPath() {
+          ctx.beginPath();
+          ctx.moveTo(x + r, y);
+          ctx.lineTo(x + w - r, y);
+          ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+          ctx.lineTo(x + w, y + h - r);
+          ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+          ctx.lineTo(x + r, y + h);
+          ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+          ctx.lineTo(x, y + r);
+          ctx.quadraticCurveTo(x, y, x + r, y);
+          ctx.closePath();
+        }
+
+        drawCardPath();
+        ctx.fillStyle = '#ffffff';
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.14)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.save();
+        drawCardPath();
+        ctx.clip();
+
+        var headerH = 21;
+        ctx.fillStyle = '#eb4439';
+        ctx.fillRect(0, 0, 64, headerH);
+
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '700 11px -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(monthStr, 32, headerH / 2 + 0.5);
+        ctx.restore();
+
+        ctx.fillStyle = '#1c1c1e';
+        var fontSize = day.length > 2 ? 24 : (day.length === 2 ? 30 : 32);
+        ctx.font = '700 ' + fontSize + 'px -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        var bodyCenterY = headerH + (64 - headerH) / 2 + 1;
+        ctx.fillText(day, 32, bodyCenterY);
+
+        var pngUrl = canvas.toDataURL('image/png');
+        var svgUrl = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3CclipPath id='c'%3E%3Crect width='60' height='60' rx='14' x='2' y='2'/%3E%3C/clipPath%3E%3C/defs%3E%3Crect width='60' height='60' rx='14' x='2' y='2' fill='%23ffffff' stroke='%23000000' stroke-opacity='0.14' stroke-width='1'/%3E%3Cg clip-path='url(%23c)'%3E%3Crect width='64' height='21' fill='%23eb4439'/%3E%3Ctext x='32' y='14.5' fill='%23ffffff' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif' font-size='11' font-weight='700' text-anchor='middle'%3E" + encodeURIComponent(monthStr) + "%3C/text%3E%3Ctext x='32' y='49' fill='%231c1c1e' font-family='-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif' font-size='" + fontSize + "' font-weight='700' text-anchor='middle'%3E" + day + "%3C/text%3E%3C/g%3E%3C/svg%3E";
+
+        var links = document.querySelectorAll("link[rel*='icon']");
+        links.forEach(function(l) {
+          if (l.type === 'image/svg+xml') {
+            l.href = svgUrl;
+          } else {
+            l.href = pngUrl;
+          }
+        });
+        var appleLink = document.querySelector("link[rel='apple-touch-icon']");
+        if (appleLink) appleLink.href = pngUrl;
+      } catch (err) {
+        // Fallback: static icons preserved
+      }
+    }
+    updateDynamicCalendarFavicon();
+  </script>
 
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZX1HGH60Z"></script>
@@ -2430,6 +2528,9 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
       function applyTranslations(langKey) {
         currentLang = langKey;
+        if (typeof updateDynamicCalendarFavicon === 'function') {
+          updateDynamicCalendarFavicon(langKey);
+        }
         const dict = I18N[langKey] || I18N.en;
 
         // Update active class on language items & trigger label
