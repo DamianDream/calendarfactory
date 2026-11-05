@@ -472,14 +472,6 @@ body[data-theme="dark"] .bg-noise {
   flex-shrink: 0;
   border-radius: var(--radius-sm);
   user-select: none;
-  cursor: pointer;
-  position: relative;
-  z-index: 90;
-}
-
-.top-date-badge:focus-visible {
-  outline: 2px solid var(--color-focus);
-  outline-offset: 2px;
 }
 
 .top-date-icon {
@@ -488,20 +480,6 @@ body[data-theme="dark"] .bg-noise {
   display: block;
   border-radius: var(--radius-sm);
   box-shadow: var(--shadow-pill);
-  transform-origin: top right;
-  transition: transform var(--dur-micro) var(--ease-out), box-shadow var(--dur-micro) var(--ease-out);
-}
-
-.top-date-badge:hover,
-.top-date-badge.is-expanded {
-  z-index: 110;
-}
-
-.top-date-badge:hover .top-date-icon,
-.top-date-badge.is-expanded .top-date-icon {
-  transform: scale(3.2);
-  box-shadow: var(--shadow-toast);
-  border-radius: var(--radius-md);
 }
 
 /* Planet Language Dropdown */
@@ -2138,7 +2116,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
   <!-- Detached Top-Right Floating Controls (Language & Theme Switch) -->
   <div class="top-corner-controls" aria-label="Settings">
-    <div class="top-date-badge" id="topCalendarBadge" role="button" tabindex="0" title="Today (click or hover to magnify)" aria-label="Today">
+    <div class="top-date-badge" id="topCalendarBadge" title="Today" aria-label="Today">
       <img id="topCalendarIcon" class="top-date-icon" src="favicon.svg" alt="Calendar" width="24" height="24">
     </div>
 
@@ -4441,20 +4419,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         }
       }
 
-      const topCalendarBadge = document.getElementById('topCalendarBadge');
-      if (topCalendarBadge) {
-        topCalendarBadge.addEventListener('click', function(e) {
-          e.stopPropagation();
-          this.classList.toggle('is-expanded');
-        });
-        topCalendarBadge.addEventListener('keydown', function(e) {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            this.classList.toggle('is-expanded');
-          }
-        });
-      }
-
       const pickerBackdrop = document.getElementById('pickerBackdrop');
       if (pickerBackdrop) {
         pickerBackdrop.addEventListener('click', function() {
@@ -4470,11 +4434,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (timePopup && !timePopup.classList.contains('hidden')) {
           if (!timePopup.contains(e.target) && e.target !== inputTime && !btnTime?.contains(e.target)) {
             closeTimePicker();
-          }
-        }
-        if (topCalendarBadge && topCalendarBadge.classList.contains('is-expanded')) {
-          if (!topCalendarBadge.contains(e.target)) {
-            topCalendarBadge.classList.remove('is-expanded');
           }
         }
       });
@@ -4512,7 +4471,6 @@ input[list]:focus::-webkit-calendar-picker-indicator {
         if (e.key === 'Escape') {
           closeCalendarPopup();
           closeTimePicker();
-          if (topCalendarBadge) topCalendarBadge.classList.remove('is-expanded');
         }
       });
 
