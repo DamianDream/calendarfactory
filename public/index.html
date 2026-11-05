@@ -1086,7 +1086,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 .share-icon-btn--fb:hover { color: var(--color-social-fb); background: var(--color-social-fb-hover-bg); }
 .share-icon-btn--x:hover  { color: var(--color-social-x); }
 
-/* Event Banner in View Mode */
+/* Event Banner in View Mode: adaptive for both wide banners (~4:1) and square covers (1:1, up to 800x800) */
 .event-banner-wrap {
   position: relative;
   width: calc(100% + var(--space-md) * 2);
@@ -1094,13 +1094,15 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   margin-right: calc(var(--space-md) * -1);
   margin-top: calc((var(--space-2xl) + var(--space-xs)) * -1);
   margin-bottom: var(--space-xl);
-  aspect-ratio: 970 / 250;
-  max-height: 120px;
+  max-height: 440px;
   border-radius: 0;
   border-top: none;
   border-bottom: 1px solid var(--color-rule);
   overflow: hidden;
   background-color: var(--color-paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 639px) {
@@ -1109,15 +1111,23 @@ input[list]:focus::-webkit-calendar-picker-indicator {
   }
   body.has-view-banner .event-banner-wrap {
     margin-top: 0;
+    max-height: 420px;
   }
 }
 
 .event-banner-img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-height: 440px;
   object-fit: cover;
   object-position: center;
   display: block;
+}
+
+@media (max-width: 639px) {
+  .event-banner-img {
+    max-height: 420px;
+  }
 }
 
 @media (min-width: 640px) {
@@ -1127,10 +1137,12 @@ input[list]:focus::-webkit-calendar-picker-indicator {
     margin-right: 0;
     margin-top: 0;
     margin-bottom: var(--space-xl);
-    aspect-ratio: 970 / 250;
-    max-height: 160px;
+    max-height: 480px;
     border-radius: var(--radius-md);
     border: 1px solid var(--color-rule);
+  }
+  .event-banner-img {
+    max-height: 480px;
   }
 }
 
@@ -1181,17 +1193,20 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 .banner-input-preview {
   margin-top: var(--space-xs);
   width: 100%;
-  aspect-ratio: 970 / 250;
-  max-height: 80px;
+  max-height: 180px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-rule);
   overflow: hidden;
   background-color: var(--color-paper);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .banner-input-preview-img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-height: 180px;
   object-fit: cover;
   object-position: center;
   display: block;
@@ -1821,7 +1836,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
                 <span class="floating-line"></span>
               </div>
               <div class="banner-actions-row">
-                <label for="fileBannerUpload" class="chip chip-upload" id="btnUploadBannerLabel" title="Загрузить баннер (до 1 МБ, ImgBB)">
+                <label for="fileBannerUpload" class="chip chip-upload" id="btnUploadBannerLabel" title="Загрузить баннер или обложку 1:1 (до 800px, 2 МБ, ImgBB)">
                   <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                   </svg>
@@ -1829,7 +1844,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
                   <input type="file" id="fileBannerUpload" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" class="sr-only">
                 </label>
               </div>
-              <div class="field-hint" id="bannerFormatHint">Хранение через ImgBB (бессрочно). Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).</div>
+              <div class="field-hint" id="bannerFormatHint">Хранение через ImgBB (до 30 дней). Поддерживает баннеры (~4:1, 970×250 px) и квадратные обложки (1:1, до 800×800 px для мобильных). До 2 МБ (JPG, PNG, WebP, GIF, SVG).</div>
               <div id="bannerInputPreviewWrap" class="banner-input-preview hidden">
                 <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 970 250'/%3E" alt="Banner preview" loading="lazy">
               </div>
@@ -1974,12 +1989,12 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "All day",
           moreParams: "Additional parameters",
           fieldBanner: "Banner image URL",
-          bannerHint: "Hosted via ImgBB (permanent). Recommended size: 970×250 px, up to 1 MB (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Hosted via ImgBB (stored up to 30 days). Supports wide banners (~4:1, 970×250 px) and square covers (1:1, up to 800×800 px for mobile). Up to 2 MB (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Upload banner",
           btnUploadingBanner: "Uploading…",
-          btnUploadBannerTitle: "Upload banner image (up to 1 MB, ImgBB)",
+          btnUploadBannerTitle: "Upload banner or 1:1 cover (up to 800px, 2 MB, ImgBB)",
           toastBannerUploaded: "Banner uploaded successfully",
-          toastBannerTooLarge: "File too large (maximum 1 MB)",
+          toastBannerTooLarge: "File too large (maximum 2 MB)",
           toastBannerWait: "Please wait 10 seconds before uploading again",
           toastBannerError: "Failed to upload image",
           fieldLoc: "Location or meeting URL",
@@ -2038,12 +2053,12 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Дополнительные параметры",
           fieldBanner: "Ссылка на баннер (изображение)",
-          bannerHint: "Хранение через ImgBB (бессрочно). Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Хранение через ImgBB (до 30 дней). Поддерживает баннеры (~4:1, 970×250 px) и квадратные обложки (1:1, до 800×800 px для мобильных). До 2 МБ (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Загрузить баннер",
           btnUploadingBanner: "Загрузка…",
-          btnUploadBannerTitle: "Загрузить баннер (до 1 МБ, ImgBB)",
+          btnUploadBannerTitle: "Загрузить баннер или обложку 1:1 (до 800px, 2 МБ, ImgBB)",
           toastBannerUploaded: "Баннер успешно загружен",
-          toastBannerTooLarge: "Файл слишком большой (максимум 1 МБ)",
+          toastBannerTooLarge: "Файл слишком большой (максимум 2 МБ)",
           toastBannerWait: "Подождите 10 секунд перед следующей загрузкой",
           toastBannerError: "Не удалось загрузить изображение",
           fieldLoc: "Место или ссылка на встречу",
@@ -2102,12 +2117,12 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Додаткові параметри",
           fieldBanner: "Посилання на банер (зображення)",
-          bannerHint: "Зберігання через ImgBB (безстроково). Рекомендований розмір: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Зберігання через ImgBB (до 30 днів). Підтримує банери (~4:1, 970×250 px) та квадратні обкладинки (1:1, до 800×800 px для мобільних). До 2 МБ (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Завантажити банер",
           btnUploadingBanner: "Завантаження…",
-          btnUploadBannerTitle: "Завантажити банер (до 1 МБ, ImgBB)",
+          btnUploadBannerTitle: "Завантажити банер або обкладинку 1:1 (до 800px, 2 МБ, ImgBB)",
           toastBannerUploaded: "Банер успішно завантажено",
-          toastBannerTooLarge: "Файл занадто великий (максимум 1 МБ)",
+          toastBannerTooLarge: "Файл занадто великий (максимум 2 МБ)",
           toastBannerWait: "Зачекайте 10 секунд перед наступним завантаженням",
           toastBannerError: "Не вдалося завантажити зображення",
           fieldLoc: "Місце або посилання на зустріч",
@@ -2166,12 +2181,12 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Cały dzień",
           moreParams: "Dodatkowe parametry",
           fieldBanner: "Link do banera (obrazek)",
-          bannerHint: "Hosting przez ImgBB (bezterminowo). Zalecany rozmiar: 970×250 px, do 1 MB (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Hosting przez ImgBB (do 30 dni). Obsługuje banery (~4:1, 970×250 px) oraz kwadratowe okładki (1:1, do 800×800 px na mobile). Do 2 MB (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Prześlij baner",
           btnUploadingBanner: "Przesyłanie…",
-          btnUploadBannerTitle: "Prześlij baner (do 1 MB, ImgBB)",
+          btnUploadBannerTitle: "Prześlij baner lub okładkę 1:1 (do 800px, 2 MB, ImgBB)",
           toastBannerUploaded: "Baner został pomyślnie przesłany",
-          toastBannerTooLarge: "Plik jest zbyt duży (maksymalnie 1 MB)",
+          toastBannerTooLarge: "Plik jest zbyt duży (maksymalnie 2 MB)",
           toastBannerWait: "Odczekaj 10 sekund przed kolejnym przesłaniem",
           toastBannerError: "Nie udało się przesłać obrazu",
           fieldLoc: "Lokalizacja lub link do spotkania",
@@ -2230,12 +2245,12 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "ตลอดทั้งวัน",
           moreParams: "พารามิเตอร์เพิ่มเติม",
           fieldBanner: "ลิงก์แบนเนอร์ (รูปภาพ)",
-          bannerHint: "โฮสต์ผ่าน ImgBB (ถาวร) ขนาดที่แนะนำ: 970×250 px ไม่เกิน 1 MB (JPG, PNG, WebP, GIF, SVG)",
+          bannerHint: "จัดเก็บผ่าน ImgBB (สูงสุด 30 วัน) รองรับทั้งแบนเนอร์แนวนอน (~4:1, 970×250 px) และภาพสี่เหลี่ยมจัตุรัส (1:1 สูงสุด 800×800 px สำหรับมือถือ) ไม่เกิน 2 MB (JPG, PNG, WebP, GIF, SVG)",
           btnUploadBanner: "อัปโหลดแบนเนอร์",
           btnUploadingBanner: "กำลังอัปโหลด…",
-          btnUploadBannerTitle: "อัปโหลดรูปภาพแบนเนอร์ (ไม่เกิน 1 MB, ImgBB)",
+          btnUploadBannerTitle: "อัปโหลดแบนเนอร์หรือภาพปก 1:1 (สูงสุด 800px, 2 MB, ImgBB)",
           toastBannerUploaded: "อัปโหลดแบนเนอร์เรียบร้อยแล้ว",
-          toastBannerTooLarge: "ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 1 MB)",
+          toastBannerTooLarge: "ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 2 MB)",
           toastBannerWait: "โปรดรอ 10 วินาทีก่อนทำการอัปโหลดครั้งต่อไป",
           toastBannerError: "ไม่สามารถอัปโหลดรูปภาพได้",
           fieldLoc: "สถานที่หรือลิงก์การประชุม",
@@ -3805,19 +3820,62 @@ input[list]:focus::-webkit-calendar-picker-indicator {
             });
           }
 
+          function resizeImageIfNeeded(file) {
+            return new Promise((resolve) => {
+              if (!file || !file.type || file.type === 'image/svg+xml') {
+                return resolve(file);
+              }
+              const img = new Image();
+              const url = URL.createObjectURL(file);
+              img.onload = () => {
+                URL.revokeObjectURL(url);
+                const originalW = img.naturalWidth || img.width;
+                const originalH = img.naturalHeight || img.height;
+                const MAX_W = 1200;
+                const MAX_H = 800;
+
+                if (originalW <= MAX_W && originalH <= MAX_H && file.size <= 2 * 1024 * 1024) {
+                  return resolve(file);
+                }
+
+                const ratio = Math.min(MAX_W / originalW, MAX_H / originalH, 1);
+                const targetW = Math.max(1, Math.round(originalW * ratio));
+                const targetH = Math.max(1, Math.round(originalH * ratio));
+
+                const canvas = document.createElement('canvas');
+                canvas.width = targetW;
+                canvas.height = targetH;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return resolve(file);
+
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(img, 0, 0, targetW, targetH);
+
+                const mimeType = (file.type === 'image/png') ? 'image/png' : 'image/jpeg';
+                canvas.toBlob((blob) => {
+                  if (!blob) return resolve(file);
+                  const resizedFile = new File([blob], file.name.replace(/\.[^.]+$/, (mimeType === 'image/png' ? '.png' : '.jpg')), {
+                    type: mimeType,
+                    lastModified: Date.now()
+                  });
+                  resolve(resizedFile);
+                }, mimeType, 0.92);
+              };
+              img.onerror = () => {
+                URL.revokeObjectURL(url);
+                resolve(file);
+              };
+              img.src = url;
+            });
+          }
+
           if (fileUpload) {
             fileUpload.addEventListener('change', async function () {
-              const file = this.files && this.files[0];
+              let file = this.files && this.files[0];
               if (!file) return;
 
               const dict = I18N[currentLang] || I18N.en;
-
-              // Validate client-side max 1 MB (1,048,576 bytes)
-              if (file.size > 1 * 1024 * 1024) {
-                showToast(dict.toastBannerTooLarge || 'File too large (max 1 MB)');
-                this.value = '';
-                return;
-              }
 
               if (uploadDisabledTimer || isUploading) {
                 showToast(dict.toastBannerWait || 'Please wait 10 seconds before uploading again');
@@ -3831,6 +3889,14 @@ input[list]:focus::-webkit-calendar-picker-indicator {
               if (uploadTxt) uploadTxt.textContent = dict.btnUploadingBanner || 'Uploading…';
 
               try {
+                file = await resizeImageIfNeeded(file);
+
+                // Validate client-side max 2 MB (2,097,152 bytes)
+                if (file.size > 2 * 1024 * 1024) {
+                  showToast(dict.toastBannerTooLarge || 'File too large (max 2 MB)');
+                  this.value = '';
+                  return;
+                }
                 const formData = new FormData();
                 formData.append('file', file);
 

@@ -47,7 +47,8 @@ Parameters are passed in query string (`?key=value`) separated by `&`.
 | **`allDay`** | `allday` | No | `1` or `true` | All-day event flag. |
 | **`theme`** | `m`, `mode` | No | `dark` \| `light` | Visual card theme (`dark` for dark mode). |
 | **`c`** | `color`, `bg` | No | HEX color code | Custom page background color (`0f172a`, `ffffff`). |
-| **`lang`** | — | No | `en` \| `ru` \| `ua` | Landing card interface language. |
+| **`banner`** | `b`, `img`, `image`, `cover` | No | Image URL | Event banner or cover image (~4:1 banner or 1:1 mobile cover up to 800x800). |
+| **`lang`** | — | No | `en` \| `ru` \| `ua` \| `pl` \| `th` | Landing card interface language. |
 | **`{variables}`** | Any name | No | Text | Replaces `{var}`, `{{var}}`, or `[var]` inside `title`, `desc`, and `loc`. |
 
 ---
@@ -178,3 +179,22 @@ https://calendarfactory.pages.dev/?title=Product+Launch&start=2026-11-30T17:00&d
 ```text
 https://calendarfactory.pages.dev/event.ics?title=Webinar&start=2026-11-20T14:30&duration=60
 ```
+
+### 5. Event with Visual Banner or 1:1 Mobile Cover
+```text
+https://calendarfactory.pages.dev/?title=Design+Summit&start=2026-11-20T10:00&banner=https://i.ibb.co/sample/banner.png
+```
+
+---
+
+## 🖼️ Event Banners & Square Mobile Covers
+
+CalendarFactory supports visual header banners and mobile covers:
+- **Formats & Ratios**:
+  - **Wide Banner**: `970×250` px (~4:1) for desktop headers and card embeds.
+  - **Square Mobile Cover**: `1:1` (up to `800×800` px) fills the top mobile screen edge-to-edge.
+- **Adaptive Display**: The image container dynamically scales to fit any image up to 800 px in height.
+- **Image Hosting**:
+  - Direct URL via query parameter: `banner=https://...` (or `b=`, `img=`, `image=`, `cover=`).
+  - Built-in generator upload powered by ImgBB API (stored up to 30 days, auto-scales images over 800 px, max 2 MB).
+

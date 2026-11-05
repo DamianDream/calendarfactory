@@ -209,9 +209,9 @@ async function handleUpload(request, env) {
       });
     }
 
-    const MAX_SIZE = 1 * 1024 * 1024;
+    const MAX_SIZE = 2 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
-      return new Response(JSON.stringify({ error: 'File size exceeds 1 MB limit' }), {
+      return new Response(JSON.stringify({ error: 'File size exceeds 2 MB limit' }), {
         status: 413,
         headers: {
           'Content-Type': 'application/json; charset=utf-8',
