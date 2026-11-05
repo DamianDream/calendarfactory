@@ -418,24 +418,19 @@ body[data-theme="dark"].has-shader-bg {
     radial-gradient(at 50% 100%, var(--shader-c2, var(--color-paper-subtle-dark)) 0px, transparent 70%);
 }
 
-body.has-shader-bg .container {
-  background: var(--color-paper);
-  border-radius: var(--radius-xl);
-  padding: var(--space-xl);
-  box-shadow: var(--shadow-card-glass);
+@media (min-width: 640px) {
+  body.has-shader-bg .container {
+    background: var(--color-paper);
+    border-radius: var(--radius-xl);
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-card-glass);
+  }
 }
 
 body.is-card-transparent .container {
   background: transparent !important;
   box-shadow: none !important;
   border-color: transparent !important;
-}
-
-@media (max-width: 480px) {
-  body.has-shader-bg .container {
-    padding: var(--space-md);
-    border-radius: var(--radius-md);
-  }
 }
 
 /* Subtle tactile background noise texture */
