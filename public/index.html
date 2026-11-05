@@ -1821,7 +1821,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
                 <span class="floating-line"></span>
               </div>
               <div class="banner-actions-row">
-                <label for="fileBannerUpload" class="chip chip-upload" id="btnUploadBannerLabel" title="Загрузить баннер (до 1 МБ, Litterbox)">
+                <label for="fileBannerUpload" class="chip chip-upload" id="btnUploadBannerLabel" title="Загрузить баннер (до 1 МБ, ImgBB)">
                   <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                   </svg>
@@ -1829,7 +1829,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
                   <input type="file" id="fileBannerUpload" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" class="sr-only">
                 </label>
               </div>
-              <div class="field-hint" id="bannerFormatHint">Картинка временно хранится на сервисе Litterbox (до 3 дней). Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).</div>
+              <div class="field-hint" id="bannerFormatHint">Хранение через ImgBB (бессрочно). Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).</div>
               <div id="bannerInputPreviewWrap" class="banner-input-preview hidden">
                 <img id="bannerInputPreviewImg" class="banner-input-preview-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 970 250'/%3E" alt="Banner preview" loading="lazy">
               </div>
@@ -1974,11 +1974,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "All day",
           moreParams: "Additional parameters",
           fieldBanner: "Banner image URL",
-          bannerHint: "Image is temporarily stored on Litterbox (up to 3 days). Recommended size: 970×250 px, up to 1 MB (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Hosted via ImgBB (permanent). Recommended size: 970×250 px, up to 1 MB (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Upload banner",
           btnUploadingBanner: "Uploading…",
-          btnUploadBannerTitle: "Upload banner image (up to 1 MB, Litterbox)",
-          toastBannerUploaded: "Banner uploaded (Litterbox)",
+          btnUploadBannerTitle: "Upload banner image (up to 1 MB, ImgBB)",
+          toastBannerUploaded: "Banner uploaded successfully",
           toastBannerTooLarge: "File too large (maximum 1 MB)",
           toastBannerWait: "Please wait 10 seconds before uploading again",
           toastBannerError: "Failed to upload image",
@@ -2038,11 +2038,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Дополнительные параметры",
           fieldBanner: "Ссылка на баннер (изображение)",
-          bannerHint: "Картинка временно хранится на сервисе Litterbox (до 3 дней). Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Хранение через ImgBB (бессрочно). Рекомендуемый размер: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Загрузить баннер",
           btnUploadingBanner: "Загрузка…",
-          btnUploadBannerTitle: "Загрузить баннер (до 1 МБ, Litterbox)",
-          toastBannerUploaded: "Баннер успешно загружен (Litterbox)",
+          btnUploadBannerTitle: "Загрузить баннер (до 1 МБ, ImgBB)",
+          toastBannerUploaded: "Баннер успешно загружен",
           toastBannerTooLarge: "Файл слишком большой (максимум 1 МБ)",
           toastBannerWait: "Подождите 10 секунд перед следующей загрузкой",
           toastBannerError: "Не удалось загрузить изображение",
@@ -2102,11 +2102,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Весь день",
           moreParams: "Додаткові параметри",
           fieldBanner: "Посилання на банер (зображення)",
-          bannerHint: "Зображення тимчасово зберігається на сервісі Litterbox (до 3 днів). Рекомендований розмір: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Зберігання через ImgBB (безстроково). Рекомендований розмір: 970×250 px, до 1 МБ (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Завантажити банер",
           btnUploadingBanner: "Завантаження…",
-          btnUploadBannerTitle: "Завантажити банер (до 1 МБ, Litterbox)",
-          toastBannerUploaded: "Банер успішно завантажено (Litterbox)",
+          btnUploadBannerTitle: "Завантажити банер (до 1 МБ, ImgBB)",
+          toastBannerUploaded: "Банер успішно завантажено",
           toastBannerTooLarge: "Файл занадто великий (максимум 1 МБ)",
           toastBannerWait: "Зачекайте 10 секунд перед наступним завантаженням",
           toastBannerError: "Не вдалося завантажити зображення",
@@ -2166,11 +2166,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "Cały dzień",
           moreParams: "Dodatkowe parametry",
           fieldBanner: "Link do banera (obrazek)",
-          bannerHint: "Obraz jest tymczasowo przechowywany w serwisie Litterbox (do 3 dni). Zalecany rozmiar: 970×250 px, do 1 MB (JPG, PNG, WebP, GIF, SVG).",
+          bannerHint: "Hosting przez ImgBB (bezterminowo). Zalecany rozmiar: 970×250 px, do 1 MB (JPG, PNG, WebP, GIF, SVG).",
           btnUploadBanner: "Prześlij baner",
           btnUploadingBanner: "Przesyłanie…",
-          btnUploadBannerTitle: "Prześlij baner (do 1 MB, Litterbox)",
-          toastBannerUploaded: "Baner został przesłany (Litterbox)",
+          btnUploadBannerTitle: "Prześlij baner (do 1 MB, ImgBB)",
+          toastBannerUploaded: "Baner został pomyślnie przesłany",
           toastBannerTooLarge: "Plik jest zbyt duży (maksymalnie 1 MB)",
           toastBannerWait: "Odczekaj 10 sekund przed kolejnym przesłaniem",
           toastBannerError: "Nie udało się przesłać obrazu",
@@ -2230,11 +2230,11 @@ input[list]:focus::-webkit-calendar-picker-indicator {
           durAllDay: "ตลอดทั้งวัน",
           moreParams: "พารามิเตอร์เพิ่มเติม",
           fieldBanner: "ลิงก์แบนเนอร์ (รูปภาพ)",
-          bannerHint: "รูปภาพจะถูกจัดเก็บชั่วคราวบน Litterbox (สูงสุด 3 วัน) ขนาดที่แนะนำ: 970×250 px ไม่เกิน 1 MB (JPG, PNG, WebP, GIF, SVG)",
+          bannerHint: "โฮสต์ผ่าน ImgBB (ถาวร) ขนาดที่แนะนำ: 970×250 px ไม่เกิน 1 MB (JPG, PNG, WebP, GIF, SVG)",
           btnUploadBanner: "อัปโหลดแบนเนอร์",
           btnUploadingBanner: "กำลังอัปโหลด…",
-          btnUploadBannerTitle: "อัปโหลดรูปภาพแบนเนอร์ (ไม่เกิน 1 MB Litterbox)",
-          toastBannerUploaded: "อัปโหลดแบนเนอร์เรียบร้อยแล้ว (Litterbox)",
+          btnUploadBannerTitle: "อัปโหลดรูปภาพแบนเนอร์ (ไม่เกิน 1 MB, ImgBB)",
+          toastBannerUploaded: "อัปโหลดแบนเนอร์เรียบร้อยแล้ว",
           toastBannerTooLarge: "ไฟล์มีขนาดใหญ่เกินไป (สูงสุด 1 MB)",
           toastBannerWait: "โปรดรอ 10 วินาทีก่อนทำการอัปโหลดครั้งต่อไป",
           toastBannerError: "ไม่สามารถอัปโหลดรูปภาพได้",
@@ -3832,22 +3832,20 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 
               try {
                 const formData = new FormData();
-                formData.append('reqtype', 'fileupload');
-                formData.append('time', '72h');
-                formData.append('fileToUpload', file);
+                formData.append('file', file);
 
-                const res = await fetch('https://litterbox.catbox.moe/resources/internals/api.php', {
+                const res = await fetch('/api/upload', {
                   method: 'POST',
                   body: formData
                 });
 
-                const urlText = (await res.text()).trim();
-                if (res.ok && /^https?:\/\//i.test(urlText)) {
-                  inputBanner.value = urlText;
-                  updateBannerPreview(urlText);
+                const data = await res.json().catch(() => null);
+                if (res.ok && data && data.url) {
+                  inputBanner.value = data.url;
+                  updateBannerPreview(data.url);
                   updateGeneratedLinks();
-                  showToast(dict.toastBannerUploaded || 'Banner uploaded');
-                  trackEvent('banner_upload_success', { service: 'litterbox', size: file.size });
+                  showToast(dict.toastBannerUploaded || 'Banner uploaded successfully');
+                  trackEvent('banner_upload_success', { service: 'imgbb', size: file.size });
 
                   // Disable button for exactly 10 seconds (no countdown)
                   setUploadDisabled(true);
@@ -3857,7 +3855,8 @@ input[list]:focus::-webkit-calendar-picker-indicator {
                     uploadDisabledTimer = null;
                   }, 10000);
                 } else {
-                  showToast(dict.toastBannerError || 'Upload failed');
+                  const errMsg = (data && data.error) ? data.error : (dict.toastBannerError || 'Upload failed');
+                  showToast(errMsg);
                 }
               } catch (err) {
                 showToast(dict.toastBannerError || 'Upload failed');
