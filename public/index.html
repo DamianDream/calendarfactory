@@ -3198,6 +3198,15 @@ body.is-card-transparent .view-viewer-tz {
       let currentBgStyle = 'cotton-candy';
       let shaderInstance = null;
 
+      // Mobile defaults to no gradient (light, clean) so the WebGL shader never
+      // interferes with rendering; desktop keeps the Cotton Candy gradient.
+      function getDefaultBgStyle() {
+        try {
+          if (window.matchMedia && window.matchMedia('(max-width: 639px)').matches) return 'none';
+        } catch (e) {}
+        return 'cotton-candy';
+      }
+
       function getSavedBgStyle() {
         const cookieVal = getCookie('cf_bg_style');
         if (cookieVal && (BG_PRESETS[cookieVal] || cookieVal === 'none')) return cookieVal;
@@ -3478,7 +3487,7 @@ body.is-card-transparent .view-viewer-tz {
           ts: Date.now()
         };
 
-        const hasContent = Boolean(draft.title || draft.desc || draft.loc || draft.banner || draft.extra || draft.cardTransparent || (draft.bg && draft.bg !== 'cotton-candy') || (draft.color && draft.color !== '#ffffff'));
+        const hasContent = Boolean(draft.title || draft.desc || draft.loc || draft.banner || draft.extra || draft.cardTransparent || (draft.bg && draft.bg !== getDefaultBgStyle()) || (draft.color && draft.color !== '#ffffff'));
         if (!hasContent) {
           try {
             document.cookie = `${DRAFT_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
@@ -4760,36 +4769,12 @@ body.is-card-transparent .view-viewer-tz {
           }
         }
 
-        // Secondary viewer local time badge if viewer is in a different timezone
+        // Viewer local-time badge removed: a formed event link shows the event's
+        // own date/time only, no duplicate of the viewer's local time.
         const viewerEl = document.getElementById('eventViewerTz');
         if (viewerEl) {
-          let viewerTz = '';
-          try {
-            viewerTz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-          } catch (e) {}
-
-          let hasDifferentTime = false;
-          let vStart = '', vEnd = '', vDate = '', eDate = '', cityLabel = '';
-
-          if (!ev.isAllDay && viewerTz && eventTzValid) {
-            const viewerDateOptions = { weekday: 'short', month: 'short', day: 'numeric', timeZone: viewerTz };
-            const viewerTimeOptions = { hour: '2-digit', minute: '2-digit', timeZone: viewerTz };
-            vStart = ev.startDate.toLocaleTimeString(localeCode, viewerTimeOptions);
-            vEnd = ev.endDate.toLocaleTimeString(localeCode, viewerTimeOptions);
-            vDate = ev.startDate.toLocaleDateString(localeCode, viewerDateOptions);
-            eDate = ev.startDate.toLocaleDateString(localeCode, tzOptions);
-            hasDifferentTime = (vStart !== startStr) || (vDate !== dateStr);
-            cityLabel = viewerTz.split('/').pop().replace(/_/g, ' ');
-          }
-
-          if (hasDifferentTime) {
-            const dateDiffNote = (vDate !== eDate) ? `${vDate}, ` : '';
-            viewerEl.innerHTML = `<svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span>${dict.viewViewerLocalTime || 'Ваше местное время:'} <strong>${dateDiffNote}${vStart} – ${vEnd}</strong> (${cityLabel})</span>`;
-            viewerEl.classList.remove('hidden');
-          } else {
-            viewerEl.classList.add('hidden');
-            viewerEl.textContent = '';
-          }
+          viewerEl.classList.add('hidden');
+          viewerEl.textContent = '';
         }
 
         if (ev.loc) {
@@ -4859,7 +4844,7 @@ body.is-card-transparent .view-viewer-tz {
           const p = new URLSearchParams();
           if (currentLang) p.set('lang', currentLang);
           if (currentTheme === 'dark') p.set('theme', 'dark');
-          if (currentBgStyle && currentBgStyle !== 'cotton-candy') p.set('bg', currentBgStyle);
+          if (currentBgStyle && currentBgStyle !== getDefaultBgStyle()) p.set('bg', currentBgStyle);
           if (document.body.classList.contains('is-card-transparent')) p.set('card', 'transparent');
           if (customBgColor) {
             const clean = customBgColor.replace(/^#/, '').toLowerCase();
@@ -5440,7 +5425,7 @@ body.is-card-transparent .view-viewer-tz {
         const selectBgStyle = document.getElementById('selectBgStyle');
         if (selectBgStyle) {
           const bgVal = selectBgStyle.value;
-          if (bgVal && bgVal !== 'cotton-candy') {
+          if (bgVal && bgVal !== getDefaultBgStyle()) {
             p.set('bg', bgVal);
           }
         }
@@ -5547,8 +5532,8 @@ body.is-card-transparent .view-viewer-tz {
         if (topCornerControls) topCornerControls.classList.add('hidden');
         if (footerLinks) footerLinks.classList.add('hidden');
         const viewBgParam = (getVal(['bg', 'style', 'gradient']) || '').toLowerCase();
-        let viewBg = viewBgParam || 'cotton-candy';
-        if (!BG_PRESETS[viewBg] && viewBg !== 'none') viewBg = 'cotton-candy';
+        let viewBg = viewBgParam || getDefaultBgStyle();
+        if (!BG_PRESETS[viewBg] && viewBg !== 'none') viewBg = getDefaultBgStyle();
         applyBgShader(viewBg);
 
         const rawCard = (getVal(['card', 'card_bg', 'transparent']) || '').toLowerCase();
@@ -5583,8 +5568,8 @@ body.is-card-transparent .view-viewer-tz {
 
         const urlBg = (getVal(['bg', 'style', 'gradient']) || '').toLowerCase();
         const savedBg = getSavedBgStyle();
-        let activeBg = urlBg || savedBg || 'cotton-candy';
-        if (!BG_PRESETS[activeBg] && activeBg !== 'none') activeBg = 'cotton-candy';
+        let activeBg = urlBg || savedBg || getDefaultBgStyle();
+        if (!BG_PRESETS[activeBg] && activeBg !== 'none') activeBg = getDefaultBgStyle();
         currentBgStyle = activeBg;
         applyBgShader(currentBgStyle);
 
