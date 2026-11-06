@@ -1,32 +1,35 @@
-// Cloudflare Pages middleware: inject OpenGraph/Twitter meta for event links.
-// Messenger crawlers (Telegram/WhatsApp/FB/X) do not run JS, so the client-side
-// title/banner never reach them. Here we rewrite the served HTML for event URLs.
+// Cloudflare Pages middleware: server-render event content for crawlers.
+// Telegram/WhatsApp/FB crawlers and Telegram Instant View do NOT run JS, so we
+// inject (a) OpenGraph/Twitter meta for the rich link card and (b) a semantic
+// <article id="tg-iv"> the Telegram Instant View template maps to a clean page.
+
+import { buildEvent, formatDisplay, formatIsoCompact, formatDayCompact, tzToIana } from './_shared/ical.js';
 
 const EVENT_KEYS = ['title', 't', 'name', 'summary', 'event', 'subject', 'start', 's', 'date', 'd', 'dt', 'dtstart', 'datetime'];
 
-function firstParam(q, keys) {
-  for (const k of keys) { const v = q.get(k); if (v && v.trim()) return v.trim(); }
-  return '';
+function esc(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 }
 
-// Single-pass, length-bounded token substitution (no re-scan of replacements).
-const PLACEHOLDER_TOKEN = /\{\{([^{}]+)\}\}|\{([^{}]+)\}|%([^%]+)%|\[([^\]]+)\]|\$\{([^{}]+)\}/g;
-function replacePlaceholders(text, q, maxOut = 5000) {
-  if (!text) return '';
-  const src = text.length > maxOut ? text.slice(0, maxOut) : text;
-  let count = 0;
-  const out = src.replace(PLACEHOLDER_TOKEN, (m, a, b, c, d, e) => {
-    if (++count > 100) return m;
-    const key = (a || b || c || d || e || '').trim();
-    const v = q.get(key);
-    return v == null ? m : String(v).slice(0, 500);
-  });
-  return out.length > maxOut ? out.slice(0, maxOut) : out;
-}
-
-function attr(s) {
-  return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;').replace(/'/g, '&#39;').slice(0, 500);
+function buildGoogleUrl(ev) {
+  const p = new URLSearchParams();
+  p.set('action', 'TEMPLATE');
+  p.set('text', ev.title);
+  if (ev.isAllDay) {
+    const nd = new Date(ev.startDate.getTime() + 86400000);
+    p.set('dates', `${formatDayCompact(ev.startDate)}/${formatDayCompact(nd)}`);
+  } else {
+    p.set('dates', `${formatIsoCompact(ev.startDate)}/${formatIsoCompact(ev.endDate)}`);
+  }
+  let details = ev.desc;
+  if (ev.url) details = details ? `${details}\n\n${ev.url}` : ev.url;
+  if (details) p.set('details', details);
+  if (ev.loc) p.set('location', ev.loc);
+  const iana = tzToIana(ev.tz);
+  if (iana && !iana.startsWith('Etc/')) p.set('ctz', iana);
+  return 'https://calendar.google.com/calendar/render?' + p.toString();
 }
 
 export async function onRequest(context) {
@@ -39,33 +42,53 @@ export async function onRequest(context) {
 
   const url = new URL(request.url);
   const q = url.searchParams;
-  const isEvent = EVENT_KEYS.some((k) => q.has(k));
-  if (!isEvent) return response;
+  if (!EVENT_KEYS.some((k) => q.has(k))) return response;
 
-  const rawTitle = firstParam(q, ['title', 't', 'name', 'summary', 'event', 'subject']) || 'Calendar Event';
-  const rawDesc = firstParam(q, ['description', 'desc', 'details', 'text', 'body', 'notes', 'info']);
-  const banner = firstParam(q, ['banner', 'img', 'image', 'b', 'pic', 'photo']);
+  const lang = (q.get('lang') || q.get('l') || q.get('locale') || 'en').toLowerCase();
+  const ev = buildEvent(q);
+  const dateLine = formatDisplay(ev, lang);
+  const image = /^https?:\/\/.+/i.test(ev.banner) ? ev.banner : '';
 
-  const title = replacePlaceholders(rawTitle, q).slice(0, 200);
-  const desc = replacePlaceholders(rawDesc, q).slice(0, 300);
-  const image = /^https?:\/\/.+/i.test(banner) ? banner : '';
-
+  // --- OpenGraph / Twitter card ---
+  const ogDesc = [dateLine, ev.loc, ev.desc].filter(Boolean).join(' · ').slice(0, 300);
   let meta =
     `<meta property="og:type" content="website">` +
-    `<meta property="og:title" content="${attr(title)}">` +
-    `<meta property="og:url" content="${attr(url.href)}">` +
+    `<meta property="og:title" content="${esc(ev.title).slice(0, 200)}">` +
+    `<meta property="og:url" content="${esc(url.href)}">` +
+    `<meta property="og:site_name" content="CalendarFactory">` +
     `<meta name="twitter:card" content="${image ? 'summary_large_image' : 'summary'}">` +
-    `<meta name="twitter:title" content="${attr(title)}">`;
-  if (desc) {
-    meta += `<meta property="og:description" content="${attr(desc)}">` +
-            `<meta name="twitter:description" content="${attr(desc)}">`;
+    `<meta name="twitter:title" content="${esc(ev.title).slice(0, 200)}">`;
+  if (ogDesc) {
+    meta += `<meta property="og:description" content="${esc(ogDesc)}">` +
+            `<meta name="twitter:description" content="${esc(ogDesc)}">`;
   }
   if (image) {
-    meta += `<meta property="og:image" content="${attr(image)}">` +
-            `<meta name="twitter:image" content="${attr(image)}">`;
+    meta += `<meta property="og:image" content="${esc(image)}">` +
+            `<meta name="twitter:image" content="${esc(image)}">`;
   }
+  // Signals Telegram to prefer Instant View for this page.
+  meta += `<meta property="al:web:url" content="${esc(url.href)}">`;
+
+  // --- Semantic article for Instant View / crawlers (hidden from browsers) ---
+  const googleHref = buildGoogleUrl(ev);
+  const icsHref = '/event.ics' + url.search;
+  const descHtml = ev.desc ? `<p>${esc(ev.desc).replace(/\n/g, '<br>')}</p>` : '';
+  const locHtml = ev.loc ? `<p>${esc(ev.loc)}</p>` : '';
+  const tzHtml = ev.tz ? `<p>${esc(ev.tz)}</p>` : '';
+  const coverHtml = image ? `<figure><img src="${esc(image)}" alt="${esc(ev.title)}"></figure>` : '';
+  const article =
+    `<article id="tg-iv" style="display:none" aria-hidden="true">` +
+      `<h1>${esc(ev.title)}</h1>` +
+      coverHtml +
+      `<address><time>${esc(dateLine)}</time></address>` +
+      tzHtml +
+      locHtml +
+      descHtml +
+      `<p><a href="${esc(googleHref)}">Google Calendar</a> · <a href="${esc(icsHref)}">Apple / .ics</a></p>` +
+    `</article>`;
 
   return new HTMLRewriter()
     .on('head', { element(el) { el.append(meta, { html: true }); } })
+    .on('body', { element(el) { el.prepend(article, { html: true }); } })
     .transform(response);
 }

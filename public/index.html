@@ -4696,12 +4696,21 @@ body.is-card-transparent .view-viewer-tz {
         });
       });
 
+      // Telegram Instant View template hash. Once the IV template is published
+      // at instantview.telegram.org, paste its rhash here so shared event links
+      // open as an instant, telegra.ph-style page inside Telegram. Empty = plain share.
+      const TELEGRAM_IV_RHASH = '';
+
       function shareToNetwork(network, url, title) {
         var dict = I18N[currentLang] || I18N.en;
         var msg = (dict.shareMsg || 'Calendar Event') + (title ? ': ' + title : '');
         var target = '';
         switch (network) {
-          case 'telegram': target = 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(msg); break;
+          case 'telegram':
+            target = TELEGRAM_IV_RHASH
+              ? 'https://t.me/iv?url=' + encodeURIComponent(url) + '&rhash=' + encodeURIComponent(TELEGRAM_IV_RHASH)
+              : 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(msg);
+            break;
           case 'whatsapp': target = 'https://wa.me/?text=' + encodeURIComponent(msg + ' ' + url); break;
           case 'x':        target = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(msg); break;
           case 'facebook':  target = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url); break;

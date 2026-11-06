@@ -1,0 +1,26 @@
+# CalendarFactory — Telegram Instant View template
+# Paste this into the right-hand editor at https://instantview.telegram.org
+# (My Templates -> calendarfactory.pages.dev). The server renders a hidden
+# <article id="tg-iv"> that this template maps to an instant page.
+
+~version: "2.1"
+
+# Root of the server-rendered event content
+body:       //article[@id="tg-iv"]
+
+# Required title (Instant View removes it from the body automatically)
+title:      $body/h1
+
+# Cover image (event banner), if present
+cover:      $body//figure//img
+@if_not(.//figure//img): $body
+cover:      //meta[@property="og:image"]/@content
+
+# Nice-to-haves
+subtitle:   $body//address//time
+site_name:  "CalendarFactory"
+published_date: false
+author:     false
+
+# Keep the add-to-calendar links as inline links in the body (default IV
+# handling of <a> is fine). Nothing else to strip.
