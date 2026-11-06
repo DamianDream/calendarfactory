@@ -4132,16 +4132,19 @@ body.is-card-transparent .view-viewer-tz {
         return new Date(Date.UTC(year, month - 1, day, hours, minutes - offsetMinutes, 0));
       }
 
-      function replacePlaceholders(text, paramMap) {
+      // Single-pass, length-bounded token substitution (no re-scan of replacements).
+      const PLACEHOLDER_TOKEN = /\{\{([^{}]+)\}\}|\{([^{}]+)\}|%([^%]+)%|\[([^\]]+)\]|\$\{([^{}]+)\}/g;
+      function replacePlaceholders(text, paramMap, maxOut = 5000) {
         if (!text) return '';
-        let result = text;
-        for (const [rawKey, val] of Object.entries(paramMap)) {
-          if (val === undefined || val === null) continue;
-          const escapedKey = rawKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          const pattern = new RegExp(`\\{\\{${escapedKey}\\}\\}|\\{${escapedKey}\\}|%${escapedKey}%|\\[${escapedKey}\\]|\\$\\{${escapedKey}\\}`, 'gi');
-          result = result.replace(pattern, val);
-        }
-        return result;
+        const src = text.length > maxOut ? text.slice(0, maxOut) : text;
+        let count = 0;
+        const out = src.replace(PLACEHOLDER_TOKEN, (m, a, b, c, d, e) => {
+          if (++count > 100) return m;
+          const key = (a || b || c || d || e || '').trim();
+          const v = paramMap[key];
+          return v == null ? m : String(v).slice(0, 500);
+        });
+        return out.length > maxOut ? out.slice(0, maxOut) : out;
       }
 
       function formatIsoCompact(d) {
@@ -4335,8 +4338,8 @@ body.is-card-transparent .view-viewer-tz {
       function parseEventParams() {
         const rawTitle = getVal(['title', 't', 'name', 'summary', 'event', 'subject']) || (currentLang === 'ua' ? 'Подія в календарі' : currentLang === 'ru' ? 'Событие в календаре' : currentLang === 'pl' ? 'Wydarzenie w kalendarzu' : currentLang === 'th' ? 'กิจกรรมในปฏิทิน' : 'Calendar Event');
         const rawDesc = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
-        const rawLoc = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
-        const rawUrl = getVal(['url', 'link', 'u']) || '';
+        const rawLoc = getVal(['location', 'loc', 'address', 'place', 'venue']) || '';
+        const rawUrl = getVal(['url', 'link']) || '';
         const rawBanner = getVal(['banner', 'img', 'image', 'b', 'pic', 'photo']) || '';
 
         const title = replacePlaceholders(rawTitle, allParams);
@@ -4492,9 +4495,19 @@ body.is-card-transparent .view-viewer-tz {
         if (s.includes('beijing') || s.includes('shanghai')) return 'Asia/Shanghai';
         if (s.includes('bangkok')) return 'Asia/Bangkok';
         if (s.includes('jakarta')) return 'Asia/Jakarta';
+        if (s.includes('tehran')) return 'Asia/Tehran';
+        if (s.includes('kathmandu')) return 'Asia/Kathmandu';
+        if (s.includes('adelaide')) return 'Australia/Adelaide';
+        if (s.includes('darwin')) return 'Australia/Darwin';
+        if (s.includes('st. johns') || s.includes('st johns') || s.includes('newfoundland')) return 'America/St_Johns';
+        if (s.includes('chatham')) return 'Pacific/Chatham';
+        if (s.includes('marquesas')) return 'Pacific/Marquesas';
+        if (s.includes('eucla')) return 'Australia/Eucla';
+        if (s.includes('lord howe')) return 'Australia/Lord_Howe';
         if (tzStr.includes('/')) return tzStr;
-        const m = tzStr.match(/UTC\s*([+-]\d+)/i);
+        const m = tzStr.match(/UTC\s*([+-]\d+)(?::(\d+))?/i);
         if (m) {
+          if (m[2] && parseInt(m[2], 10) !== 0) return ''; // fractional offset: use exact minute math, no Etc/GMT
           const num = parseInt(m[1], 10);
           return num === 0 ? 'UTC' : (num > 0 ? `Etc/GMT-${num}` : `Etc/GMT+${Math.abs(num)}`);
         }
@@ -4554,12 +4567,15 @@ body.is-card-transparent .view-viewer-tz {
       function generateIcs(ev) {
         function escapeIcs(str) {
           if (!str) return '';
-          return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+          return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n|\r|\n/g, '\\n').replace(/[\x00-\x08\x0B-\x1F\x7F]/g, '');
         }
 
         const now = new Date();
         const stamp = formatIsoCompact(now);
-        const uid = `cf-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@calendarfactory.pages.dev`;
+        const uidSeed = `${ev.isAllDay ? formatDayCompact(ev.startDate) : formatIsoCompact(ev.startDate)}|${ev.isAllDay ? formatDayCompact(ev.endDate) : formatIsoCompact(ev.endDate)}|${ev.title || ''}|${ev.loc || ''}`;
+        let uidH = 0x811c9dc5;
+        for (let i = 0; i < uidSeed.length; i++) { uidH ^= uidSeed.charCodeAt(i); uidH = Math.imul(uidH, 0x01000193); }
+        const uid = `cf-${(uidH >>> 0).toString(36)}@calendarfactory.pages.dev`;
 
         let dtStart = '';
         let dtEnd = '';
@@ -4781,7 +4797,12 @@ body.is-card-transparent .view-viewer-tz {
           const locEl = document.getElementById('eventLoc');
           locRow.classList.remove('hidden');
           if (/^https?:\/\//i.test(ev.loc)) {
-            locEl.innerHTML = `<a href="${ev.loc}" target="_blank" rel="noopener noreferrer">${ev.loc}</a>`;
+            const locLink = document.createElement('a');
+            locLink.href = ev.loc;
+            locLink.target = '_blank';
+            locLink.rel = 'noopener noreferrer';
+            locLink.textContent = ev.loc;
+            locEl.replaceChildren(locLink);
           } else {
             locEl.textContent = ev.loc;
           }
@@ -4838,7 +4859,7 @@ body.is-card-transparent .view-viewer-tz {
           const p = new URLSearchParams();
           if (currentLang) p.set('lang', currentLang);
           if (currentTheme === 'dark') p.set('theme', 'dark');
-          if (currentBgStyle) p.set('bg', currentBgStyle);
+          if (currentBgStyle && currentBgStyle !== 'cotton-candy') p.set('bg', currentBgStyle);
           if (document.body.classList.contains('is-card-transparent')) p.set('card', 'transparent');
           if (customBgColor) {
             const clean = customBgColor.replace(/^#/, '').toLowerCase();
@@ -5419,7 +5440,7 @@ body.is-card-transparent .view-viewer-tz {
         const selectBgStyle = document.getElementById('selectBgStyle');
         if (selectBgStyle) {
           const bgVal = selectBgStyle.value;
-          if (bgVal) {
+          if (bgVal && bgVal !== 'cotton-candy') {
             p.set('bg', bgVal);
           }
         }
@@ -5618,7 +5639,7 @@ body.is-card-transparent .view-viewer-tz {
         }
 
         inputDescription.value = getVal(['description', 'desc', 'details', 'text', 'body', 'notes', 'info']) || '';
-        inputLocation.value = getVal(['location', 'loc', 'address', 'l', 'place', 'venue']) || '';
+        inputLocation.value = getVal(['location', 'loc', 'address', 'place', 'venue']) || '';
         inputExtraProps.value = getVal(['vars', 'extra']) || '';
 
         // Restore draft from cookie / localStorage (stored up to 1 day)
@@ -5827,34 +5848,12 @@ body.is-card-transparent .view-viewer-tz {
                 const formData = new FormData();
                 formData.append('file', file);
 
-                let res = await fetch('/api/upload', {
+                const res = await fetch('/api/upload', {
                   method: 'POST',
                   body: formData
                 });
 
-                let data = await res.json().catch(() => null);
-
-                // If ImgBB WAF blocks Cloudflare datacenter IP, fallback to direct upload with key from worker
-                if (!res.ok && data && typeof data.error === 'string' && data.error.toLowerCase().includes('forbidden')) {
-                  const keyRes = await fetch('/api/upload');
-                  const keyData = await keyRes.json().catch(() => null);
-                  if (keyData && keyData.key) {
-                    const clientForm = new FormData();
-                    clientForm.append('image', file);
-                    const clientUploadRes = await fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(keyData.key), {
-                      method: 'POST',
-                      body: clientForm
-                    });
-                    const clientData = await clientUploadRes.json().catch(() => null);
-                    if (clientUploadRes.ok && clientData && clientData.success && clientData.data) {
-                      res = clientUploadRes;
-                      data = {
-                        success: true,
-                        url: clientData.data.url || clientData.data.display_url
-                      };
-                    }
-                  }
-                }
+                const data = await res.json().catch(() => null);
 
                 if (res.ok && data && data.url) {
                   inputBanner.value = data.url;

@@ -100,16 +100,31 @@ async function handleUpload(request, env) {
     }
 
     let imgbbUrl = `https://api.imgbb.com/1/upload?key=${encodeURIComponent(apiKey)}`;
-    const imgbbRes = await fetch(imgbbUrl, {
-      method: 'POST',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'X-Forwarded-For': clientIp,
-        'CF-Connecting-IP': clientIp,
-      },
-      body: imgbbForm,
-    });
+    let imgbbRes;
+    try {
+      imgbbRes = await fetch(imgbbUrl, {
+        method: 'POST',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+          'Accept': 'application/json, text/plain, */*',
+          'X-Forwarded-For': clientIp,
+          'CF-Connecting-IP': clientIp,
+        },
+        body: imgbbForm,
+        signal: AbortSignal.timeout(10000),
+      });
+    } catch (e) {
+      const timedOut = e && (e.name === 'TimeoutError' || e.name === 'AbortError');
+      return new Response(JSON.stringify({
+        error: timedOut ? 'ImgBB upload timed out, please try again' : 'ImgBB upload request failed'
+      }), {
+        status: 504,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
 
     const data = await imgbbRes.json().catch(() => null);
 
@@ -162,27 +177,14 @@ async function handleUpload(request, env) {
   }
 }
 
-export async function onRequestGet(context) {
-  const apiKey = context.env && context.env.IMGBB_API_KEY;
-  if (!apiKey) {
-    return new Response(JSON.stringify({
-      error: 'IMGBB_API_KEY is not configured in Cloudflare Settings -> Variables and secrets'
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
-  }
-  return new Response(JSON.stringify({
-    key: apiKey
-  }), {
-    status: 200,
+export async function onRequestGet() {
+  // The API key never leaves the server. Uploads go through POST only.
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
-      'Cache-Control': 'no-store',
+      'Allow': 'POST, OPTIONS',
     },
   });
 }
@@ -192,7 +194,7 @@ export async function onRequestOptions() {
     status: 204,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Accept',
       'Access-Control-Max-Age': '86400',
     },
