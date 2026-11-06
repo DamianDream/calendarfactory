@@ -1,14 +1,12 @@
 {
   "name": "calendarfactory",
   "version": "1.0.0",
-  "description": "Minimalist single-page calendar event generator with direct URL properties, 100% client-side for Cloudflare",
+  "description": "Minimalist calendar event link generator with a Cloudflare Pages Function for iCal/.ics and banner upload",
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "echo 'Static assets ready'",
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "pages:deploy": "wrangler pages deploy public",
+    "dev": "wrangler pages dev public",
+    "deploy": "wrangler pages deploy public",
     "test": "node test/event-ics.test.mjs"
   },
   "keywords": [
