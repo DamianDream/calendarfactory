@@ -9,16 +9,19 @@ function firstParam(q, keys) {
   return '';
 }
 
-function replacePlaceholders(text, q) {
+// Single-pass, length-bounded token substitution (no re-scan of replacements).
+const PLACEHOLDER_TOKEN = /\{\{([^{}]+)\}\}|\{([^{}]+)\}|%([^%]+)%|\[([^\]]+)\]|\$\{([^{}]+)\}/g;
+function replacePlaceholders(text, q, maxOut = 5000) {
   if (!text) return '';
-  let result = text;
-  for (const [rawKey, val] of q.entries()) {
-    if (val == null) continue;
-    const escapedKey = rawKey.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const pattern = new RegExp(`\\{\\{${escapedKey}\\}\\}|\\{${escapedKey}\\}|%${escapedKey}%|\\[${escapedKey}\\]|\\$\\{${escapedKey}\\}`, 'gi');
-    result = result.replace(pattern, () => val);
-  }
-  return result;
+  const src = text.length > maxOut ? text.slice(0, maxOut) : text;
+  let count = 0;
+  const out = src.replace(PLACEHOLDER_TOKEN, (m, a, b, c, d, e) => {
+    if (++count > 100) return m;
+    const key = (a || b || c || d || e || '').trim();
+    const v = q.get(key);
+    return v == null ? m : String(v).slice(0, 500);
+  });
+  return out.length > maxOut ? out.slice(0, maxOut) : out;
 }
 
 function attr(s) {

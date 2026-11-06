@@ -59,5 +59,14 @@ check('newfoundland', dtstart(await ics('title=t&start=2026-07-20T14:00&tz=Ameri
   check('uid-distinct', String(a !== c), 'true');
 }
 
+// Placeholder amplification must stay bounded (title cap 300, no blow-up)
+{
+  const tokens = '{a}'.repeat(2000);
+  const big = 'y'.repeat(4000);
+  const body = await ics('title=' + encodeURIComponent(tokens) + '&a=' + big + '&start=2026-07-20T14:00&tz=Europe/Kyiv');
+  const sum = (body.match(/^SUMMARY:(.*)$/m) || [])[1] || '';
+  check('amplification-bounded', String(sum.length <= 300), 'true');
+}
+
 console.log(fails ? `\n${fails} FAILED` : '\nALL PASS');
 process.exit(fails?1:0);
