@@ -35,5 +35,19 @@ check('loc-escaped', (body.match(/LOCATION:[^\r\n]*/)||[])[0], 'LOCATION:A\\,B\\
   check('no-crlf-injection', summaryLines, 1);
 }
 
+// D1: fractional timezones must keep the :30/:45 minutes
+check('kathmandu-iana', dtstart(await ics('title=t&start=2026-07-20T14:00&tz=Asia/Kathmandu')), 'DTSTART:20260720T081500Z');
+check('kathmandu-offset', dtstart(await ics('title=t&start=2026-07-20T14:00&tz=' + encodeURIComponent('UTC+05:45 - Kathmandu'))), 'DTSTART:20260720T081500Z');
+check('tehran-city', dtstart(await ics('title=t&start=2026-07-20T14:00&tz=' + encodeURIComponent('UTC+03:30 - Tehran'))), 'DTSTART:20260720T103000Z');
+check('utc-decimal-5.75', dtstart(await ics('title=t&start=2026-07-20T14:00&utc=5.75')), 'DTSTART:20260720T081500Z');
+check('newfoundland', dtstart(await ics('title=t&start=2026-07-20T14:00&tz=America/St_Johns')), 'DTSTART:20260720T163000Z');
+// D4: oversized fields are truncated (SUMMARY stays within cap)
+{
+  const big = 'x'.repeat(5000);
+  const body = await ics('title=' + big + '&start=2026-07-20T14:00&tz=Asia/Kathmandu');
+  const sum = (body.match(/^SUMMARY:(.*)$/m) || [])[1] || '';
+  check('title-capped', String(sum.length <= 300), 'true');
+}
+
 console.log(fails ? `\n${fails} FAILED` : '\nALL PASS');
 process.exit(fails?1:0);

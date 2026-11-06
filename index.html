@@ -4492,9 +4492,19 @@ body.is-card-transparent .view-viewer-tz {
         if (s.includes('beijing') || s.includes('shanghai')) return 'Asia/Shanghai';
         if (s.includes('bangkok')) return 'Asia/Bangkok';
         if (s.includes('jakarta')) return 'Asia/Jakarta';
+        if (s.includes('tehran')) return 'Asia/Tehran';
+        if (s.includes('kathmandu')) return 'Asia/Kathmandu';
+        if (s.includes('adelaide')) return 'Australia/Adelaide';
+        if (s.includes('darwin')) return 'Australia/Darwin';
+        if (s.includes('st. johns') || s.includes('st johns') || s.includes('newfoundland')) return 'America/St_Johns';
+        if (s.includes('chatham')) return 'Pacific/Chatham';
+        if (s.includes('marquesas')) return 'Pacific/Marquesas';
+        if (s.includes('eucla')) return 'Australia/Eucla';
+        if (s.includes('lord howe')) return 'Australia/Lord_Howe';
         if (tzStr.includes('/')) return tzStr;
-        const m = tzStr.match(/UTC\s*([+-]\d+)/i);
+        const m = tzStr.match(/UTC\s*([+-]\d+)(?::(\d+))?/i);
         if (m) {
+          if (m[2] && parseInt(m[2], 10) !== 0) return ''; // fractional offset: use exact minute math, no Etc/GMT
           const num = parseInt(m[1], 10);
           return num === 0 ? 'UTC' : (num > 0 ? `Etc/GMT-${num}` : `Etc/GMT+${Math.abs(num)}`);
         }

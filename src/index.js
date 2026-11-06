@@ -120,12 +120,21 @@ function tzToIana(tzStr) {
     [['chicago'], 'America/Chicago'], [['denver'], 'America/Denver'], [['tokyo'], 'Asia/Tokyo'],
     [['dubai'], 'Asia/Dubai'], [['istanbul'], 'Europe/Istanbul'], [['athens'], 'Europe/Athens'],
     [['delhi', 'mumbai', 'kolkata'], 'Asia/Kolkata'], [['bangkok'], 'Asia/Bangkok'],
-    [['singapore'], 'Asia/Singapore'], [['sydney'], 'Australia/Sydney']
+    [['singapore'], 'Asia/Singapore'], [['sydney'], 'Australia/Sydney'],
+    [['tehran'], 'Asia/Tehran'], [['kathmandu'], 'Asia/Kathmandu'],
+    [['adelaide'], 'Australia/Adelaide'], [['darwin'], 'Australia/Darwin'],
+    [['st. johns', 'st johns', 'newfoundland'], 'America/St_Johns'],
+    [['chatham'], 'Pacific/Chatham'], [['marquesas'], 'Pacific/Marquesas'],
+    [['eucla'], 'Australia/Eucla'], [['lord howe'], 'Australia/Lord_Howe']
   ];
   for (const [keys, zone] of map) { if (keys.some(k => s.includes(k))) return zone; }
   if (tzStr.includes('/')) return tzStr;
-  const m = tzStr.match(/UTC\s*([+-]\d+)/i);
-  if (m) { const n = parseInt(m[1], 10); return n === 0 ? 'UTC' : (n > 0 ? `Etc/GMT-${n}` : `Etc/GMT+${Math.abs(n)}`); }
+  const m = tzStr.match(/UTC\s*([+-]\d+)(?::(\d+))?/i);
+  if (m) {
+    if (m[2] && parseInt(m[2], 10) !== 0) return ''; // fractional offset: exact minute math, no Etc/GMT
+    const n = parseInt(m[1], 10);
+    return n === 0 ? 'UTC' : (n > 0 ? `Etc/GMT-${n}` : `Etc/GMT+${Math.abs(n)}`);
+  }
   return tzStr;
 }
 
@@ -159,6 +168,21 @@ function wallClockToUtc(wc, tzStr) {
     offsetMin = (h >= 0 ? 1 : -1) * (Math.abs(h) * 60 + min);
   }
   return new Date(Date.UTC(wc.year, wc.month - 1, wc.day, wc.hh, wc.mm - offsetMin, wc.ss || 0));
+}
+
+function normalizeUtcOffset(raw) {
+  if (!raw) return '';
+  const s = String(raw).trim();
+  let num;
+  if (/^[+-]?\d{1,2}:\d{2}$/.test(s)) {
+    const [h, mm] = s.replace(/^\+/, '').split(':');
+    const sign = h.startsWith('-') ? -1 : 1;
+    num = sign * (Math.abs(parseInt(h, 10)) + parseInt(mm, 10) / 60);
+  } else { num = parseFloat(s); }
+  if (isNaN(num)) return /^utc/i.test(s) ? s : '';
+  const sign = num >= 0 ? '+' : '-';
+  const abs = Math.abs(num), hrs = Math.floor(abs), mins = Math.round((abs - hrs) * 60);
+  return `UTC${sign}${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
 }
 
 function replacePlaceholders(text, q) {
@@ -401,8 +425,7 @@ export default {
       const rawLoc = getParam(['loc', 'location', 'place', 'venue']);
       const rawDesc = getParam(['desc', 'description', 'details', 'text', 'body', 'notes', 'info']);
       const rawUrl = getParam(['url', 'link']);
-      const utcParam = getParam(['utc']);
-      const tz = getParam(['timezone', 'tz', 'zone']) || (utcParam ? `UTC${/^[+-]/.test(utcParam) ? '' : '+'}${utcParam}` : '');
+      const tz = getParam(['timezone', 'tz', 'zone']) || normalizeUtcOffset(getParam(['utc']));
 
       const title = replacePlaceholders(rawTitle, q);
       let desc = replacePlaceholders(rawDesc, q);
@@ -410,6 +433,11 @@ export default {
       if (rawUrl) {
         desc = desc ? `${desc}\n\n${rawUrl}` : rawUrl;
       }
+      const clampLen = (v, n) => (v && v.length > n ? v.slice(0, n) : v);
+      // Server-side caps: direct GET /event.ics bypasses the client URL limit.
+      const titleC = clampLen(title, 300);
+      const descC = clampLen(desc, 5000);
+      const locC = clampLen(loc, 500);
 
       const parsed = parseFlexibleDateTime(startVal, timeVal);
       let isAllDay = parsed ? parsed.isAllDay : false;
@@ -458,7 +486,7 @@ export default {
         dtEnd = `DTEND:${formatIsoCompact(endDate)}`;
       }
 
-      const safeTitle = title.replace(/[^a-z0-9_-]/gi, '_').toLowerCase() || 'event';
+      const safeTitle = titleC.replace(/[^a-z0-9_-]/gi, '_').toLowerCase() || 'event';
       const lines = [
         'BEGIN:VCALENDAR',
         'VERSION:2.0',
@@ -470,9 +498,9 @@ export default {
         `DTSTAMP:${stamp}`,
         dtStart,
         dtEnd,
-        `SUMMARY:${escapeIcs(title)}`,
-        desc ? `DESCRIPTION:${escapeIcs(desc)}` : '',
-        loc ? `LOCATION:${escapeIcs(loc)}` : '',
+        `SUMMARY:${escapeIcs(titleC)}`,
+        descC ? `DESCRIPTION:${escapeIcs(descC)}` : '',
+        locC ? `LOCATION:${escapeIcs(locC)}` : '',
         'STATUS:CONFIRMED',
         'END:VEVENT',
         'END:VCALENDAR'
