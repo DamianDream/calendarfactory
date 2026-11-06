@@ -5848,34 +5848,12 @@ body.is-card-transparent .view-viewer-tz {
                 const formData = new FormData();
                 formData.append('file', file);
 
-                let res = await fetch('/api/upload', {
+                const res = await fetch('/api/upload', {
                   method: 'POST',
                   body: formData
                 });
 
-                let data = await res.json().catch(() => null);
-
-                // If ImgBB WAF blocks Cloudflare datacenter IP, fallback to direct upload with key from worker
-                if (!res.ok && data && typeof data.error === 'string' && data.error.toLowerCase().includes('forbidden')) {
-                  const keyRes = await fetch('/api/upload');
-                  const keyData = await keyRes.json().catch(() => null);
-                  if (keyData && keyData.key) {
-                    const clientForm = new FormData();
-                    clientForm.append('image', file);
-                    const clientUploadRes = await fetch('https://api.imgbb.com/1/upload?key=' + encodeURIComponent(keyData.key), {
-                      method: 'POST',
-                      body: clientForm
-                    });
-                    const clientData = await clientUploadRes.json().catch(() => null);
-                    if (clientUploadRes.ok && clientData && clientData.success && clientData.data) {
-                      res = clientUploadRes;
-                      data = {
-                        success: true,
-                        url: clientData.data.url || clientData.data.display_url
-                      };
-                    }
-                  }
-                }
+                const data = await res.json().catch(() => null);
 
                 if (res.ok && data && data.url) {
                   inputBanner.value = data.url;

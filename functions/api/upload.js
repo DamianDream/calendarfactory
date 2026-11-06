@@ -177,27 +177,14 @@ async function handleUpload(request, env) {
   }
 }
 
-export async function onRequestGet(context) {
-  const apiKey = context.env && context.env.IMGBB_API_KEY;
-  if (!apiKey) {
-    return new Response(JSON.stringify({
-      error: 'IMGBB_API_KEY is not configured in Cloudflare Settings -> Variables and secrets'
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Access-Control-Allow-Origin': '*',
-      },
-    });
-  }
-  return new Response(JSON.stringify({
-    key: apiKey
-  }), {
-    status: 200,
+export async function onRequestGet() {
+  // The API key never leaves the server. Uploads go through POST only.
+  return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+    status: 405,
     headers: {
       'Content-Type': 'application/json; charset=utf-8',
       'Access-Control-Allow-Origin': '*',
-      'Cache-Control': 'no-store',
+      'Allow': 'POST, OPTIONS',
     },
   });
 }
@@ -207,7 +194,7 @@ export async function onRequestOptions() {
     status: 204,
     headers: {
       'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type, Accept',
       'Access-Control-Max-Age': '86400',
     },
