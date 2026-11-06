@@ -49,5 +49,15 @@ check('newfoundland', dtstart(await ics('title=t&start=2026-07-20T14:00&tz=Ameri
   check('title-capped', String(sum.length <= 300), 'true');
 }
 
+// D8: UID is deterministic for identical events, differs for different ones
+{
+  const u = async (qs) => ((await ics(qs)).match(/^UID:(.*)$/m) || [])[1];
+  const a = await u('title=Meeting&start=2026-07-20T14:00&tz=Europe/Kyiv&loc=Zoom');
+  const b = await u('title=Meeting&start=2026-07-20T14:00&tz=Europe/Kyiv&loc=Zoom');
+  const c = await u('title=Other&start=2026-07-20T14:00&tz=Europe/Kyiv&loc=Zoom');
+  check('uid-stable', String(a === b && !!a), 'true');
+  check('uid-distinct', String(a !== c), 'true');
+}
+
 console.log(fails ? `\n${fails} FAILED` : '\nALL PASS');
 process.exit(fails?1:0);

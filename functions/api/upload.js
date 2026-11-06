@@ -100,16 +100,31 @@ async function handleUpload(request, env) {
     }
 
     let imgbbUrl = `https://api.imgbb.com/1/upload?key=${encodeURIComponent(apiKey)}`;
-    const imgbbRes = await fetch(imgbbUrl, {
-      method: 'POST',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'X-Forwarded-For': clientIp,
-        'CF-Connecting-IP': clientIp,
-      },
-      body: imgbbForm,
-    });
+    let imgbbRes;
+    try {
+      imgbbRes = await fetch(imgbbUrl, {
+        method: 'POST',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
+          'Accept': 'application/json, text/plain, */*',
+          'X-Forwarded-For': clientIp,
+          'CF-Connecting-IP': clientIp,
+        },
+        body: imgbbForm,
+        signal: AbortSignal.timeout(10000),
+      });
+    } catch (e) {
+      const timedOut = e && (e.name === 'TimeoutError' || e.name === 'AbortError');
+      return new Response(JSON.stringify({
+        error: timedOut ? 'ImgBB upload timed out, please try again' : 'ImgBB upload request failed'
+      }), {
+        status: 504,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    }
 
     const data = await imgbbRes.json().catch(() => null);
 

@@ -18,6 +18,16 @@ function escapeIcs(str) {
   return str.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r\n|\r|\n/g, '\\n').replace(/[\x00-\x08\x0B-\x1F\x7F]/g, '');
 }
 
+function hashString(str) {
+  // FNV-1a 32-bit -> base36; deterministic, stable UID across re-imports.
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 0x01000193);
+  }
+  return (h >>> 0).toString(36);
+}
+
 function foldIcsLine(line) {
   // RFC 5545: lines longer than 75 octets should be folded.
   if (line.length <= 73) return line;
@@ -248,8 +258,8 @@ export function onRequestGet(context) {
   if (!endDate) endDate = new Date(startDate.getTime() + (isAllDay ? 86400000 : 3600000));
 
   const stamp = formatIsoCompact(new Date());
-  const rand = Array.from({ length: 7 }, () => Math.floor(Math.random() * 36).toString(36)).join('');
-  const uid = `cf-${stamp}-${rand}@calendarfactory.pages.dev`;
+  const uidSeed = `${isAllDay ? formatDayCompact(startDate) : formatIsoCompact(startDate)}|${isAllDay ? formatDayCompact(endDate) : formatIsoCompact(endDate)}|${titleC}|${locC}`;
+  const uid = `cf-${hashString(uidSeed)}@calendarfactory.pages.dev`;
 
   const dtStart = isAllDay ? `DTSTART;VALUE=DATE:${formatDayCompact(startDate)}` : `DTSTART:${formatIsoCompact(startDate)}`;
   const dtEnd = isAllDay ? `DTEND;VALUE=DATE:${formatDayCompact(endDate)}` : `DTEND:${formatIsoCompact(endDate)}`;

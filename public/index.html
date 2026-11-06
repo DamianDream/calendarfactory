@@ -4569,7 +4569,10 @@ body.is-card-transparent .view-viewer-tz {
 
         const now = new Date();
         const stamp = formatIsoCompact(now);
-        const uid = `cf-${Date.now()}-${Math.random().toString(36).substring(2, 9)}@calendarfactory.pages.dev`;
+        const uidSeed = `${ev.isAllDay ? formatDayCompact(ev.startDate) : formatIsoCompact(ev.startDate)}|${ev.isAllDay ? formatDayCompact(ev.endDate) : formatIsoCompact(ev.endDate)}|${ev.title || ''}|${ev.loc || ''}`;
+        let uidH = 0x811c9dc5;
+        for (let i = 0; i < uidSeed.length; i++) { uidH ^= uidSeed.charCodeAt(i); uidH = Math.imul(uidH, 0x01000193); }
+        const uid = `cf-${(uidH >>> 0).toString(36)}@calendarfactory.pages.dev`;
 
         let dtStart = '';
         let dtEnd = '';
@@ -4853,7 +4856,7 @@ body.is-card-transparent .view-viewer-tz {
           const p = new URLSearchParams();
           if (currentLang) p.set('lang', currentLang);
           if (currentTheme === 'dark') p.set('theme', 'dark');
-          if (currentBgStyle) p.set('bg', currentBgStyle);
+          if (currentBgStyle && currentBgStyle !== 'cotton-candy') p.set('bg', currentBgStyle);
           if (document.body.classList.contains('is-card-transparent')) p.set('card', 'transparent');
           if (customBgColor) {
             const clean = customBgColor.replace(/^#/, '').toLowerCase();
@@ -5434,7 +5437,7 @@ body.is-card-transparent .view-viewer-tz {
         const selectBgStyle = document.getElementById('selectBgStyle');
         if (selectBgStyle) {
           const bgVal = selectBgStyle.value;
-          if (bgVal) {
+          if (bgVal && bgVal !== 'cotton-candy') {
             p.set('bg', bgVal);
           }
         }
