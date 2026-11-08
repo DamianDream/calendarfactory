@@ -12,7 +12,7 @@ body:       //article[@id="tg-iv"]
 title:      $body/h1
 
 # Cover image (event banner), if present
-cover:      $body//figure | $body//img
+cover:      $body//figure//img
 
 # Subtitle (Date and Time)
 subtitle:   $body//address//time
