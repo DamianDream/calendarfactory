@@ -262,6 +262,7 @@
   /* Social brand tokens */
   --color-social-tg: #229ed9;
   --color-social-tg-hover-bg: rgba(34, 158, 217, 0.1);
+  --color-social-tg-border: rgba(34, 158, 217, 0.35);
   --color-social-wa: #25d366;
   --color-social-wa-hover-bg: rgba(37, 211, 102, 0.1);
   --color-social-fb: #1877f2;
@@ -1604,6 +1605,57 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 .share-icon-btn--fb:hover { color: var(--color-social-fb); background: var(--color-social-fb-hover-bg); }
 .share-icon-btn--x:hover  { color: var(--color-social-x); }
 
+.share-btn-tg-iv {
+  height: 45px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: 0 var(--space-md);
+  border-radius: var(--radius-sm);
+  background: var(--color-paper-subtle);
+  border: 1px solid var(--color-rule);
+  box-sizing: border-box;
+  color: var(--color-ink);
+  font-family: inherit;
+  font-size: var(--font-sm);
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color var(--dur-micro) var(--ease-out), background-color var(--dur-micro) var(--ease-out), border-color var(--dur-micro) var(--ease-out), transform var(--dur-micro) var(--ease-out);
+}
+
+.share-btn-tg-iv:hover {
+  color: var(--color-social-tg);
+  background: var(--color-social-tg-hover-bg);
+  border-color: var(--color-social-tg-border);
+  transform: translateY(-1px);
+}
+
+.share-btn-tg-iv:active {
+  transform: translateY(1px);
+}
+
+.share-btn-tg-iv:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.share-btn-tg-iv svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+@media (max-width: 480px) {
+  .share-btn-tg-iv {
+    width: 100%;
+  }
+}
+
 /* Event Banner in View Mode: adaptive for both wide banners (~4:1) and square covers (1:1, up to 800x800) */
 .event-banner-wrap {
   position: relative;
@@ -2285,7 +2337,10 @@ body.is-card-transparent .view-viewer-tz {
 
       <!-- SHARE VIA SOCIAL -->
       <div class="share-row" id="shareRowView">
-        <a class="share-icon-btn share-icon-btn--tg" id="shareViewTg" href="#" target="_blank" rel="noopener noreferrer" title="Telegram" aria-label="Share via Telegram"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+        <button class="share-btn-tg-iv" id="shareViewTg" type="button" title="Share Telegram Instant View" aria-label="Share Telegram Instant View">
+          <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          <span id="txtShareViewTg">Share Telegram Instant View</span>
+        </button>
         <a class="share-icon-btn share-icon-btn--wa" id="shareViewWa" href="#" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="Share via WhatsApp"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></a>
         <a class="share-icon-btn share-icon-btn--x" id="shareViewX" href="#" target="_blank" rel="noopener noreferrer" title="X (Twitter)" aria-label="Share via X"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
         <a class="share-icon-btn share-icon-btn--fb" id="shareViewFb" href="#" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Share via Facebook"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
@@ -2609,7 +2664,10 @@ body.is-card-transparent .view-viewer-tz {
 
         <!-- SHARE VIA SOCIAL -->
         <div class="share-row" id="shareRowForm">
-          <a class="share-icon-btn share-icon-btn--tg" id="shareFormTg" href="#" target="_blank" rel="noopener noreferrer" title="Telegram" aria-label="Share via Telegram"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg></a>
+          <button class="share-btn-tg-iv" id="shareFormTg" type="button" title="Share Telegram Instant View" aria-label="Share Telegram Instant View">
+            <svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            <span id="txtShareFormTg">Share Telegram Instant View</span>
+          </button>
           <a class="share-icon-btn share-icon-btn--wa" id="shareFormWa" href="#" target="_blank" rel="noopener noreferrer" title="WhatsApp" aria-label="Share via WhatsApp"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413z"/></svg></a>
           <a class="share-icon-btn share-icon-btn--x" id="shareFormX" href="#" target="_blank" rel="noopener noreferrer" title="X (Twitter)" aria-label="Share via X"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
           <a class="share-icon-btn share-icon-btn--fb" id="shareFormFb" href="#" target="_blank" rel="noopener noreferrer" title="Facebook" aria-label="Share via Facebook"><svg aria-hidden="true" width="25" height="25" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
@@ -2723,6 +2781,9 @@ body.is-card-transparent .view-viewer-tz {
           footerDocs: "Guide & URL parameters",
           shareTitle: "Share:",
           shareMsg: "Calendar Event Invitation",
+          shareTgIv: "Share Telegram Instant View",
+          shareTgIvCopied: "Copied!",
+          toastTgIvCopied: "Telegram Instant View link copied! Paste into Telegram",
           calToday: "Today",
           calTime: "Time",
           calDone: "Done"
@@ -2799,6 +2860,9 @@ body.is-card-transparent .view-viewer-tz {
           footerDocs: "Справка и параметры URL",
           shareTitle: "Поделиться:",
           shareMsg: "Приглашение на событие",
+          shareTgIv: "Share Telegram Instant View",
+          shareTgIvCopied: "Скопировано!",
+          toastTgIvCopied: "Ссылка Telegram Instant View скопирована! Вставьте в чат",
           calToday: "Сегодня",
           calTime: "Время",
           calDone: "Готово"
@@ -2875,6 +2939,9 @@ body.is-card-transparent .view-viewer-tz {
           footerDocs: "Довідка та параметри URL",
           shareTitle: "Поділитися:",
           shareMsg: "Запрошення на подію",
+          shareTgIv: "Share Telegram Instant View",
+          shareTgIvCopied: "Скопійовано!",
+          toastTgIvCopied: "Посилання Telegram Instant View скопійовано! Вставте в чат",
           calToday: "Сьогодні",
           calTime: "Час",
           calDone: "Застосувати"
@@ -2951,6 +3018,9 @@ body.is-card-transparent .view-viewer-tz {
           footerDocs: "Pomoc i parametry URL",
           shareTitle: "Udostępnij:",
           shareMsg: "Zaproszenie na wydarzenie",
+          shareTgIv: "Share Telegram Instant View",
+          shareTgIvCopied: "Skopiowano!",
+          toastTgIvCopied: "Skopiowano link Telegram Instant View! Wklej w czacie",
           calToday: "Dzisiaj",
           calTime: "Godzina",
           calDone: "Gotowe"
@@ -3027,6 +3097,9 @@ body.is-card-transparent .view-viewer-tz {
           footerDocs: "คู่มือและพารามิเตอร์ URL",
           shareTitle: "แชร์:",
           shareMsg: "คำเชิญเข้าร่วมกิจกรรม",
+          shareTgIv: "Share Telegram Instant View",
+          shareTgIvCopied: "คัดลอกแล้ว!",
+          toastTgIvCopied: "คัดลอกลิงก์ Telegram Instant View แล้ว! วางลงในแชท",
           calToday: "วันนี้",
           calTime: "เวลา",
           calDone: "เสร็จสิ้น"
@@ -3752,6 +3825,11 @@ body.is-card-transparent .view-viewer-tz {
         if (elTxtViewCopy) elTxtViewCopy.textContent = dict.viewCopyLink;
         const elTxtViewCreate = document.getElementById('txtViewCreateNew');
         if (elTxtViewCreate) elTxtViewCreate.textContent = dict.viewCreateNew;
+
+        const elTxtShareViewTg = document.getElementById('txtShareViewTg');
+        if (elTxtShareViewTg) elTxtShareViewTg.textContent = dict.shareTgIv || 'Share Telegram Instant View';
+        const elTxtShareFormTg = document.getElementById('txtShareFormTg');
+        if (elTxtShareFormTg) elTxtShareFormTg.textContent = dict.shareTgIv || 'Share Telegram Instant View';
 
         const elFooterDocs = document.getElementById('txtFooterDocs');
         if (elFooterDocs) elFooterDocs.textContent = dict.footerDocs;
@@ -4706,6 +4784,36 @@ body.is-card-transparent .view-viewer-tz {
       // open as an instant, telegra.ph-style page inside Telegram. Empty = plain share.
       const TELEGRAM_IV_RHASH = 'd69095d0040138';
 
+      function buildTelegramIvUrl(url) {
+        if (!url) return '';
+        return 'https://t.me/iv?url=' + encodeURIComponent(url) + (TELEGRAM_IV_RHASH ? '&rhash=' + TELEGRAM_IV_RHASH : '');
+      }
+
+      function copyTelegramIvLink(url, btnEl, textSpanId) {
+        if (!url) return;
+        var dict = I18N[currentLang] || I18N.en;
+        trackEvent('copy_telegram_iv', { source: btnEl ? btnEl.id : 'unknown' });
+        var ivUrl = buildTelegramIvUrl(url);
+
+        function onSuccess() {
+          showToast(dict.toastTgIvCopied || dict.toastCopied);
+          var span = textSpanId ? document.getElementById(textSpanId) : null;
+          if (span) {
+            var prev = span.textContent;
+            span.textContent = dict.shareTgIvCopied || 'Copied!';
+            setTimeout(function() { span.textContent = prev; }, 1800);
+          }
+        }
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(ivUrl).then(onSuccess).catch(function() {
+            prompt(dict.toastTgIvCopied || 'Copy Telegram Instant View link:', ivUrl);
+          });
+        } else {
+          prompt(dict.toastTgIvCopied || 'Copy Telegram Instant View link:', ivUrl);
+        }
+      }
+
       function shareToNetwork(network, url, title) {
         var dict = I18N[currentLang] || I18N.en;
         var msg = (dict.shareMsg || 'Calendar Event') + (title ? ': ' + title : '');
@@ -4871,7 +4979,14 @@ body.is-card-transparent .view-viewer-tz {
         // Social share handlers for view mode
         var viewUrl = window.location.href;
         var viewTitle = ev.title || '';
-        var shareViewMap = { shareViewTg: 'telegram', shareViewWa: 'whatsapp', shareViewX: 'x', shareViewFb: 'facebook' };
+        var btnViewTg = document.getElementById('shareViewTg');
+        if (btnViewTg) {
+          btnViewTg.onclick = function(e) {
+            e.preventDefault();
+            copyTelegramIvLink(viewUrl, btnViewTg, 'txtShareViewTg');
+          };
+        }
+        var shareViewMap = { shareViewWa: 'whatsapp', shareViewX: 'x', shareViewFb: 'facebook' };
         Object.keys(shareViewMap).forEach(function(id) {
           var el = document.getElementById(id);
           if (el) el.onclick = function(e) { e.preventDefault(); shareToNetwork(shareViewMap[id], viewUrl, viewTitle); };
@@ -5986,7 +6101,17 @@ body.is-card-transparent .view-viewer-tz {
         }
 
         // Social share handlers for form mode
-        var shareFormMap = { shareFormTg: 'telegram', shareFormWa: 'whatsapp', shareFormX: 'x', shareFormFb: 'facebook' };
+        var btnFormTg = document.getElementById('shareFormTg');
+        if (btnFormTg) {
+          btnFormTg.onclick = function(e) {
+            e.preventDefault();
+            if (!validateFormOrHighlight()) return;
+            var url = outMainUrl.value;
+            if (!url) return;
+            copyTelegramIvLink(url, btnFormTg, 'txtShareFormTg');
+          };
+        }
+        var shareFormMap = { shareFormWa: 'whatsapp', shareFormX: 'x', shareFormFb: 'facebook' };
         Object.keys(shareFormMap).forEach(function(id) {
           var el = document.getElementById(id);
           if (el) el.onclick = function(e) {
