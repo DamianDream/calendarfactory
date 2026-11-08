@@ -2006,7 +2006,8 @@ body.is-card-transparent .view-viewer-tz {
   opacity: 1;
 }
 
-.hidden {
+.hidden,
+.tg-iv-hidden {
   display: none !important;
 }
 
@@ -2645,6 +2646,9 @@ body.is-card-transparent .view-viewer-tz {
 
   <script>
     (function () {
+      // Clean up server-injected Telegram Instant View article for normal browser execution
+      var tgIvEl = document.getElementById('tg-iv');
+      if (tgIvEl) tgIvEl.remove();
 
       const I18N = {
         en: {

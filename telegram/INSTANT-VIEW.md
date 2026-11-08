@@ -5,16 +5,18 @@ already done; the only step that must be done in a Telegram account is publishin
 the Instant View (IV) template.
 
 ## What the code already does
+
 - `functions/_middleware.js` server-renders every event URL (`/?title=...&start=...`)
   with:
   - OpenGraph/Twitter meta (rich link card in any messenger), and
   - a hidden `<article id="tg-iv">` (title, cover image, date/time, timezone,
     location, description, calendar links) that Telegram IV maps to a clean page.
-  Crawlers and IV do not run JS, so this content is produced on the edge.
+    Crawlers and IV do not run JS, so this content is produced on the edge.
 - `public/index.html` has a `TELEGRAM_IV_RHASH` constant and a Telegram share
   button that will open Instant View directly once the hash is filled.
 
 ## Steps you perform (one-time)
+
 1. Open https://instantview.telegram.org and log in with your Telegram account.
 2. "My Templates" -> enter domain `calendarfactory.pages.dev` -> create template.
 3. Paste the contents of `telegram/iv-template.txt` into the editor.
@@ -31,6 +33,7 @@ the Instant View (IV) template.
    in the IV editor. Once approved, plain links trigger IV without the rhash.
 
 ## If the IV editor shows "no content"
+
 The article is `display:none` to keep it invisible to normal browsers. If the IV
 parser ignores it, tell me — I will switch it to a visible block that the client
 JS removes on load (keeps users from seeing it, keeps it visible to IV).

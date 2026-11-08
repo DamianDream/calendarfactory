@@ -70,21 +70,29 @@ export async function onRequest(context) {
   meta += `<meta property="al:web:url" content="${esc(url.href)}">`;
 
   // --- Semantic article for Instant View / crawlers (hidden from browsers) ---
+  const tzLabels = { ru: 'Часовой пояс', ua: 'Часовий пояс', uk: 'Часовий пояс', pl: 'Strefa czasowa', th: 'เขตเวลา', en: 'Timezone' };
+  const locLabels = { ru: 'Место', ua: 'Місце', uk: 'Місце', pl: 'Miejsce', th: 'สถานที่', en: 'Location' };
+  const addLabels = { ru: 'Добавить в календарь', ua: 'Додати в календар', uk: 'Додати в календар', pl: 'Dodaj do kalendarza', th: 'เพิ่มลงในปฏิทิน', en: 'Add to calendar' };
+
+  const tzLabel = tzLabels[lang] || tzLabels.en;
+  const locLabel = locLabels[lang] || locLabels.en;
+  const addLabel = addLabels[lang] || addLabels.en;
+
   const googleHref = buildGoogleUrl(ev);
-  const icsHref = '/event.ics' + url.search;
+  const icsHref = url.origin + '/event.ics' + url.search;
   const descHtml = ev.desc ? `<p>${esc(ev.desc).replace(/\n/g, '<br>')}</p>` : '';
-  const locHtml = ev.loc ? `<p>${esc(ev.loc)}</p>` : '';
-  const tzHtml = ev.tz ? `<p>${esc(ev.tz)}</p>` : '';
+  const locHtml = ev.loc ? `<p><strong>${locLabel}:</strong> ${esc(ev.loc)}</p>` : '';
+  const tzHtml = ev.tz ? `<p><strong>${tzLabel}:</strong> ${esc(ev.tz)}</p>` : '';
   const coverHtml = image ? `<figure><img src="${esc(image)}" alt="${esc(ev.title)}"></figure>` : '';
   const article =
-    `<article id="tg-iv" style="display:none" aria-hidden="true">` +
+    `<article id="tg-iv" class="tg-iv-hidden">` +
       `<h1>${esc(ev.title)}</h1>` +
       coverHtml +
       `<address><time>${esc(dateLine)}</time></address>` +
       tzHtml +
       locHtml +
       descHtml +
-      `<p><a href="${esc(googleHref)}">Google Calendar</a> · <a href="${esc(icsHref)}">Apple / .ics</a></p>` +
+      `<p><strong>${addLabel}:</strong> <a href="${esc(googleHref)}">Google Calendar</a> · <a href="${esc(icsHref)}">Apple / .ics</a></p>` +
     `</article>`;
 
   return new HTMLRewriter()
