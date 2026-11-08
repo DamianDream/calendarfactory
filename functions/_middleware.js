@@ -32,6 +32,29 @@ function buildGoogleUrl(ev) {
   return 'https://calendar.google.com/calendar/render?' + p.toString();
 }
 
+function buildOutlookUrl(ev) {
+  const p = new URLSearchParams();
+  p.set('path', '/calendar/action/compose');
+  p.set('rru', 'addevent');
+  p.set('subject', ev.title);
+
+  if (ev.isAllDay) {
+    p.set('allday', 'true');
+    p.set('startdt', ev.startDate.toISOString().split('T')[0]);
+    p.set('enddt', ev.endDate.toISOString().split('T')[0]);
+  } else {
+    p.set('startdt', ev.startDate.toISOString());
+    p.set('enddt', ev.endDate.toISOString());
+  }
+
+  let body = ev.desc;
+  if (ev.url) body = body ? `${body}\n\n${ev.url}` : ev.url;
+  if (body) p.set('body', body);
+  if (ev.loc) p.set('location', ev.loc);
+
+  return 'https://outlook.live.com/calendar/0/deeplink/compose?' + p.toString();
+}
+
 export async function onRequest(context) {
   const { request, next } = context;
   const response = await next();
@@ -71,28 +94,54 @@ export async function onRequest(context) {
 
   // --- Semantic article for Instant View / crawlers (hidden from browsers) ---
   const tzLabels = { ru: 'Часовой пояс', ua: 'Часовий пояс', uk: 'Часовий пояс', pl: 'Strefa czasowa', th: 'เขตเวลา', en: 'Timezone' };
-  const locLabels = { ru: 'Место', ua: 'Місце', uk: 'Місце', pl: 'Miejsce', th: 'สถานที่', en: 'Location' };
+  const locLabels = { ru: 'Локация / Место', ua: 'Локація / Місце', uk: 'Локація / Місце', pl: 'Lokalizacja', th: 'สถานที่', en: 'Location' };
+  const linkLabels = { ru: 'Ссылка', ua: 'Посилання', uk: 'Посилання', pl: 'Link', th: 'ลิงก์', en: 'Link' };
+  const descLabels = { ru: 'Описание события', ua: 'Опис події', uk: 'Опис події', pl: 'Opis wydarzenia', th: 'รายละเอียดกิจกรรม', en: 'Event description' };
   const addLabels = { ru: 'Добавить в календарь', ua: 'Додати в календар', uk: 'Додати в календар', pl: 'Dodaj do kalendarza', th: 'เพิ่มลงในปฏิทิน', en: 'Add to calendar' };
+  const openLabels = { ru: 'Открыть полную страницу события', ua: 'Відкрити інтерактивну сторінку події', uk: 'Відкрити інтерактивну сторінку події', pl: 'Otwórz pełną stronę wydarzenia', th: 'เปิดหน้ากิจกรรมแบบเต็ม', en: 'Open interactive event page' };
 
   const tzLabel = tzLabels[lang] || tzLabels.en;
   const locLabel = locLabels[lang] || locLabels.en;
+  const linkLabel = linkLabels[lang] || linkLabels.en;
+  const descLabel = descLabels[lang] || descLabels.en;
   const addLabel = addLabels[lang] || addLabels.en;
+  const openLabel = openLabels[lang] || openLabels.en;
 
   const googleHref = buildGoogleUrl(ev);
+  const outlookHref = buildOutlookUrl(ev);
   const icsHref = url.origin + '/event.ics' + url.search;
-  const descHtml = ev.desc ? `<p>${esc(ev.desc).replace(/\n/g, '<br>')}</p>` : '';
-  const locHtml = ev.loc ? `<p><strong>${locLabel}:</strong> ${esc(ev.loc)}</p>` : '';
-  const tzHtml = ev.tz ? `<p><strong>${tzLabel}:</strong> ${esc(ev.tz)}</p>` : '';
   const coverHtml = image ? `<figure><img src="${esc(image)}" alt="${esc(ev.title)}"></figure>` : '';
+
+  const metaRows = [];
+  if (ev.tz) metaRows.push(`⏰ <strong>${tzLabel}:</strong> ${esc(ev.tz)}`);
+  if (ev.loc) metaRows.push(`📍 <strong>${locLabel}:</strong> ${esc(ev.loc)}`);
+  if (ev.url) metaRows.push(`🔗 <strong>${linkLabel}:</strong> <a href="${esc(ev.url)}">${esc(ev.url)}</a>`);
+
+  const metaCard = metaRows.length ? `<blockquote>${metaRows.join('<br>\n')}</blockquote>` : '';
+  const descCard = ev.desc ? `<h3>📝 ${descLabel}</h3>\n<p>${esc(ev.desc).replace(/\n/g, '<br>')}</p>` : '';
+
+  const calendarCard =
+    `<h3>⚡ ${addLabel}</h3>\n` +
+    `<ul>\n` +
+    `  <li><a href="${esc(googleHref)}"><strong>📅 Google Calendar</strong></a></li>\n` +
+    `  <li><a href="${esc(icsHref)}"><strong>🍏 Apple Calendar / .ICS</strong></a></li>\n` +
+    `  <li><a href="${esc(outlookHref)}"><strong>💼 Microsoft Outlook</strong></a></li>\n` +
+    `</ul>`;
+
+  const footerCard =
+    `<hr>\n` +
+    `<p>🌐 <a href="${esc(url.href)}"><strong>${openLabel} →</strong></a></p>`;
+
   const article =
-    `<article id="tg-iv" class="tg-iv-hidden">` +
-      `<h1>${esc(ev.title)}</h1>` +
-      coverHtml +
-      `<address><time>${esc(dateLine)}</time></address>` +
-      tzHtml +
-      locHtml +
-      descHtml +
-      `<p><strong>${addLabel}:</strong> <a href="${esc(googleHref)}">Google Calendar</a> · <a href="${esc(icsHref)}">Apple / .ics</a></p>` +
+    `<article id="tg-iv" class="tg-iv-hidden">\n` +
+      `<h1>${esc(ev.title)}</h1>\n` +
+      coverHtml + '\n' +
+      `<address><time>🗓️ ${esc(dateLine)}</time></address>\n` +
+      (metaCard ? metaCard + '\n' : '') +
+      (descCard ? descCard + '\n' : '') +
+      `<hr>\n` +
+      calendarCard + '\n' +
+      footerCard + '\n' +
     `</article>`;
 
   return new HTMLRewriter()

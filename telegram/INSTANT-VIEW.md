@@ -32,8 +32,16 @@ the Instant View (IV) template.
 7. (Optional, for automatic IV on any shared link) Submit the template for review
    in the IV editor. Once approved, plain links trigger IV without the rhash.
 
-## If the IV editor shows "no content"
+## How it is structured
 
-The article is `display:none` to keep it invisible to normal browsers. If the IV
-parser ignores it, tell me — I will switch it to a visible block that the client
-JS removes on load (keeps users from seeing it, keeps it visible to IV).
+The edge middleware renders `<article id="tg-iv" class="tg-iv-hidden">`:
+- `<h1>`: Event title.
+- `<figure><img>`: Event banner/cover image (when `banner=` or `img=` is provided).
+- `<address><time>`: Localized date & time with calendar icon `🗓️`.
+- `<blockquote>`: Callout card for key event parameters (Timezone `⏰`, Location `📍`, Link `🔗`).
+- `<h3>` & `<p>`: Event description section with `📝`.
+- `<hr>`: Visual section dividers.
+- `<h3>` & `<ul>`: Action list with direct links for **Google Calendar**, **Apple Calendar / .ICS**, and **Microsoft Outlook**.
+- `🌐`: Direct link to open the full interactive page in the browser.
+
+The class `.tg-iv-hidden` keeps it invisible to normal browsers while remaining fully accessible to crawlers and Telegram's Instant View parser. Client JavaScript removes it on page mount.
