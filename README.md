@@ -221,3 +221,13 @@ CalendarFactory supports visual header banners and mobile covers:
   - Direct URL via query parameter: `banner=https://...` (or `b=`, `img=`, `image=`, `cover=`).
   - Built-in generator upload powered by ImgBB API (stored up to 30 days, auto-scales images over 800 px, max 2 MB).
 
+---
+
+## ⚡ Telegram Instant View Integration
+
+CalendarFactory event links open as rich, native, instant-loading cards directly inside Telegram without leaving the chat:
+- **Zero latency**: Instant View loads immediately on mobile via Cloudflare Pages edge middleware (`functions/_middleware.js`).
+- **Semantic structure**: Displays full-width event banner cover, formatted date & time (`🗓️`), highlighted parameters plate (`<blockquote>` with `⏰` timezone, `📍` location, `🔗` URL), description (`📝`), direct add-to-calendar action links (**Google Calendar**, **Apple Calendar / .ICS**, **Microsoft Outlook**), and a 1-tap button to open the full interactive web card.
+- **Telegram Share button**: The "Share to Telegram" button in CalendarFactory automatically formats and URL-encodes the `https://t.me/iv?url=<encoded>&rhash=d69095d0040138` link.
+- **Template configuration**: The production Instant View rules template is stored in [`telegram/iv-template.txt`](telegram/iv-template.txt).
+
