@@ -4711,11 +4711,13 @@ body.is-card-transparent .view-viewer-tz {
         var msg = (dict.shareMsg || 'Calendar Event') + (title ? ': ' + title : '');
         var target = '';
         switch (network) {
-          case 'telegram':
-            target = TELEGRAM_IV_RHASH
+          case 'telegram': {
+            var shareUrl = TELEGRAM_IV_RHASH
               ? 'https://t.me/iv?url=' + encodeURIComponent(url) + '&rhash=' + encodeURIComponent(TELEGRAM_IV_RHASH)
-              : 'https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(msg);
+              : url;
+            target = 'https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(msg);
             break;
+          }
           case 'whatsapp': target = 'https://wa.me/?text=' + encodeURIComponent(msg + ' ' + url); break;
           case 'x':        target = 'https://twitter.com/intent/tweet?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(msg); break;
           case 'facebook':  target = 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url); break;
