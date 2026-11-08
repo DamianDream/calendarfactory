@@ -4713,7 +4713,7 @@ body.is-card-transparent .view-viewer-tz {
         switch (network) {
           case 'telegram': {
             var shareUrl = TELEGRAM_IV_RHASH
-              ? 'https://t.me/iv?url=' + encodeURIComponent(url) + '&rhash=' + encodeURIComponent(TELEGRAM_IV_RHASH)
+              ? 'https://t.me/iv?url=' + encodeURIComponent(encodeURIComponent(url)) + '&rhash=' + encodeURIComponent(TELEGRAM_IV_RHASH)
               : url;
             target = 'https://t.me/share/url?url=' + encodeURIComponent(shareUrl) + '&text=' + encodeURIComponent(msg);
             break;
