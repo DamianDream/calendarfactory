@@ -3458,8 +3458,10 @@ body.is-card-transparent .view-viewer-tz {
         }
       }
 
-      // Temporary form draft storage in cookies & localStorage (TTL 1 day = 24 hours)
+      // Temporary form draft storage in cookies & localStorage (TTL 1 hour)
       const DRAFT_COOKIE_NAME = 'cf_form_draft_v1';
+      const DRAFT_TTL_MS = 60 * 60 * 1000; // 1 hour
+      const DRAFT_MAX_AGE_SEC = 3600;      // 1 hour in seconds
       function saveFormDraft() {
         if (isEventViewMode()) return;
         const inTitle = document.getElementById('inputTitle');
@@ -3501,8 +3503,7 @@ body.is-card-transparent .view-viewer-tz {
         }
         try {
           const json = JSON.stringify(draft);
-          // 1 day = 86400 seconds
-          document.cookie = `${DRAFT_COOKIE_NAME}=${encodeURIComponent(json)}; path=/; max-age=86400; SameSite=Lax`;
+          document.cookie = `${DRAFT_COOKIE_NAME}=${encodeURIComponent(json)}; path=/; max-age=${DRAFT_MAX_AGE_SEC}; SameSite=Lax`;
           localStorage.setItem(DRAFT_COOKIE_NAME, json);
         } catch (e) {}
       }
@@ -3514,7 +3515,7 @@ body.is-card-transparent .view-viewer-tz {
           if (!raw) return null;
           const d = JSON.parse(raw);
           if (!d || typeof d !== 'object') return null;
-          if (d.ts && (Date.now() - d.ts > 24 * 60 * 60 * 1000)) {
+          if (d.ts && (Date.now() - d.ts > DRAFT_TTL_MS)) {
             document.cookie = `${DRAFT_COOKIE_NAME}=; path=/; max-age=0; SameSite=Lax`;
             localStorage.removeItem(DRAFT_COOKIE_NAME);
             return null;
