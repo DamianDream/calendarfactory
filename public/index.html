@@ -1909,10 +1909,13 @@ body.is-card-transparent .view-viewer-tz {
   font-size: var(--text-sm);
   color: var(--color-text);
   line-height: 1.6;
-  white-space: pre-wrap;
-  word-break: break-word;
   margin-top: 0;
   margin-bottom: var(--space-xl);
+}
+
+.view-desc-text {
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 #lblViewAddTitle {
@@ -2318,9 +2321,7 @@ body.is-card-transparent .view-viewer-tz {
         </div>
       </div>
 
-      <div id="descRow" class="view-desc hidden">
-        <div id="eventDesc">Description text goes here…</div>
-      </div>
+      <div id="descRow" class="view-desc hidden"><div id="eventDesc" class="view-desc-text"></div></div>
 
       <div class="chips-label" id="lblViewAddTitle">Add to your calendar</div>
       <div class="view-actions">
