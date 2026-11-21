@@ -666,8 +666,13 @@ body[data-theme="dark"] .bg-noise {
 }
 
 .floating-textarea {
-  min-height: 60px;
+  min-height: 68px;
   resize: none;
+  overflow-y: hidden;
+  box-sizing: border-box;
+  padding-top: calc(var(--space-xl) + var(--space-xs));
+  padding-bottom: var(--space-xs);
+  line-height: 1.5;
 }
 
 .floating-select, .floating-input[list] {
@@ -812,6 +817,7 @@ input[list]:focus::-webkit-calendar-picker-indicator {
 }
 
 /* Float up state */
+.floating-control:focus-within .floating-label,
 .floating-input:focus ~ .floating-label,
 .floating-input:not(:placeholder-shown) ~ .floating-label,
 .floating-textarea:focus ~ .floating-label,
@@ -2083,8 +2089,14 @@ body.is-card-transparent .view-viewer-tz {
     margin-bottom: var(--space-2xl);
   }
 
-  .floating-input, .floating-textarea, .floating-select {
+  .floating-input, .floating-select {
     padding: var(--space-xl) 0 var(--space-sm) 0;
+    font-size: 1.0625rem;
+  }
+
+  .floating-textarea {
+    padding-top: calc(var(--space-xl) + var(--space-xs));
+    padding-bottom: var(--space-sm);
     font-size: 1.0625rem;
   }
 
@@ -2093,6 +2105,7 @@ body.is-card-transparent .view-viewer-tz {
     font-size: var(--text-md);
   }
 
+  .floating-control:focus-within .floating-label,
   .floating-input:focus ~ .floating-label,
   .floating-input:not(:placeholder-shown) ~ .floating-label,
   .floating-textarea:focus ~ .floating-label,
@@ -5450,6 +5463,37 @@ body.is-card-transparent .view-viewer-tz {
         });
       }
 
+      function autoResizeDescription() {
+        const ta = document.getElementById('inputDescription');
+        const lbl = document.getElementById('lblFieldDescription');
+        if (!ta) return;
+
+        const hasValue = Boolean(ta.value && ta.value.length > 0);
+        const isFocused = (document.activeElement === ta);
+
+        if (lbl) {
+          if (hasValue || isFocused) {
+            lbl.classList.add('floated');
+          } else {
+            lbl.classList.remove('floated');
+          }
+        }
+
+        // Measure natural scrollHeight
+        ta.style.height = 'auto';
+        const computed = window.getComputedStyle(ta);
+        const lineHeight = parseFloat(computed.lineHeight) || 24;
+        const minHeight = 68;
+
+        if (hasValue) {
+          // Proportionally auto-expand text + 1 extra line height at the bottom for visual breathing space
+          const targetHeight = Math.max(minHeight, Math.ceil(ta.scrollHeight + lineHeight));
+          ta.style.height = targetHeight + 'px';
+        } else {
+          ta.style.height = minHeight + 'px';
+        }
+      }
+
       const MAX_SAFE_URL_LENGTH = 2000;
 
       function getCurrentFormEvent() {
@@ -5503,6 +5547,7 @@ body.is-card-transparent .view-viewer-tz {
 
       function updateGeneratedLinks() {
         if (!inputTitle) return;
+        autoResizeDescription();
         const title = inputTitle.value.trim();
         const dateVal = inputDate.value;
         const timeVal = inputTime.value || '10:00';
@@ -6008,6 +6053,14 @@ body.is-card-transparent .view-viewer-tz {
           el.addEventListener('input', updateGeneratedLinks);
           el.addEventListener('change', updateGeneratedLinks);
         });
+
+        if (inputDescription) {
+          inputDescription.addEventListener('input', autoResizeDescription);
+          inputDescription.addEventListener('change', autoResizeDescription);
+          inputDescription.addEventListener('focus', autoResizeDescription);
+          inputDescription.addEventListener('blur', autoResizeDescription);
+        }
+        window.addEventListener('resize', autoResizeDescription);
 
         if (inputTimezone) {
           inputTimezone.addEventListener('change', function () {
